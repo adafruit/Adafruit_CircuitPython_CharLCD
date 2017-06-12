@@ -10,7 +10,6 @@ import busio
 import digitalio
 from board import *
 
-
 # Commands
 LCD_CLEARDISPLAY        = 0x01
 LCD_RETURNHOME          = 0x02
@@ -53,35 +52,22 @@ LCD_5x8DOTS             = 0x00
 # Offset for up to 4 rows.
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
-class cirpyth_char_lcd(object):
-	"""Interface to the character lcd."""
+class CircuitPython_CharLCD(object):
+	""" Character LCD Class"""
 	def __init__(self, rs, en, d4, d5, d6, d7, cols, lines):
-		"""initialization interface for character lcds 
-		   
-		   :param rs: reset pin
-		   :param en: enable pin 
-		   :param cols: LCD columns
-		   :param lines: LCD lines 
-		   :param d4: datapin 4
-		   :param d5: datapin 4
-		   :param d6: datapin 4
-		   :param d7: datapin 4
-		"""
-
-		#  save col/line state
-		self._cols = lcd_columns
-		self._lines = lines 
-		#  save pin numbers
-		self._rs = rs
-	   	self._en = en
-	    self._d4 = d4
-	    self._d5 = d5
-	    self._d6 = d6
-	    self._d7 = d7
-	    #  set all pins as outputs
+		#	save config. attributes 
+		self.cols = cols
+		self.lines = lines 
+		self.rs = rs
+		self.en = en
+		self.d4 = d4
+		self.d5 = d5
+		self.d6 = d6
+		self.d7 = d7
+		#	switch all pins to output
 		for pin in(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7):
 			pin.switch_to_output()
-		#  initialize the display 
+		#	init. display 
 		self.write8(0x33)
 		self.write8(0x32)
 		#  init. display control
@@ -99,60 +85,31 @@ class cirpyth_char_lcd(object):
 		self.clear()
 
 	def home(self):
-		self.write8(LCD_RETURNHOME)
-		self.microcontroller.delay_us(3000)
+		"""moves the cursor back to its home"""
+		self.write8(LCD_RETURNHOME) # set cursor position to 0
+		self.time.sleep(0.003) # 3000microsec. sleep
 
 	def clear(self):
-		self.write8(LCD_CLEARDISPLAY)
-		self.microcontroller.delay_us(3000)
+		"""Enable or disable the display.  Set enable to True to enable."""
+		self.write8(LCD_CLEARDISPLAY) # clear display
+		self.time.sleep(0.003) # 3000microsec. sleep
 
 	def set_cursor(self, col, row):
+		"""Move the cursor to an explicit column and row position."""
 		#  move cursor to explicit column/row position
 		# Clamp row to the last row of the display
-		if row > self._lines:
-			row = self._lines - 1 
+		if row > self.lines:
+			row = self.lines - 1 
 		# Set location
 		self.write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
 	def enable_display(self, enable):
-	        """Enable or disable the display.  Set enable to True to enable."""
-	        if enable:
-	            self.displaycontrol |= LCD_DISPLAYON
-	        else:
-	            self.displaycontrol &= ~LCD_DISPLAYON
-	        self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
-
-
-	# write8 function ported
-	#  ASSUMES ALL PINS ARE OUTPUT 
-	def write8(value):
-		#  one ms delay to prevent writing too quickly.
-		microcontroller.delay_us(1000)
-		#  set character/data bit. (charmode = False)
-		lcd_rs.value = 0
-		# WRITE upper 4 bits
-		lcd_d4.value = ((value >> 4) & 1) > 0
-		lcd_d5.value = ((value >> 5) & 1) > 0
-		lcd_d6.value = ((value >> 6) & 1) > 0
-		lcd_d7.value = ((value >> 7) & 1) > 0
-		#  send command
-		pulse_enable()
-		# WRITE lower 4 bits 
-		lcd_d4.value = (value & 1) > 0
-		lcd_d5.value = ((value >> 1) & 1) > 0
-		lcd_d6.value = ((value >> 2) & 1) > 0
-		lcd_d7.value = ((value >> 3) & 1) > 0
-		pulse_enable()
-
-	# pulse the clock en line on, off to send cmd
-	def pulse_enable():
-		lcd_en.value = False 
-		# 1microsec pause
-		microcontroller.delay_us(1)
-		lcd_en.value = True
-		microcontroller.delay_us(1)
-		lcd_en.value = False
-		microcontroller.delay_us(100)
+		   """Enable or disable the display.  Set enable to True to enable."""
+			if enable:
+				self.displaycontrol |= LCD_DISPLAYON
+			else:
+				self.displaycontrol &= ~LCD_DISPLAYON
+			self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
 	#  write text to display 
 	def message(self, text):
@@ -163,13 +120,48 @@ class cirpyth_char_lcd(object):
 			if char == '\n':
 				line += 1
 				#  move to left/right depending on text direction
-				col = 0 if self.displaymode & LCD_ENTRYLEFT > 0 else self._cols-1
+				col = 0 if self.displaymode & LCD_ENTRYLEFT > 0 else self.cols-1
 				self.set_cursor(col, line)
 			# Write character to display 
 			else:
 				self.write8(ord(char), True)
 
 
+ 
+	def write8(self, value, char_mode = False):
+		"""Write 8b value in char or data mode. 0<=val<=255.
+		char_mode = True if char data, False if non-character
+		data (default)"""
+		#  one millisec delay to prevent writing too quickly.
+		self.time.sleep(0.001)
+		#  set character/data bit. (charmode = False)
+		self.lcd_rs.value = 0
+		# WRITE upper 4 bits
+		self.d4.value = ((value >> 4) & 1) > 0
+		self.d5.value = ((value >> 5) & 1) > 0
+		self.d6.value = ((value >> 6) & 1) > 0
+		self.d7.value = ((value >> 7) & 1) > 0
+		#  send command
+		self.pulse_enable()
+		# WRITE lower 4 bits 
+		self.d4.value = (value        & 1) > 0
+		self.d5.value = ((value >> 1) & 1) > 0
+		self.d6.value = ((value >> 2) & 1) > 0
+		self.d7.value = ((value >> 3) & 1) > 0
+		self.pulse_enable()
+
+	def pulse_enable(self):
+	""" Pulses clockEN line off->on->off to send command"""
+		self.en.value = False 
+		# 1microsec pause
+		self.time.sleep(0.0000001)
+		self.en.value = True
+		# 1microsec pause
+		self.time.sleep(0.0000001)
+		self.en.value = False
+		# 1microsec pause
+		self.time.sleep(0.0000001)
+	
 
 
 
