@@ -28,9 +28,17 @@ lcd = LCD.cirpyth_char_lcd(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_c
 
 
 #	Demo showing the blinking cursor
-lcd.clear()
-lcd.blink(True)
-#	wait 5 seconds
+lcd.enable_display(True)
 
-time.sleep(5)
+"""
+lcd.set_cursor(0,1)
+lcd.show_cursor(True)
+time.sleep(1)
+lcd.home()
+lcd.show_cursor(True)
+"""
+lcd.message('hello\ncircuitpython')
+
+#lcd.blink(True)
+
 

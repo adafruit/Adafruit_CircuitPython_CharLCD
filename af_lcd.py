@@ -93,13 +93,42 @@ class cirpyth_char_lcd(object):
 		self.write8(LCD_CLEARDISPLAY)
 		time.sleep(0.003)
 
+	def show_cursor(self, show):
+		if show:
+			self.displaycontrol |= LCD_CURSORON
+		else:
+			self.displaycontrol &= ~LCD_DISPLAYON
+		self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+
 	def set_cursor(self, col, row):
 		#  move cursor to explicit column/row position
 		# Clamp row to the last row of the display
-		if row > self._lines:
-			row = self._lines - 1 
+		if row > self.lines:
+			row = self.lines - 1 
 		# Set location
 		self.write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
+
+	def blink(self, blink):
+		if blink:
+			self.displaycontrol |= LCD_BLINKON
+		else:
+			self.displaycontrol &= ~LCD_BLINKON
+		self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+
+	def move_left(self):
+		self.write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT)
+
+	def move_right(self):
+		self.write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT)
+
+	def set_left_to_right(self):
+		self.displaymode |= LCD_ENTRYLEFT
+		self.write8(LCD_ENTRYMODESET | self.displaymode)
+
+	def set_left_to_right(self):
+		self.displaymode |= LCD_ENTRYLEFT
+		self.write8(LCD_ENTRYMODESET | self.displaymode)
+
 
 	def enable_display(self, enable):
 			"""Enable or disable the display.  Set enable to True to enable."""
@@ -112,11 +141,11 @@ class cirpyth_char_lcd(object):
 
 	# write8 function ported
 	#  ASSUMES ALL PINS ARE OUTPUT 
-	def write8(self,value):
+	def write8(self,value, char_mode = False):
 		#  one ms delay to prevent writing too quickly.
 		time.sleep(0.001)
 		#  set character/data bit. (charmode = False)
-		self.rs.value = 0 
+		self.rs.value = char_mode
 		# WRITE upper 4 bits
 		self.d4.value = ((value >> 4) & 1) > 0
 		self.d5.value = ((value >> 5) & 1) > 0
@@ -141,13 +170,6 @@ class cirpyth_char_lcd(object):
 		self.en.value = False
 		time.sleep(0.0000001)
 
-	def blink(self, blink):
-		if blink:
-			self.displaycontrol |= LCD_BLINKON
-		else:
-			self.displaycontrol &= ~LCD_BLINKON
-		self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
-
 	#  write text to display 
 	def message(self, text):
 		line = 0
@@ -157,13 +179,11 @@ class cirpyth_char_lcd(object):
 			if char == '\n':
 				line += 1
 				#  move to left/right depending on text direction
-				col = 0 if self.displaymode & LCD_ENTRYLEFT > 0 else self._cols-1
+				col = 0 if self.displaymode & LCD_ENTRYLEFT > 0 else self.cols-1
 				self.set_cursor(col, line)
 			# Write character to display 
 			else:
-				self.write8(ord(char))
+				self.write8(ord(char), True)
 
 
-
-
-
+	
