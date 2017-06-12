@@ -138,6 +138,12 @@ class cirpyth_char_lcd(object):
 				self.displaycontrol &= ~LCD_DISPLAYON
 			self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
+	def autoscroll(self, autoscroll):
+		if autoscroll:
+			self.displaymode |= LCD_ENTRYSHIFTINCREMENT
+		else:
+			self.displaymode &= ~LCD_ENTRYSHIFTINCREMENT
+		self.write8(LCD_ENTRYMODESET | self.displaymode)
 
 	# write8 function ported
 	#  ASSUMES ALL PINS ARE OUTPUT 
@@ -169,6 +175,8 @@ class cirpyth_char_lcd(object):
 		time.sleep(0.0000001)
 		self.en.value = False
 		time.sleep(0.0000001)
+
+
 
 	#  write text to display 
 	def message(self, text):
