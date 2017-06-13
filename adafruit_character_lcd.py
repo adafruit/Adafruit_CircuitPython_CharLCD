@@ -29,7 +29,7 @@ TODO(description)
 """
 
 """
-`cirpyth_char_lcd` - character lcd module 
+`adafruit_character_lcd` - character lcd module 
 =================================================
 module for interfacing with character lcds
 """ 
@@ -81,11 +81,21 @@ LCD_5x8DOTS             = 0x00
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
 class cirpyth_char_lcd(object):
-	"""Interface to a character lcd."""
+		""" Interfaces with a character LCD
+       		:param rs: The reset data line
+       		:param en: The enable data line
+       		:param d4, d5, d6, d7: The data lines 4 thru 7
+       		:param cols: The columns on the charLCD
+       		:param lines: The lines on the charLCD
+       		:param backlight: The backlight pin, usually the last pin. Check with your datasheet
+       		:param enable_pwm: The PWM CONTROL, TODO
+       		:param initial_backlight: THE initial backlight status (on/off)
+    	"""
 	def __init__(self, rs, en, d4, d5, d6, d7, cols, lines, 
 					backlight = None,
 					enable_pwm = False,
-					initial_backlight = 1.0):
+					initial_backlight = 0.0):
+
 		self.cols = cols
 		self.lines = lines 
 		#  save pin numbers
@@ -106,10 +116,10 @@ class cirpyth_char_lcd(object):
 		#	 Setup backlight 
 		if backlight is not None:
 			self.backlight.switch_to_output()
-			self.backlight.value = 0 # turn backlight on
+			self.backlight.value = initial_backlight # turn backlight on
 		#  initialize the display 
-		self.write8(0x33)
-		self.write8(0x32)
+		self._write8(0x33)
+		self._write8(0x32)
 		#  init. display control
 		self.displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF
 		#  init display function
@@ -117,21 +127,21 @@ class cirpyth_char_lcd(object):
 		#  init display mode 
 		self.displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT
 		#  write to display control
-		self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+		self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 		#  write displayfunction
-		self.write8(LCD_FUNCTIONSET | self.displayfunction)
+		self._write8(LCD_FUNCTIONSET | self.displayfunction)
 		#  set the entry mode
-		self.write8(LCD_ENTRYMODESET | self.displaymode)
+		self._write8(LCD_ENTRYMODESET | self.displaymode)
 		self.clear()
 
 	def home(self):
 		"""Moves the cursor back home pos(1,1)"""
-		self.write8(LCD_RETURNHOME)
+		self._write8(LCD_RETURNHOME)
 		time.sleep(0.003)
 
 	def clear(self):
 		"""Clears the LCD"""
-		self.write8(LCD_CLEARDISPLAY)
+		self._write8(LCD_CLEARDISPLAY)
 		time.sleep(0.003)
 
 	def show_cursor(self, show):
@@ -140,7 +150,7 @@ class cirpyth_char_lcd(object):
 			self.displaycontrol |= LCD_CURSORON
 		else:
 			self.displaycontrol &= ~LCD_DISPLAYON
-		self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+		self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
 	def set_cursor(self, col, row):
 		"""Sets the cursor to ``row`` and ``col``
@@ -151,33 +161,33 @@ class cirpyth_char_lcd(object):
 		if row > self.lines:
 			row = self.lines - 1 
 		# Set location
-		self.write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
+		self._write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
 	def blink(self, blink):
-	"""True if the device has lost power since the time was set."""
+	"""Blinks the cursor if blink = true."""
 		if blink:
 			self.displaycontrol |= LCD_BLINKON
 		else:
 			self.displaycontrol &= ~LCD_BLINKON
-		self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+		self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
 	def move_left(self):
 		"""Moves display left one position"""
-		self.write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT)
+		self._write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT)
 
 	def move_right(self):
 		"""Moves display right one position"""
-		self.write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT)
+		self._write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT)
 
 	def set_left_to_right(self):
 		"""Set direction of text to read from left to right"""
 		self.displaymode |= LCD_ENTRYLEFT
-		self.write8(LCD_ENTRYMODESET | self.displaymode)
+		self._write8(LCD_ENTRYMODESET | self.displaymode)
 
 	def set_right_to_left(self):
 		"""Set direction of text to read from right to left"""
 		self.displaymode |= LCD_ENTRYRIGHT
-		self.write8(LCD_ENTRYMODESET | self.displaymode)
+		self._write8(LCD_ENTRYMODESET | self.displaymode)
 
 	def enable_display(self, enable):
 			"""Enable or disable the display.  Set enable to True to enable."""
@@ -185,7 +195,7 @@ class cirpyth_char_lcd(object):
 				self.displaycontrol |= LCD_DISPLAYON
 			else:
 				self.displaycontrol &= ~LCD_DISPLAYON
-			self.write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+			self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
 	def autoscroll(self, autoscroll):
 		"""autoscroll will right justify text if true, else it will left justify the text"""
@@ -193,9 +203,9 @@ class cirpyth_char_lcd(object):
 			self.displaymode |= LCD_ENTRYSHIFTINCREMENT
 		else:
 			self.displaymode &= ~LCD_ENTRYSHIFTINCREMENT
-		self.write8(LCD_ENTRYMODESET | self.displaymode)
+		self._write8(LCD_ENTRYMODESET | self.displaymode)
 
-	def write8(self,value, char_mode = False):
+	def _write8(self,value, char_mode = False):
 		"""Sends 8b ``value`` in ``char_mode``.
 			:param value: bytes
 			:param char_mode: character/data mode selector. False (default) for 
@@ -211,16 +221,16 @@ class cirpyth_char_lcd(object):
 		self.d6.value = ((value >> 6) & 1) > 0
 		self.d7.value = ((value >> 7) & 1) > 0
 		#  send command
-		self.pulse_enable()
+		self._pulse_enable()
 		# WRITE lower 4 bits 
 		self.d4.value = (value & 1) > 0
 		self.d5.value = ((value >> 1) & 1) > 0
 		self.d6.value = ((value >> 2) & 1) > 0
 		self.d7.value = ((value >> 3) & 1) > 0
-		self.pulse_enable()
+		self._pulse_enable()
 
-	# pulse the clock en line on, off to send cmd
-	def pulse_enable(self):
+	def _pulse_enable(self):
+		""" Pulses (lo->hi->lo) to send commands. """
 		self.en.value = False 
 		# 1microsec pause
 		time.sleep(0.0000001)
@@ -229,12 +239,11 @@ class cirpyth_char_lcd(object):
 		self.en.value = False
 		time.sleep(0.0000001)
 
-	def set_backlight(self, lightoff):
-		""" Set lightoff to 0 to turn off, 1 to turn on. """
-		if lightoff == 1:
+	def set_backlight(self, lighton):
+		""" Set lighton to turn the charLCD backlight on. """
+		if lighton:
 			self.backlight.value = 0
-		elif lightoff == 0:
-			self.backlight.value = 1
+
  
 	def message(self, text):
 		"""Write text to display, can include \n for newline"""
@@ -249,7 +258,7 @@ class cirpyth_char_lcd(object):
 				self.set_cursor(col, line)
 			# Write character to display 
 			else:
-				self.write8(ord(char), True)
+				self._write8(ord(char), True)
 
 
 	

@@ -8,7 +8,7 @@ requires:
 """ 
 
 import time, math, busio, digitalio
-import af_lcd as LCD
+import adafruit_character_lcd as LCD
 from board import *
 
 #  Character LCD Config:
