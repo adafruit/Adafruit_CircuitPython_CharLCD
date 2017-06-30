@@ -112,10 +112,10 @@ class cirpyth_char_lcd(object):
 			self.pwn_enabled = enable_pwm 
 			#	set all pins as outputs
 			for pin in(rs, en, d4, d5, d6, d7):
-				pin.direction = digitalio.direction.OUTPUT
+				pin.direction = digitalio.Direction.OUTPUT
 			#	 Setup backlight 
 			if backlight is not None:
-				self.backlight.direction = digitalio.direction.OUTPUT
+				self.backlight.direction = digitalio.Direction.OUTPUT
 				self.backlight.value = 0 # turn backlight on
 			#  initialize the display 
 			self._write8(0x33)
