@@ -2,8 +2,9 @@
 Introduction
 ============
 
-This repo is compatable with HD44780 "standard" 16x2 Character LCDs
+This repo is compatable with standard Character LCDs.
 
+Compatable with CircuitPython Versions: 1.0.0 
 
 Dependencies
 =============
@@ -47,6 +48,9 @@ After you have set up your LCD, we can make the device by calling it
 To verify that your pins are correct, print a hello message to the CharLCD:
 
     lcd.message('hello\ncircuitpython')
+
+
+Custom character example with create_char() is provided within /examples/ 
     
 
 

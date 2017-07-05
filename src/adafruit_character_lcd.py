@@ -81,6 +81,16 @@ LCD_5x8DOTS             = 0x00
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
 class cirpyth_char_lcd(object):
+    """ Interfaces with a character LCD
+          :param rs: The reset data line
+          :param en: The enable data line
+          :param d4, d5, d6, d7: The data lines 4 thru 7
+          :param cols: The columns on the charLCD
+          :param lines: The lines on the charLCD
+          :param backlight: The backlight pin, usually the last pin. Check with your datasheet
+          :param enable_pwm: The PWM CONTROL, TODO
+          :param initial_backlight: THE initial backlight status (on/off)
+      """
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines, 
           backlight = None,
           enable_pwm = False,
@@ -143,6 +153,11 @@ class cirpyth_char_lcd(object):
       self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def set_cursor(self, col, row):
+      """Sets the cursor to ``row`` and ``col``
+            :param col: column location
+            :param row: row location 
+        """
+      # Clamp row to the last row of the display
       if row > self.lines:
         row = self.lines - 1 
       # Set location
@@ -169,6 +184,10 @@ class cirpyth_char_lcd(object):
       self.displaymode |= LCD_ENTRYLEFT
       self._write8(LCD_ENTRYMODESET | self.displaymode)
 
+    def set_right_to_left(self):
+      """Set direction of text to read from right to left"""
+      self.displaymode |= LCD_ENTRYLEFT
+      self._write8(LCD_ENTRYMODESET | self.displaymode)
 
     def enable_display(self, enable):
         """Enable or disable the display.  Set enable to True to enable."""
@@ -179,6 +198,12 @@ class cirpyth_char_lcd(object):
         self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def _write8(self,value, char_mode = False):
+      """Sends 8b ``value`` in ``char_mode``.
+        :param value: bytes
+        :param char_mode: character/data mode selector. False (default) for 
+        data only, True for character bits.
+        """
+      #  one ms delay to prevent writing too quickly.
       time.sleep(0.001)
       #  set character/data bit. (charmode = False)
       self.rs.value = char_mode
@@ -213,6 +238,7 @@ class cirpyth_char_lcd(object):
       else:
         self.backlight.value = 1
 
+   
     def message(self, text):
       """Write text to display, can include \n for newline"""
       line = 0
@@ -229,12 +255,17 @@ class cirpyth_char_lcd(object):
           self._write8(ord(char), True)
 
     def create_char(self, location, pattern):
+         """Fill one of the first 8 CGRAM locations with custom characters.
+        The location parameter should be between 0 and 7 and pattern should
+        provide an array of 8 bytes containing the pattern. E.g. you can easyly
+        design your custom character at http://www.quinapalus.com/hd44780udg.html
+        To show your custom character use eg. lcd.message('\x01')
+        """
+        # only position 0..7 are allowed
         location &= 0x7
         self._write8(LCD_SETCGRAMADDR | (location << 3))
         for i in range(7):
             print(pattern[i])
-            self._write8(pattern[i], True)
-
-
+            self._write8(pattern[i], True)     
 
   
