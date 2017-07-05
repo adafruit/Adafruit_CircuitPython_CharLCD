@@ -268,4 +268,8 @@ class cirpyth_char_lcd(object):
             print(pattern[i])
             self._write8(pattern[i], True)     
 
+<<<<<<< HEAD
   
+=======
+  
+>>>>>>> 6686b1657d1b3b0fe2a26b0897bf4389bc72c19c
