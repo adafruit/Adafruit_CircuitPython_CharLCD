@@ -35,7 +35,6 @@ module for interfacing with character lcds
 """ 
 import time 
 import math
-import busio
 import digitalio
 from board import *
 
@@ -255,7 +254,7 @@ class cirpyth_char_lcd(object):
           self._write8(ord(char), True)
 
     def create_char(self, location, pattern):
-         """Fill one of the first 8 CGRAM locations with custom characters.
+        """Fill one of the first 8 CGRAM locations with custom characters.
         The location parameter should be between 0 and 7 and pattern should
         provide an array of 8 bytes containing the pattern. E.g. you can easyly
         design your custom character at http://www.quinapalus.com/hd44780udg.html
@@ -264,12 +263,5 @@ class cirpyth_char_lcd(object):
         # only position 0..7 are allowed
         location &= 0x7
         self._write8(LCD_SETCGRAMADDR | (location << 3))
-        for i in range(7):
-            print(pattern[i])
-            self._write8(pattern[i], True)     
-
-<<<<<<< HEAD
-  
-=======
-  
->>>>>>> 6686b1657d1b3b0fe2a26b0897bf4389bc72c19c
+        for i in range(8):
+            self._write8(pattern[i], char_mode=True)
