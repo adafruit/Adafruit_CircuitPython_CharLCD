@@ -25,7 +25,10 @@
 
 TODO(description)
 
-* Author(s): Brent Rubell
+* Author(s): 
+-Brent Rubell
+-Asher Lieber 
+-Tony DiCola for the original python charLCD library 
 """
 
 """
@@ -39,42 +42,42 @@ import digitalio
 from board import *
 
 # Commands
-LCD_CLEARDISPLAY        = 0x01
-LCD_RETURNHOME          = 0x02
-LCD_ENTRYMODESET        = 0x04
-LCD_DISPLAYCONTROL      = 0x08
-LCD_CURSORSHIFT         = 0x10
-LCD_FUNCTIONSET         = 0x20
-LCD_SETCGRAMADDR        = 0x40
-LCD_SETDDRAMADDR        = 0x80
+LCD_CLEARDISPLAY        = const(0x01)
+LCD_RETURNHOME          = const(0x02)
+LCD_ENTRYMODESET        = const(0x04)
+LCD_DISPLAYCONTROL      = const(0x08)
+LCD_CURSORSHIFT         = const(0x10)
+LCD_FUNCTIONSET         = const(0x20)
+LCD_SETCGRAMADDR        = const(0x40)
+LCD_SETDDRAMADDR        = const(0x80)
 
 # Entry flags
-LCD_ENTRYRIGHT          = 0x00
-LCD_ENTRYLEFT           = 0x02
-LCD_ENTRYSHIFTINCREMENT = 0x01
-LCD_ENTRYSHIFTDECREMENT = 0x00
+LCD_ENTRYRIGHT          = const(0x00)
+LCD_ENTRYLEFT           = const(0x02)
+LCD_ENTRYSHIFTINCREMENT = const(0x01)
+LCD_ENTRYSHIFTDECREMENT = const(0x00)
 
 # Control flags
-LCD_DISPLAYON           = 0x04
-LCD_DISPLAYOFF          = 0x00
-LCD_CURSORON            = 0x02
-LCD_CURSOROFF           = 0x00
-LCD_BLINKON             = 0x01
-LCD_BLINKOFF            = 0x00
+LCD_DISPLAYON           = const(0x04)
+LCD_DISPLAYOFF          = const(0x00)
+LCD_CURSORON            = const(0x02)
+LCD_CURSOROFF           = const(0x00)
+LCD_BLINKON             = const(0x01)
+LCD_BLINKOFF            = const(0x00)
 
 # Move flags
-LCD_DISPLAYMOVE         = 0x08
-LCD_CURSORMOVE          = 0x00
-LCD_MOVERIGHT           = 0x04
-LCD_MOVELEFT            = 0x00
+LCD_DISPLAYMOVE         = const(0x08)
+LCD_CURSORMOVE          = const(0x00)
+LCD_MOVERIGHT           = const(0x04)
+LCD_MOVELEFT            = const(0x00)
 
 # Function set flags
-LCD_8BITMODE            = 0x10
-LCD_4BITMODE            = 0x00
-LCD_2LINE               = 0x08
-LCD_1LINE               = 0x00
-LCD_5x10DOTS            = 0x04
-LCD_5x8DOTS             = 0x00
+LCD_8BITMODE            = const(0x10)
+LCD_4BITMODE            = const(0x00)
+LCD_2LINE               = const(0x08)
+LCD_1LINE               = const(0x00)
+LCD_5x10DOTS            = const(0x04)
+LCD_5x8DOTS             = const(0x00)
 
 # Offset for up to 4 rows.
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
