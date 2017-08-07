@@ -2,9 +2,9 @@
 Introduction
 ============
 
-This repo is compatable with standard Character LCDs.
+This repo is compatible with standard Character LCDs.
 
-Compatable with CircuitPython Versions: 1.0.0 
+Compatible with CircuitPython Versions: 1.0.0 
 
 Dependencies
 =============
@@ -57,8 +57,5 @@ Custom character example with create_char() is provided within /examples/
 Contributing
 ============
 
-Contributions are welcome! Please read our `Code of Conduct
-[Code of Conduct](https://github.com/adafruit/Adafruit_CircuitPython_CircuitPython_CharLCD/blob/master/CODE_OF_CONDUCT.md)
+Contributions are welcome! Please read our [Code of Conduct](https://github.com/adafruit/Adafruit_CircuitPython_CircuitPython_CharLCD/blob/master/CODE_OF_CONDUCT.md)
 before contributing to help this project stay welcoming.
-
-
