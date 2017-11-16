@@ -1,5 +1,5 @@
 import time, math, digitalio
-import adafruit_character_lcd_RGB as LCD
+import adafruit_character_lcd
 import pulseio
 from board import *
 
@@ -21,7 +21,7 @@ green = pulseio.PWMOut(D4)
 blue = pulseio.PWMOut(D5)
 
 #   Init the lcd class
-lcd = LCD.cirpyth_char_lcd_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, red, green, blue, lcd_backlight)
+lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, red, green, blue, lcd_backlight)
 
 # only red
 RED     = [100, 0,   0]

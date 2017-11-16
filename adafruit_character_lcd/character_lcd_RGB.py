@@ -25,125 +25,139 @@
 
 TODO(description)
 
-* Author(s): 
+* Author(s):
 -Brent Rubell
--Asher Lieber 
--Tony DiCola for the original python charLCD library 
+-Asher Lieber
+-Tony DiCola for the original python charLCD library
 """
 
 """
-`adafruit_character_lcd` - character lcd module 
+`adafruit_character_lcd_RGB` - RGB character lcd module
 =================================================
-module for interfacing with character lcds
-""" 
-import time 
+module for interfacing with RGB character lcds
+"""
+import time
 import math
 import digitalio
+import pulseio
 from board import *
+from micropython import const
 
 # Commands
-LCD_CLEARDISPLAY        = const(0x01)
-LCD_RETURNHOME          = const(0x02)
-LCD_ENTRYMODESET        = const(0x04)
-LCD_DISPLAYCONTROL      = const(0x08)
-LCD_CURSORSHIFT         = const(0x10)
-LCD_FUNCTIONSET         = const(0x20)
-LCD_SETCGRAMADDR        = const(0x40)
-LCD_SETDDRAMADDR        = const(0x80)
+_LCD_CLEARDISPLAY        = const(0x01)
+_LCD_RETURNHOME          = const(0x02)
+_LCD_ENTRYMODESET        = const(0x04)
+_LCD_DISPLAYCONTROL      = const(0x08)
+_LCD_CURSORSHIFT         = const(0x10)
+_LCD_FUNCTIONSET         = const(0x20)
+_LCD_SETCGRAMADDR        = const(0x40)
+_LCD_SETDDRAMADDR        = const(0x80)
 
 # Entry flags
-LCD_ENTRYRIGHT          = const(0x00)
-LCD_ENTRYLEFT           = const(0x02)
-LCD_ENTRYSHIFTINCREMENT = const(0x01)
-LCD_ENTRYSHIFTDECREMENT = const(0x00)
+_LCD_ENTRYRIGHT          = const(0x00)
+_LCD_ENTRYLEFT           = const(0x02)
+_LCD_ENTRYSHIFTINCREMENT = const(0x01)
+_LCD_ENTRYSHIFTDECREMENT = const(0x00)
 
 # Control flags
-LCD_DISPLAYON           = const(0x04)
-LCD_DISPLAYOFF          = const(0x00)
+_LCD_DISPLAYON           = const(0x04)
+_LCD_DISPLAYOFF          = const(0x00)
 LCD_CURSORON            = const(0x02)
-LCD_CURSOROFF           = const(0x00)
-LCD_BLINKON             = const(0x01)
-LCD_BLINKOFF            = const(0x00)
+_LCD_CURSOROFF           = const(0x00)
+_LCD_BLINKON             = const(0x01)
+_LCD_BLINKOFF            = const(0x00)
 
 # Move flags
-LCD_DISPLAYMOVE         = const(0x08)
-LCD_CURSORMOVE          = const(0x00)
-LCD_MOVERIGHT           = const(0x04)
-LCD_MOVELEFT            = const(0x00)
+_LCD_DISPLAYMOVE         = const(0x08)
+_LCD_CURSORMOVE          = const(0x00)
+_LCD_MOVERIGHT           = const(0x04)
+_LCD_MOVELEFT            = const(0x00)
 
 # Function set flags
-LCD_8BITMODE            = const(0x10)
-LCD_4BITMODE            = const(0x00)
-LCD_2LINE               = const(0x08)
-LCD_1LINE               = const(0x00)
-LCD_5x10DOTS            = const(0x04)
-LCD_5x8DOTS             = const(0x00)
+_LCD_8BITMODE            = const(0x10)
+_LCD_4BITMODE            = const(0x00)
+_LCD_2LINE               = const(0x08)
+_LCD_1LINE               = const(0x00)
+_LCD_5x10DOTS            = const(0x04)
+_LCD_5x8DOTS             = const(0x00)
 
 # Offset for up to 4 rows.
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
-class cirpyth_char_lcd(object):
+class Character_LCD_RGB(object):
     """ Interfaces with a character LCD
-          :param rs: The reset data line
-          :param en: The enable data line
-          :param d4, d5, d6, d7: The data lines 4 thru 7
-          :param cols: The columns on the charLCD
-          :param lines: The lines on the charLCD
-          :param backlight: The backlight pin, usually the last pin. Check with your datasheet
-          :param enable_pwm: The PWM CONTROL, TODO
+          :param ~microcontroller.Pin rs: The reset data line
+          :param ~microcontroller.Pin en: The enable data line
+          :param ~microcontroller.Pin d4, d5, d6, d7: The data lines 4 thru 7
+          :param ~microcontroller.Pin cols: The columns on the charLCD
+          :param ~microcontroller.Pin lines: The lines on the charLCD
+          :param ~microcontroller.Pin red: Red RGB Anode
+          :param ~microcontroller.Pin green: Green RGB Anode
+          :param ~microcontroller.Pin blue: Blue RGB Anode
+          :param ~microcontroller.Pin backlight: The backlight pin, usually the last pin. Consult the datasheet.
+          :param enable_pwm: PulseIO Control
           :param initial_backlight: THE initial backlight status (on/off)
       """
-    def __init__(self, rs, en, d4, d5, d6, d7, cols, lines, 
+    def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
+          red,
+          green,
+          blue,
           backlight = None,
           enable_pwm = False,
           initial_backlight = 1.0):
-
+      #  define columns and lines
       self.cols = cols
-      self.lines = lines 
-      #  save pin numbers
+      self.lines = lines
+      #  define pin params
       self.rs = rs
       self.en = en
       self.d4 = d4
       self.d5 = d5
       self.d6 = d6
       self.d7 = d7
-      # backlight pin
+      #  define color params
+      self.red = red
+      self.green = green
+      self.blue = blue
+      #  define rgb led
+      self.RGBLED = [red, green, blue]
+      # define backlight pin
       self.backlight = backlight
       # save backlight state
       self.backlight = backlight
-      self.pwn_enabled = enable_pwm 
+      self.pwn_enabled = enable_pwm
       # set all pins as outputs
       for pin in(rs, en, d4, d5, d6, d7):
         pin.direction = digitalio.Direction.OUTPUT
-      #  Setup backlight 
+      #  setup backlight
       if backlight is not None:
         self.backlight.direction = digitalio.Direction.OUTPUT
         self.backlight.value = 0 # turn backlight on
-      #  initialize the display 
+      #  initialize the display
       self._write8(0x33)
       self._write8(0x32)
       #  init. display control
-      self.displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF
+      self.displaycontrol = _LCD_DISPLAYON | _LCD_CURSOROFF | _LCD_BLINKOFF
       #  init display function
-      self.displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_2LINE | LCD_5x8DOTS
-      #  init display mode 
-      self.displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT
+      self.displayfunction = _LCD_4BITMODE | _LCD_1LINE | _LCD_2LINE | _LCD_5x8DOTS
+      #  init display mode
+      self.displaymode = _LCD_ENTRYLEFT | _LCD_ENTRYSHIFTDECREMENT
       #  write to display control
-      self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+      self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
       #  write displayfunction
-      self._write8(LCD_FUNCTIONSET | self.displayfunction)
+      self._write8(_LCD_FUNCTIONSET | self.displayfunction)
       #  set the entry mode
-      self._write8(LCD_ENTRYMODESET | self.displaymode)
+      self._write8(_LCD_ENTRYMODESET | self.displaymode)
       self.clear()
 
     def home(self):
       """Moves the cursor back home pos(1,1)"""
-      self._write8(LCD_RETURNHOME)
+      self._write8(_LCD_RETURNHOME)
       time.sleep(0.003)
 
     def clear(self):
       """Clears the LCD"""
-      self._write8(LCD_CLEARDISPLAY)
+      self._write8(_LCD_CLEARDISPLAY)
       time.sleep(0.003)
 
     def show_cursor(self, show):
@@ -151,58 +165,32 @@ class cirpyth_char_lcd(object):
       if show:
         self.displaycontrol |= LCD_CURSORON
       else:
-        self.displaycontrol &= ~LCD_DISPLAYON
-      self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+        self.displaycontrol &= ~_LCD_DISPLAYON
+      self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def set_cursor(self, col, row):
       """Sets the cursor to ``row`` and ``col``
             :param col: column location
-            :param row: row location 
+            :param row: row location
         """
       # Clamp row to the last row of the display
       if row > self.lines:
-        row = self.lines - 1 
+        row = self.lines - 1
       # Set location
-      self._write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
-
-    def blink(self, blink):
-      """Blinks the cursor if blink = true."""
-      if blink == True:
-        self.displaycontrol |= LCD_BLINKON
-      else:
-        self.displaycontrol &= ~LCD_BLINKON
-      self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
-
-    def move_left(self):
-      """Moves display left one position"""
-      self._write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT)
-
-    def move_right(self):
-      """Moves display right one position"""
-      self._write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT)
-    
-    def set_left_to_right(self):
-      """Set direction of text to read from left to right"""
-      self.displaymode |= LCD_ENTRYLEFT
-      self._write8(LCD_ENTRYMODESET | self.displaymode)
-
-    def set_right_to_left(self):
-      """Set direction of text to read from right to left"""
-      self.displaymode |= LCD_ENTRYLEFT
-      self._write8(LCD_ENTRYMODESET | self.displaymode)
+      self._write8(_LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
     def enable_display(self, enable):
         """Enable or disable the display.  Set enable to True to enable."""
         if enable:
-          self.displaycontrol |= LCD_DISPLAYON
+          self.displaycontrol |= _LCD_DISPLAYON
         else:
-          self.displaycontrol &= ~LCD_DISPLAYON
-        self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
+          self.displaycontrol &= ~_LCD_DISPLAYON
+        self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def _write8(self,value, char_mode = False):
       """Sends 8b ``value`` in ``char_mode``.
         :param value: bytes
-        :param char_mode: character/data mode selector. False (default) for 
+        :param char_mode: character/data mode selector. False (default) for
         data only, True for character bits.
         """
       #  one ms delay to prevent writing too quickly.
@@ -216,7 +204,7 @@ class cirpyth_char_lcd(object):
       self.d7.value = ((value >> 7) & 1) > 0
       #  send command
       self._pulse_enable()
-      # WRITE lower 4 bits 
+      # WRITE lower 4 bits
       self.d4.value = (value & 1) > 0
       self.d5.value = ((value >> 1) & 1) > 0
       self.d6.value = ((value >> 2) & 1) > 0
@@ -225,7 +213,7 @@ class cirpyth_char_lcd(object):
 
     def _pulse_enable(self):
       """ Pulses (lo->hi->lo) to send commands. """
-      self.en.value = False 
+      self.en.value = False
       # 1microsec pause
       time.sleep(0.0000001)
       self.en.value = True
@@ -240,7 +228,22 @@ class cirpyth_char_lcd(object):
       else:
         self.backlight.value = 1
 
-   
+    def _map(self, x, in_min, in_max, out_min, out_max):
+        """ Affine transfer/map with constrained output. """
+        outrange = float(out_max - out_min)
+        inrange = float(in_max - in_min)
+        ret = (x - in_min) * (outrange / inrange) + out_min
+        if (out_max > out_min):
+            return max(min(ret, out_max), out_min)
+        else:
+            return max(min(ret, out_min), out_max)
+
+    def setColor(self, color):
+        """ Method to set the duty cycle of the RGB LED """
+        self.RGBLED[0].duty_cycle = int(self._map(color[0], 0, 100, 65535, 0))
+        self.RGBLED[1].duty_cycle = int(self._map(color[1], 0, 100, 65535, 0))
+        self.RGBLED[2].duty_cycle = int(self._map(color[2], 0, 100, 65535, 0))
+
     def message(self, text):
       """Write text to display, can include \n for newline"""
       line = 0
@@ -250,21 +253,8 @@ class cirpyth_char_lcd(object):
         if char == '\n':
           line += 1
           #  move to left/right depending on text direction
-          col = 0 if self.displaymode & LCD_ENTRYLEFT > 0 else self.cols-1
+          col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.cols-1
           self.set_cursor(col, line)
-        # Write character to display 
+        # Write character to display
         else:
           self._write8(ord(char), True)
-
-    def create_char(self, location, pattern):
-        """Fill one of the first 8 CGRAM locations with custom characters.
-        The location parameter should be between 0 and 7 and pattern should
-        provide an array of 8 bytes containing the pattern. E.g. you can easyly
-        design your custom character at http://www.quinapalus.com/hd44780udg.html
-        To show your custom character use eg. lcd.message('\x01')
-        """
-        # only position 0..7 are allowed
-        location &= 0x7
-        self._write8(LCD_SETCGRAMADDR | (location << 3))
-        for i in range(8):
-            self._write8(pattern[i], char_mode=True)

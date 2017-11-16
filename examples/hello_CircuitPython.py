@@ -1,19 +1,19 @@
 """
-'hello_CircuitPython.py' 
+'hello_CircuitPython.py'
 =================================================
 hello world using 16x2 character lcd
-requires: 
+requires:
 - CircuitPython_CharLCD Module
-""" 
+"""
 
 import time, math, digitalio
-import adafruit_character_lcd as LCD
+import adafruit_character_lcd
 from board import *
 
 #   Character LCD Config:
 #   modify this if you have a different sized charlcd
 lcd_columns = 16
-lcd_rows = 2 
+lcd_rows = 2
 
 #   Metro m0 Pin Config:
 lcd_rs = digitalio.DigitalInOut(D7)
@@ -25,13 +25,13 @@ lcd_d4 = digitalio.DigitalInOut(D9)
 lcd_backlight = digitalio.DigitalInOut(D13)
 
 #   Init the lcd class
-lcd = LCD.cirpyth_char_lcd(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+lcd = adafruit_character_lcd.Character_LCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
-#   Print a 2x line message 
+#   Print a 2x line message
 lcd.message('hello\ncircuitpython')
 # Wait 5s
 time.sleep(5)
-#   Demo showing cursor 
+#   Demo showing cursor
 lcd.clear()
 lcd.show_cursor(True)
 lcd.message('showing cursor ')
@@ -57,7 +57,3 @@ lcd.clear()
 lcd.message("going to sleep\ncya later!")
 lcd.set_backlight(False)
 time.sleep(2)
-
-
-
-
