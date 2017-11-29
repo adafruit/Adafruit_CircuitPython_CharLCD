@@ -23,7 +23,6 @@
 `adafruit_CircuitPython_CharLCD`
 ====================================================
 
-TODO(description)
 
 * Author(s):
 -Brent Rubell
@@ -32,7 +31,7 @@ TODO(description)
 """
 
 """
-`adafruit_character_lcd` - character lcd module
+:mod:`adafruit_character_lcd`
 =================================================
 module for interfacing with character lcds
 """
@@ -84,19 +83,21 @@ LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
 class Character_LCD(object):
     """ Interfaces with a character LCD
-          :param rs: The reset data line
-          :param en: The enable data line
-          :param d4, d5, d6, d7: The data lines 4 thru 7
+          :param ~digitalio.DigitalInOut rs: The reset data line
+          :param ~digitalio.DigitalInOut en: The enable data line
+          :param ~digitalio.DigitalInOut d4: The data line 4
+          :param ~digitalio.DigitalInOut d5: The data line 5
+          :param ~digitalio.DigitalInOut d6: The data line 6
+          :param ~digitalio.DigitalInOut d7: The data line 7
           :param cols: The columns on the charLCD
           :param lines: The lines on the charLCD
-          :param backlight: The backlight pin, usually the last pin. Check with your datasheet
-          :param enable_pwm: The PWM CONTROL, TODO
-          :param initial_backlight: THE initial backlight status (on/off)
+          :param ~digitalio.DigitalInOut backlight: The backlight pin, usually the last pin. Check with your datasheet
       """
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
-          backlight = None,
-          enable_pwm = False,
-          initial_backlight = 1.0):
+          backlight = None #,
+          #enable_pwm = False,
+          #initial_backlight = 1.0
+          ):
 
       self.cols = cols
       self.lines = lines
@@ -109,9 +110,7 @@ class Character_LCD(object):
       self.d7 = d7
       # backlight pin
       self.backlight = backlight
-      # save backlight state
-      self.backlight = backlight
-      self.pwn_enabled = enable_pwm
+      # self.pwn_enabled = enable_pwm
       # set all pins as outputs
       for pin in(rs, en, d4, d5, d6, d7):
         pin.direction = digitalio.Direction.OUTPUT
@@ -147,7 +146,9 @@ class Character_LCD(object):
       time.sleep(0.003)
 
     def show_cursor(self, show):
-      """Show or hide the cursor"""
+      """Show or hide the cursor
+            :param show: True to show cursor, False to hide
+      """
       if show:
         self.displaycontrol |= LCD_CURSORON
       else:
@@ -166,7 +167,9 @@ class Character_LCD(object):
       self._write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
     def blink(self, blink):
-      """Blinks the cursor if blink = true."""
+      """Blinks the cursor if blink = true.
+            :param blink: True to blink, False no blink
+      """
       if blink == True:
         self.displaycontrol |= LCD_BLINKON
       else:
@@ -192,7 +195,9 @@ class Character_LCD(object):
       self._write8(LCD_ENTRYMODESET | self.displaymode)
 
     def enable_display(self, enable):
-        """Enable or disable the display.  Set enable to True to enable."""
+        """Enable or disable the display.
+            :param enable: True to enable display, False to disable
+        """
         if enable:
           self.displaycontrol |= LCD_DISPLAYON
         else:
@@ -234,7 +239,9 @@ class Character_LCD(object):
       time.sleep(0.0000001)
 
     def set_backlight(self, lighton):
-      """ Set lighton to turn the charLCD backlight on. """
+      """ Set lighton to turn the charLCD backlight on.
+            :param lighton: True to turn backlight on, False to turn off
+      """
       if lighton:
         self.backlight.value = 0
       else:
@@ -242,7 +249,9 @@ class Character_LCD(object):
 
 
     def message(self, text):
-      """Write text to display, can include \n for newline"""
+      """Write text to display, can include \n for newline
+            :param text: string to display
+      """
       line = 0
       #  iterate thru each char
       for char in text:
@@ -262,6 +271,9 @@ class Character_LCD(object):
         provide an array of 8 bytes containing the pattern. E.g. you can easyly
         design your custom character at http://www.quinapalus.com/hd44780udg.html
         To show your custom character use eg. lcd.message('\x01')
+            :param location: integer in range(8) to store the created character
+            :param ~bytes pattern: len(8) describes created character
+
         """
         # only position 0..7 are allowed
         location &= 0x7
