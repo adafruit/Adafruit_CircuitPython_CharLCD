@@ -2,8 +2,10 @@
 Introduction
 ============
 
-This repo is compatible with standard Character LCDs such as
+This library is compatible with standard Character LCDs such as:
 * [Adafruit Standard LCD 16x2](https://www.adafruit.com/product/181)
+* [Adafruit RGB backlight negative LCD 16x2](https://www.adafruit.com/product/399)
+* [Adafruit RGB backlight negative LCD 20x4](https://www.adafruit.com/product/498)
 
 Compatible with CircuitPython Versions: 2.x
 
