@@ -23,7 +23,6 @@
 `adafruit_CircuitPython_CharLCD`
 ====================================================
 
-TODO(description)
 
 * Author(s):
 -Brent Rubell
@@ -32,7 +31,7 @@ TODO(description)
 """
 
 """
-`adafruit_character_lcd_RGB` - RGB character lcd module
+:mod:`adafruit_character_lcd_RGB`
 =================================================
 module for interfacing with RGB character lcds
 """
@@ -86,25 +85,29 @@ LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
 class Character_LCD_RGB(object):
     """ Interfaces with a character LCD
-          :param ~microcontroller.Pin rs: The reset data line
-          :param ~microcontroller.Pin en: The enable data line
-          :param ~microcontroller.Pin d4, d5, d6, d7: The data lines 4 thru 7
-          :param ~microcontroller.Pin cols: The columns on the charLCD
-          :param ~microcontroller.Pin lines: The lines on the charLCD
-          :param ~microcontroller.Pin red: Red RGB Anode
-          :param ~microcontroller.Pin green: Green RGB Anode
-          :param ~microcontroller.Pin blue: Blue RGB Anode
-          :param ~microcontroller.Pin backlight: The backlight pin, usually the last pin. Consult the datasheet.
-          :param enable_pwm: PulseIO Control
-          :param initial_backlight: THE initial backlight status (on/off)
+        :param ~digitalio.DigitalInOut rs: The reset data line
+        :param ~digitalio.DigitalInOut en: The enable data line
+        :param ~digitalio.DigitalInOut d4: The data line 4
+        :param ~digitalio.DigitalInOut d5: The data line 5
+        :param ~digitalio.DigitalInOut d6: The data line 6
+        :param ~digitalio.DigitalInOut d7: The data line 7
+        :param cols: The columns on the charLCD
+        :param lines: The lines on the charLCD
+        :param ~pulseio.PWMOut red: Red RGB Anode
+        :param ~pulseio.PWMOut green: Green RGB Anode
+        :param ~pulseio.PWMOut blue: Blue RGB Anode
+        :param ~digitalio.DigitalInOut backlight: The backlight pin, usually the last pin. Consult the datasheet.
+            Note that Pin value 0 means blaklight is lit.
+
       """
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
           red,
           green,
           blue,
-          backlight = None,
-          enable_pwm = False,
-          initial_backlight = 1.0):
+          backlight = None #,
+          #enable_pwm = False,
+          #initial_backlight = 1.0
+          ):
       #  define columns and lines
       self.cols = cols
       self.lines = lines
@@ -123,9 +126,7 @@ class Character_LCD_RGB(object):
       self.RGBLED = [red, green, blue]
       # define backlight pin
       self.backlight = backlight
-      # save backlight state
-      self.backlight = backlight
-      self.pwn_enabled = enable_pwm
+      # self.pwn_enabled = enable_pwm
       # set all pins as outputs
       for pin in(rs, en, d4, d5, d6, d7):
         pin.direction = digitalio.Direction.OUTPUT
@@ -180,7 +181,9 @@ class Character_LCD_RGB(object):
       self._write8(_LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
     def enable_display(self, enable):
-        """Enable or disable the display.  Set enable to True to enable."""
+        """Enable or disable the display.
+            :param enable: True to enable display, False to disable
+        """
         if enable:
           self.displaycontrol |= _LCD_DISPLAYON
         else:
@@ -222,7 +225,9 @@ class Character_LCD_RGB(object):
       time.sleep(0.0000001)
 
     def set_backlight(self, lighton):
-      """ Set lighton to turn the charLCD backlight on. """
+      """ Set lighton to turn the charLCD backlight on.
+            :param lighton: True to turn backlight on, False to turn off
+      """
       if lighton:
         self.backlight.value = 0
       else:
@@ -239,13 +244,17 @@ class Character_LCD_RGB(object):
             return max(min(ret, out_min), out_max)
 
     def setColor(self, color):
-        """ Method to set the duty cycle of the RGB LED """
+        """ Method to set the duty cycle of the RGB LED
+            :param color: list of 3 integers in range(100). ``[R,G,B]`` 0 is no color, 100 it maximum color
+        """
         self.RGBLED[0].duty_cycle = int(self._map(color[0], 0, 100, 65535, 0))
         self.RGBLED[1].duty_cycle = int(self._map(color[1], 0, 100, 65535, 0))
         self.RGBLED[2].duty_cycle = int(self._map(color[2], 0, 100, 65535, 0))
 
     def message(self, text):
-      """Write text to display, can include \n for newline"""
+      """Write text to display, can include \n for newline
+            :param text: string to display
+      """
       line = 0
       #  iterate thru each char
       for char in text:
