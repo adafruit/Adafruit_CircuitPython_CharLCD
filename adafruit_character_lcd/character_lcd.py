@@ -37,8 +37,10 @@ module for interfacing with character lcds
 """
 import time
 import math
+
 import digitalio
 from board import *
+
 
 # Commands
 LCD_CLEARDISPLAY        = const(0x01)
@@ -80,6 +82,34 @@ LCD_5x8DOTS             = const(0x00)
 
 # Offset for up to 4 rows.
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
+
+# MCP23008 I2C backpack pin mapping from LCD logical pin to MCP23008 pin.
+_MCP23008_LCD_RS         = const(1)
+_MCP23008_LCD_EN         = const(2)
+_MCP23008_LCD_D4         = const(3)
+_MCP23008_LCD_D5         = const(4)
+_MCP23008_LCD_D6         = const(5)
+_MCP23008_LCD_D7         = const(6)
+_MCP23008_LCD_BACKLIGHT  = const(7)
+
+# 74LS595 SPI backpack pin mapping from LCD logical pin to 74LS595 pin.
+_74LS595_LCD_RS          = const(1)
+_74LS595_LCD_EN          = const(2)
+_74LS595_LCD_D4          = const(6)
+_74LS595_LCD_D5          = const(5)
+_74LS595_LCD_D6          = const(4)
+_74LS595_LCD_D7          = const(3)
+_74LS595_LCD_BACKLIGHT   = const(7)
+
+
+def _set_bit(byte_value, position, val):
+    # Given the specified byte_value set the bit at position to the provided
+    # boolean value val and return the modified byte.
+    if val:
+        return byte_value | (1 << position)
+    else:
+        return byte_value & ~(1 << position)
+
 
 class Character_LCD(object):
     """ Interfaces with a character LCD
@@ -280,3 +310,119 @@ class Character_LCD(object):
         self._write8(LCD_SETCGRAMADDR | (location << 3))
         for i in range(8):
             self._write8(pattern[i], char_mode=True)
+
+
+class Character_LCD_I2C(Character_LCD):
+    """Character LCD connected to I2C/SPI backpack using its I2C connection.
+    This is a subclass of Character_LCD and implements all of the same
+    functions and functionality.
+    """
+
+    def __init__(self, i2c, cols, lines):
+        """Initialize character LCD connectedto backpack using I2C connection
+        on the specified I2C bus and of the specified number of columns and
+        lines on the display.
+        """
+        # Import the MCP23008 module here when the class is used
+        # to keep memory usage low.  If you attempt to import globally at the
+        # top of this file you WILL run out of memory on the M0, even with
+        # MPY files.  The amount of code and classes implicitly imported
+        # by all the SPI and I2C code is too high.  Thus import on demand.
+        import adafruit_character_lcd.mcp23008 as mcp23008
+        self._mcp = mcp23008.MCP23008(i2c, address)
+        # Setup pins for I2C backpack, see diagram:
+        #   https://learn.adafruit.com/assets/35681
+        rs = self._mcp.DigitalInOut(_MCP23008_LCD_RS, self._mcp)
+        en = self._mcp.DigitalInOut(_MCP23008_LCD_EN, self._mcp)
+        d4 = self._mcp.DigitalInOut(_MCP23008_LCD_D4, self._mcp)
+        d5 = self._mcp.DigitalInOut(_MCP23008_LCD_D5, self._mcp)
+        d6 = self._mcp.DigitalInOut(_MCP23008_LCD_D6, self._mcp)
+        d7 = self._mcp.DigitalInOut(_MCP23008_LCD_D7, self._mcp)
+        backlight = self._mcp.DigitalInOut(_MCP23008_LCD_BACKLIGHT, self._mcp)
+        # Call superclass initializer with MCP23008 pins.
+        super().__init__(rs, en, d4, d5, d6, d7, cols, lines,
+                         backlight=backlight)
+
+    def _write8(self, value, char_mode=False):
+        # Optimize a command write by changing all GPIO pins at once instead
+        # of letting the super class try to set each one invidually (far too
+        # slow with overhead of I2C communication).
+        gpio = self._mcp.gpio
+        # Make sure enable is low.
+        gpio = _set_bit(gpio, _MCP23008_LCD_EN, False)
+        # Set character/data bit. (charmode = False).
+        gpio = _set_bit(gpio, _MCP23008_LCD_RS, char_mode)
+        # Set upper 4 bits.
+        gpio = _set_bit(gpio, _MCP23008_LCD_D4, ((value >> 4) & 1) > 0)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D5, ((value >> 5) & 1) > 0)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D6, ((value >> 6) & 1) > 0)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D7, ((value >> 7) & 1) > 0)
+        self._mcp.gpio = gpio
+        # Send command.
+        self._pulse_enable()
+        # Now repeat for lower 4 bits.
+        gpio = self._mcp.gpio
+        gpio = _set_bit(gpio, _MCP23008_LCD_EN, False)
+        gpio = _set_bit(gpio, _MCP23008_LCD_RS, char_mode)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D4, (value & 1) > 0)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D5, ((value >> 1) & 1) > 0)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D6, ((value >> 2) & 1) > 0)
+        gpio = _set_bit(gpio, _MCP23008_LCD_D7, ((value >> 3) & 1) > 0)
+        self._mcp.gpio = gpio
+        self._pulse_enable()
+
+
+class Character_LCD_SPI(Character_LCD):
+    """Character LCD connected to I2C/SPI backpack using its SPI connection.
+    This is a subclass of Character_LCD and implements all of the same
+    functions and functionality.
+    """
+
+    def __init__(self, spi, latch, cols, lines):
+        """Initialize character LCD connectedto backpack using SPI connection
+        on the specified SPI bus and latch line with the specified number of
+        columns and lines on the display.
+        """
+        # See comment above on I2C class for why this is imported here:
+        import adafruit_character_lcd.shift_reg_74ls595 as shift_reg_74ls595
+        self._sr = shift_reg_74ls595.ShiftReg74LS595(spi, latch)
+        # Setup pins for SPI backpack, see diagram:
+        #   https://learn.adafruit.com/assets/35681
+        rs = self._sr.DigitalInOut(_74LS595_LCD_RS, self._sr)
+        en = self._sr.DigitalInOut(_74LS595_LCD_EN, self._sr)
+        d4 = self._sr.DigitalInOut(_74LS595_LCD_D4, self._sr)
+        d5 = self._sr.DigitalInOut(_74LS595_LCD_D5, self._sr)
+        d6 = self._sr.DigitalInOut(_74LS595_LCD_D6, self._sr)
+        d7 = self._sr.DigitalInOut(_74LS595_LCD_D7, self._sr)
+        backlight = self._sr.DigitalInOut(_74LS595_LCD_BACKLIGHT, self._sr)
+        # Call superclass initializer with shift register pins.
+        super().__init__(rs, en, d4, d5, d6, d7, cols, lines,
+                         backlight=backlight)
+
+    def _write8(self, value, char_mode=False):
+        # Optimize a command write by changing all GPIO pins at once instead
+        # of letting the super class try to set each one invidually (far too
+        # slow with overhead of SPI communication).
+        gpio = self._sr.gpio
+        # Make sure enable is low.
+        gpio = _set_bit(gpio, _74LS595_LCD_EN, False)
+        # Set character/data bit. (charmode = False).
+        gpio = _set_bit(gpio, _74LS595_LCD_RS, char_mode)
+        # Set upper 4 bits.
+        gpio = _set_bit(gpio, _74LS595_LCD_D4, ((value >> 4) & 1) > 0)
+        gpio = _set_bit(gpio, _74LS595_LCD_D5, ((value >> 5) & 1) > 0)
+        gpio = _set_bit(gpio, _74LS595_LCD_D6, ((value >> 6) & 1) > 0)
+        gpio = _set_bit(gpio, _74LS595_LCD_D7, ((value >> 7) & 1) > 0)
+        self._sr.gpio = gpio
+        # Send command.
+        self._pulse_enable()
+        # Now repeat for lower 4 bits.
+        gpio = self._sr.gpio
+        gpio = _set_bit(gpio, _74LS595_LCD_EN, False)
+        gpio = _set_bit(gpio, _74LS595_LCD_RS, char_mode)
+        gpio = _set_bit(gpio, _74LS595_LCD_D4, (value & 1) > 0)
+        gpio = _set_bit(gpio, _74LS595_LCD_D5, ((value >> 1) & 1) > 0)
+        gpio = _set_bit(gpio, _74LS595_LCD_D6, ((value >> 2) & 1) > 0)
+        gpio = _set_bit(gpio, _74LS595_LCD_D7, ((value >> 3) & 1) > 0)
+        self._sr.gpio = gpio
+        self._pulse_enable()
