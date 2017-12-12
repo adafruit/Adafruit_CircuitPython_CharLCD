@@ -25,6 +25,6 @@ install:
   - pip install pylint circuitpython-build-tools
 
 script:
-  - pylint adafruit_charlcd/*.py
+  - pylint adafruit_character_lcd/*.py
   - ([[ ! -d "examples" ]] || pylint --disable=missing-docstring,invalid-name examples/*.py)
   - circuitpython-build-bundles --filename_prefix adafruit-circuitpython-charlcd --library_location .
