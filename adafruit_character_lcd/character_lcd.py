@@ -147,7 +147,7 @@ class Character_LCD(object):
       #  Setup backlight
       if backlight is not None:
         self.backlight.direction = digitalio.Direction.OUTPUT
-        self.backlight.value = 0 # turn backlight on
+        self.backlight.value = 1 # turn backlight on
       #  initialize the display
       self._write8(0x33)
       self._write8(0x32)
@@ -272,10 +272,11 @@ class Character_LCD(object):
       """ Set lighton to turn the charLCD backlight on.
             :param lighton: True to turn backlight on, False to turn off
       """
-      if lighton:
-        self.backlight.value = 0
-      else:
-        self.backlight.value = 1
+      if self.backlight is not None:
+        if lighton:
+          self.backlight.value = 1
+        else:
+          self.backlight.value = 0
 
 
     def message(self, text):
