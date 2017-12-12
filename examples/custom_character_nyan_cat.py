@@ -1,6 +1,7 @@
-import time, digitalio
+import time
+import digitalio
 import adafruit_character_lcd
-from board import *
+from board import D7, D8, D9, D10, D11, D12, D13
 
 lcd_columns = 16
 lcd_rows = 2
@@ -11,21 +12,23 @@ lcd_d6 = digitalio.DigitalInOut(D11)
 lcd_d5 = digitalio.DigitalInOut(D10)
 lcd_d4 = digitalio.DigitalInOut(D9)
 lcd_backlight = digitalio.DigitalInOut(D13)
-lcd = adafruit_character_lcd.Character_LCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+lcd = adafruit_character_lcd.Character_LCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
+                                           lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
-head = [31,17,27,17,17,21,17,31]
+head = [31, 17, 27, 17, 17, 21, 17, 31]
 
-top_body = [31,0,31,0,18,8,2,8]
-top_left_corner_body = [31,16,16,17,22,20,20,20]
-top_right_corner_body = [31,1,1,17,13,5,5,5]
+top_body = [31, 0, 31, 0, 18, 8, 2, 8]
+top_left_corner_body = [31, 16, 16, 17, 22, 20, 20, 20]
+top_right_corner_body = [31, 1, 1, 17, 13, 5, 5, 5]
 
-# these three chars will be the above three reversed with a few minor changes to fit feet into the bottom
+# these three chars will be the above three reversed with a few minor changes to
+# fit feet into the bottom
 bot_body = []
 bot_left_corner_body = []
 bot_right_corner_body = []
 
-tail_neutral = [0,0,0,0,31,31,0,0]
-tail_up = [0,8,12,6,3,1,0,0]
+tail_neutral = [0, 0, 0, 0, 31, 31, 0, 0]
+tail_up = [0, 8, 12, 6, 3, 1, 0, 0]
 
 for i in range(7, -1, -1):
     bot_body.append(top_body[i])
@@ -48,8 +51,8 @@ bot_right_corner_body[6] = 31
 bot_body2 = bot_body[:-1] + [3]
 
 
-rainbow = [0,0,6,25,11,29,27,12]
-rainbow2 = [0,0,6,31,13,5,23,12]
+rainbow = [0, 0, 6, 25, 11, 29, 27, 12]
+rainbow2 = [0, 0, 6, 31, 13, 5, 23, 12]
 
 lcd.create_char(0, top_body)
 lcd.create_char(1, top_left_corner_body)
@@ -79,13 +82,13 @@ for i in range(body_width):
 lcd.message('\x05')
 
 while True:
-   lcd.create_char(4, bot_body2)
-   lcd.create_char(7, tail_up)
-   lcd.create_char(2, rainbow2)
-   lcd.move_right()
-   time.sleep(.4)
-   lcd.create_char(4, bot_body)
-   lcd.create_char(7, tail_neutral)
-   lcd.create_char(2, rainbow)
-   lcd.move_left()
-   time.sleep(.4)
+    lcd.create_char(4, bot_body2)
+    lcd.create_char(7, tail_up)
+    lcd.create_char(2, rainbow2)
+    lcd.move_right()
+    time.sleep(.4)
+    lcd.create_char(4, bot_body)
+    lcd.create_char(7, tail_neutral)
+    lcd.create_char(2, rainbow)
+    lcd.move_left()
+    time.sleep(.4)
