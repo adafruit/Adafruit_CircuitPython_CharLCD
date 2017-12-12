@@ -1,17 +1,19 @@
-# 74LS595 Serial to Paralllel Shift Register Driver
-# Bare-bones driver for the 74LS595, as used by the character LCD
-# backpack.  This exposes the 74LS595 and its pins as standard CircuitPython
-# digitalio pins.  Currently this is integrated in the character LCD class for
-# simplicity and reduction in dependent imports, but it could be broken out
-# into a standalone library later.
+"""74LS595 Serial to Paralllel Shift Register Driver
+Bare-bones driver for the 74LS595, as used by the character LCD
+backpack.  This exposes the 74LS595 and its pins as standard CircuitPython
+digitalio pins.  Currently this is integrated in the character LCD class for
+simplicity and reduction in dependent imports, but it could be broken out
+into a standalone library later.
+"""
 # Author: Tony DiCola
 import digitalio
 
 import adafruit_bus_device.spi_device as spi_device
 
-
+#pylint: disable-msg=too-few-public-methods
+#pylint: disable-msg=no-self-use
 class ShiftReg74LS595:
-
+    """Shift Register 74LS95 driver class"""
     class DigitalInOut:
         """Digital input/output of the 74LS595.  The interface is exactly the
         same as the digitalio.DigitalInOut class, however note that by design
@@ -26,15 +28,18 @@ class ShiftReg74LS595:
             self._pin = pin_number
             self._sr = shift_reg_74ls595
 
-        def switch_to_output(value=False, **kwargs):
+        def switch_to_output(self, value=False):
+            """DigitalInOut switch_to_output"""
             self.direction = digitalio.Direction.OUTPUT
             self.value = value
 
-        def switch_to_input(self, pull=None, **kwargs):
+        def switch_to_input(self):
+            """do not call switch_to_input"""
             raise RuntimeError('Unable to use 74LS595 as digital input!')
 
         @property
         def value(self):
+            """do not call value"""
             raise RuntimeError('Unable to use 74LS595 as digital input!')
 
         @value.setter
@@ -49,23 +54,23 @@ class ShiftReg74LS595:
 
         @property
         def direction(self):
-            # ALWAYS an output!
+            """ALWAYS an output!"""
             return digitalio.Direction.OUTPUT
 
         @direction.setter
         def direction(self, val):
-            # Can only be set as OUTPUT!
+            """Can only be set as OUTPUT!"""
             if val != digitalio.Direction.OUTPUT:
                 raise RuntimeError('Unable to use 74LS595 as digital input!')
 
         @property
         def pull(self):
-            # Pull-up/down not supported, return None for no pull-up/down.
+            """Pull-up/down not supported, return NonLiberty e for no pull-up/down."""
             return None
 
         @pull.setter
         def pull(self, val):
-            # Only supports null/no pull state.
+            """Only supports null/no pull state."""
             if val is not None:
                 raise RuntimeError('Unable to set 74LS595 pull!')
 
@@ -87,3 +92,6 @@ class ShiftReg74LS595:
         self._gpio[0] = val & 0xFF
         with self._device as spi:
             spi.write(self._gpio)
+
+#pylint: enable-msg=no-self-use
+#pylint: enable-msg=too-few-public-methods

@@ -30,9 +30,9 @@ BLUE    = [0,   0,   100]
 
 while True:
     lcd.message('CircuitPython\nRGB Test')
-    lcd.setColor(RED)
+    lcd.set_color(RED)
     time.sleep(1)
-    lcd.setColor(GREEN)
+    lcd.set_color(GREEN)
     time.sleep(1)
-    lcd.setColor(BLUE)
+    lcd.set_color(BLUE)
     time.sleep(1)

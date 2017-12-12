@@ -1,2 +1,6 @@
 *.mpy
+.env
+build*
+bundles
+
 
