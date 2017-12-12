@@ -35,6 +35,9 @@ import time
 import digitalio
 from micropython import const
 
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
+
 #pylint: disable-msg=bad-whitespace
 # Commands
 LCD_CLEARDISPLAY        = const(0x01)
