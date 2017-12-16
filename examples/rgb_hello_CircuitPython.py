@@ -1,7 +1,8 @@
-import time, math, digitalio
+import time
+import digitalio
 import adafruit_character_lcd
 import pulseio
-from board import *
+from board import D3, D4, D5, D7, D8, D9, D10, D11, D12, D13
 
 #   Character LCD Config:
 #   modify this if you have a different sized charlcd
@@ -21,18 +22,22 @@ green = pulseio.PWMOut(D4)
 blue = pulseio.PWMOut(D5)
 
 #   Init the lcd class
-lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, red, green, blue, lcd_backlight)
+lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5,
+                                               lcd_d6, lcd_d7, lcd_columns, lcd_rows,
+                                               red, green, blue, lcd_backlight)
 
+#pylint: disable-msg=bad-whitespace
 # only red
 RED     = [100, 0,   0]
 GREEN   = [0,   100, 0]
 BLUE    = [0,   0,   100]
+#pylint: enable-msg=bad-whitespace
 
 while True:
     lcd.message('CircuitPython\nRGB Test')
-    lcd.setColor(RED)
+    lcd.set_color(RED)
     time.sleep(1)
-    lcd.setColor(GREEN)
+    lcd.set_color(GREEN)
     time.sleep(1)
-    lcd.setColor(BLUE)
+    lcd.set_color(BLUE)
     time.sleep(1)

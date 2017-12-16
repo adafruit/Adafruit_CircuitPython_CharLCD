@@ -1,5 +1,4 @@
 # Hello World using 16x2 character lcd and an 74LS595 SPI LCD backpack.
-import math
 import time
 
 import board
@@ -15,9 +14,9 @@ lcd_columns = 16
 lcd_rows = 2
 
 #   Backpack connection configuration:
-clk    = board.SCK    # Pin connected to backpack CLK.
-data   = board.MOSI   # Pin connected to backpack DAT/data.
-latch  = board.D5     # Pin connected to backpack LAT/latch.
+clk = board.SCK    # Pin connected to backpack CLK.
+data = board.MOSI   # Pin connected to backpack DAT/data.
+latch = board.D5     # Pin connected to backpack LAT/latch.
 
 #   Initialize SPI bus.
 spi = busio.SPI(clk, MOSI=data)
@@ -49,8 +48,8 @@ scroll_msg = 'Scroll'
 lcd.message(scroll_msg)
 #   Scroll to the left
 for i in range(lcd_columns - len(scroll_msg)):
-  time.sleep(0.5)
-  lcd.move_left()
+    time.sleep(0.5)
+    lcd.move_left()
 #   Demo turning backlight off
 lcd.clear()
 lcd.message("going to sleep\ncya later!")

@@ -1,15 +1,17 @@
-# MCP23008 I2C GPIO Extender Driver
-# Bare-bones driver for the MCP23008 driver, as used by the character LCD
-# backpack.  This exposes the MCP2308 and its pins as standard CircuitPython
-# digitalio pins.  Currently this is integrated in the character LCD class for
-# simplicity and reduction in dependent imports, but it could be broken out
-# into a standalone library later.
+"""MCP23008 I2C GPIO Extender Driver
+Bare-bones driver for the MCP23008 driver, as used by the character LCD
+backpack.  This exposes the MCP2308 and its pins as standard CircuitPython
+digitalio pins.  Currently this is integrated in the character LCD class for
+simplicity and reduction in dependent imports, but it could be broken out
+into a standalone library later."""
 # Author: Tony DiCola
 import digitalio
 
 import adafruit_bus_device.i2c_device as i2c_device
 
+from micropython import const
 
+#pylint: disable-msg=bad-whitespace
 # Registers and other constants:
 _MCP23008_ADDRESS       = const(0x20)
 _MCP23008_IODIR         = const(0x00)
@@ -24,12 +26,14 @@ _MCP23008_INTCAP        = const(0x08)
 _MCP23008_GPIO          = const(0x09)
 _MCP23008_OLAT          = const(0x0A)
 
+#pylint: enable-msg=bad-whitespace
+
 
 class MCP23008:
 
-    # Class-level buffer for reading and writing registers with the device.
-    # This reduces memory allocations but makes the code non-reentrant/thread-
-    # safe!
+    """Class-level buffer for reading and writing registers with the device.
+    This reduces memory allocations but makes the code non-reentrant/thread-
+    safe!"""
     _BUFFER = bytearray(2)
 
     class DigitalInOut:
@@ -46,16 +50,25 @@ class MCP23008:
             self._pin = pin_number
             self._mcp = mcp23008
 
-        def switch_to_output(value=False, **kwargs):
+        # kwargs in switch functions below are _necessary_ for compatibility
+        # with DigitalInout class (which allows specifying pull, etc. which
+        # is unused by this class).  Do not remove them, instead turn off pylint
+        # in this case.
+        #pylint: disable=unused-argument
+        def switch_to_output(self, value=False, **kwargs):
+            """DigitalInOut switch_to_output"""
             self.direction = digitalio.Direction.OUTPUT
             self.value = value
 
         def switch_to_input(self, pull=None, **kwargs):
+            """DigitalInOut switch_to_input"""
             self.direction = digitalio.Direction.INPUT
             self.pull = pull
+        #pylint: enable=unused-argument
 
         @property
         def value(self):
+            """Get ot Set pin value: True or False"""
             gpio = self._mcp.gpio
             return bool(gpio & (1 << self._pin))
 
@@ -70,34 +83,36 @@ class MCP23008:
 
         @property
         def direction(self):
-            iodir = self._mcp._read_u8(_MCP23008_IODIR)
+            """Set or Get pin Directtion INPUT or OUTPUT"""
+            iodir = self._mcp.read_u8(_MCP23008_IODIR)
             if iodir & (1 << self._pin) > 0:
                 return digitalio.Direction.INPUT
-            else:
-                return digitalio.Direction.OUTPUT
+
+            return digitalio.Direction.OUTPUT
 
         @direction.setter
         def direction(self, val):
-            iodir = self._mcp._read_u8(_MCP23008_IODIR)
+            iodir = self._mcp.read_u8(_MCP23008_IODIR)
             if val == digitalio.Direction.INPUT:
                 iodir |= (1 << self._pin)
             elif val == digitalio.Direction.OUTPUT:
                 iodir &= ~(1 << self._pin)
             else:
                 raise ValueError('Expected INPUT or OUTPUT direction!')
-            self._mcp._write_u8(_MCP23008_IODIR, iodir)
+            self._mcp.write_u8(_MCP23008_IODIR, iodir)
 
         @property
         def pull(self):
-            gppu = self._mcp._read_u8(_MCP23008_GPPU)
+            """Set or Get Pull UP state: only digitalio.Pull.UP is supported"""
+            gppu = self._mcp.read_u8(_MCP23008_GPPU)
             if gppu & (1 << self._pin) > 0:
                 return digitalio.Pull.UP
-            else:
-                return None
+
+            return None
 
         @pull.setter
         def pull(self, val):
-            gppu = self._mcp._read_u8(_MCP23008_GPPU)
+            gppu = self._mcp.read_u8(_MCP23008_GPPU)
             if val is None:
                 gppu &= ~(1 << self._pin)  # Disable pull-up
             elif val == digitalio.Pull.UP:
@@ -106,7 +121,7 @@ class MCP23008:
                 raise ValueError('Pull-down resistors are not supported!')
             else:
                 raise ValueError('Expected UP, DOWN, or None for pull state!')
-            self._mcp._write_u8(_MCP23008_GPPU, gppu)
+            self._mcp.write_u8(_MCP23008_GPPU, gppu)
 
     def __init__(self, i2c, address=_MCP23008_ADDRESS):
         """Initialize MCP23008 instance on specified I2C bus and optionally
@@ -119,16 +134,16 @@ class MCP23008:
             # for defaults of other registers.
             device.write('\x00\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x00')
 
-    def _read_u8(self, register):
-        # Read an unsigned 8 bit value from the specified 8-bit register.
+    def read_u8(self, register):
+        """Read an unsigned 8 bit value from the specified 8-bit register."""
         with self._device as i2c:
             self._BUFFER[0] = register & 0xFF
             i2c.write(self._BUFFER, end=1, stop=False)
             i2c.readinto(self._BUFFER, end=1)
             return self._BUFFER[0]
 
-    def _write_u8(self, register, val):
-        # Write an 8 bit value to the specified 8-bit register.
+    def write_u8(self, register, val):
+        """Write an 8 bit value to the specified 8-bit register."""
         with self._device as i2c:
             self._BUFFER[0] = register & 0xFF
             self._BUFFER[1] = val & 0xFF
@@ -140,8 +155,8 @@ class MCP23008:
         output value of the associated pin (0 = low, 1 = high), assuming that
         pin has been configured as an output previously.
         """
-        return self._read_u8(_MCP23008_GPIO)
+        return self.read_u8(_MCP23008_GPIO)
 
     @gpio.setter
     def gpio(self, val):
-        self._write_u8(_MCP23008_GPIO, val)
+        self.write_u8(_MCP23008_GPIO, val)
