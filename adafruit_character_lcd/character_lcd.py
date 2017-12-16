@@ -101,8 +101,8 @@ _74HC595_LCD_BACKLIGHT   = const(7)
 #pylint: enable-msg=bad-whitespace
 
 def _set_bit(byte_value, position, val):
-    """Given the specified byte_value set the bit at position to the provided
-    boolean value val and return the modified byte."""
+    # Given the specified byte_value set the bit at position to the provided
+    # boolean value val and return the modified byte.
     ret = None
     if val:
         ret = byte_value | (1 << position)
@@ -124,7 +124,7 @@ class Character_LCD(object):
           :param lines: The lines on the charLCD
           :param ~digitalio.DigitalInOut backlight: The backlight pin, usually
             the last pin. Check with your datasheet
-      """
+    """
     #pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
                  backlight=None #,
@@ -239,11 +239,10 @@ class Character_LCD(object):
         self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def _write8(self, value, char_mode=False):
-        """Sends 8b ``value`` in ``char_mode``.
-        :param value: bytes
-        :param char_mode: character/data mode selector. False (default) for
-        data only, True for character bits.
-        """
+        # Sends 8b ``value`` in ``char_mode``.
+        # :param value: bytes
+        # :param char_mode: character/data mode selector. False (default) for
+        # data only, True for character bits.
         #  one ms delay to prevent writing too quickly.
         time.sleep(0.001)
         #  set character/data bit. (charmode = False)
@@ -263,7 +262,7 @@ class Character_LCD(object):
         self._pulse_enable()
 
     def _pulse_enable(self):
-        """ Pulses (lo->hi->lo) to send commands. """
+        # Pulses (lo->hi->lo) to send commands.
         self.enable.value = False
         # 1microsec pause
         time.sleep(0.0000001)

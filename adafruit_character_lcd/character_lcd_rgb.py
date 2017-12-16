@@ -84,7 +84,7 @@ LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 #pylint: enable-msg=bad-whitespace
 
 def _map(xval, in_min, in_max, out_min, out_max):
-    """ Affine transfer/map with constrained output. """
+    # Affine transfer/map with constrained output.
     outrange = float(out_max - out_min)
     inrange = float(in_max - in_min)
     ret = (xval - in_min) * (outrange / inrange) + out_min
@@ -112,7 +112,7 @@ class Character_LCD_RGB(object):
         :param ~digitalio.DigitalInOut backlight: The backlight pin, usually the last pin.
             Consult the datasheet.  Note that Pin value 0 means backlight is lit.
 
-      """
+    """
     #pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
                  red,
@@ -206,11 +206,10 @@ class Character_LCD_RGB(object):
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def _write8(self, value, char_mode=False):
-        """Sends 8b ``value`` in ``char_mode``.
-        :param value: bytes
-        :param char_mode: character/data mode selector. False (default) for
-        data only, True for character bits.
-        """
+        # Sends 8b ``value`` in ``char_mode``.
+        # :param value: bytes
+        # :param char_mode: character/data mode selector. False (default) for
+        # data only, True for character bits.
         #  one ms delay to prevent writing too quickly.
         time.sleep(0.001)
         #  set character/data bit. (charmode = False)
@@ -230,7 +229,7 @@ class Character_LCD_RGB(object):
         self._pulse_enable()
 
     def _pulse_enable(self):
-        """ Pulses (lo->hi->lo) to send commands. """
+        # Pulses (lo->hi->lo) to send commands.
         self.enable.value = False
         # 1microsec pause
         time.sleep(0.0000001)
