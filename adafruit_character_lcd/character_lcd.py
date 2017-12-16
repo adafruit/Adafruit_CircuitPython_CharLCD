@@ -89,14 +89,14 @@ _MCP23008_LCD_D6         = const(5)
 _MCP23008_LCD_D7         = const(6)
 _MCP23008_LCD_BACKLIGHT  = const(7)
 
-# 74LS595 SPI backpack pin mapping from LCD logical pin to 74LS595 pin.
-_74LS595_LCD_RS          = const(1)
-_74LS595_LCD_EN          = const(2)
-_74LS595_LCD_D4          = const(6)
-_74LS595_LCD_D5          = const(5)
-_74LS595_LCD_D6          = const(4)
-_74LS595_LCD_D7          = const(3)
-_74LS595_LCD_BACKLIGHT   = const(7)
+# 74HC595 SPI backpack pin mapping from LCD logical pin to 74HC595 pin.
+_74HC595_LCD_RS          = const(1)
+_74HC595_LCD_EN          = const(2)
+_74HC595_LCD_D4          = const(6)
+_74HC595_LCD_D5          = const(5)
+_74HC595_LCD_D6          = const(4)
+_74HC595_LCD_D7          = const(3)
+_74HC595_LCD_BACKLIGHT   = const(7)
 
 #pylint: enable-msg=bad-whitespace
 
@@ -389,17 +389,17 @@ class Character_LCD_SPI(Character_LCD):
         columns and lines on the display.
         """
         # See comment above on I2C class for why this is imported here:
-        import adafruit_character_lcd.shift_reg_74ls595 as shift_reg_74ls595
-        self._sr = shift_reg_74ls595.ShiftReg74LS595(spi, latch)
+        import adafruit_character_lcd.shift_reg_74hc595 as shift_reg_74hc595
+        self._sr = shift_reg_74hc595.ShiftReg74HC595(spi, latch)
         # Setup pins for SPI backpack, see diagram:
         #   https://learn.adafruit.com/assets/35681
-        reset = self._sr.DigitalInOut(_74LS595_LCD_RS, self._sr)
-        enable = self._sr.DigitalInOut(_74LS595_LCD_EN, self._sr)
-        dl4 = self._sr.DigitalInOut(_74LS595_LCD_D4, self._sr)
-        dl5 = self._sr.DigitalInOut(_74LS595_LCD_D5, self._sr)
-        dl6 = self._sr.DigitalInOut(_74LS595_LCD_D6, self._sr)
-        dl7 = self._sr.DigitalInOut(_74LS595_LCD_D7, self._sr)
-        backlight = self._sr.DigitalInOut(_74LS595_LCD_BACKLIGHT, self._sr)
+        reset = self._sr.DigitalInOut(_74HC595_LCD_RS, self._sr)
+        enable = self._sr.DigitalInOut(_74HC595_LCD_EN, self._sr)
+        dl4 = self._sr.DigitalInOut(_74HC595_LCD_D4, self._sr)
+        dl5 = self._sr.DigitalInOut(_74HC595_LCD_D5, self._sr)
+        dl6 = self._sr.DigitalInOut(_74HC595_LCD_D6, self._sr)
+        dl7 = self._sr.DigitalInOut(_74HC595_LCD_D7, self._sr)
+        backlight = self._sr.DigitalInOut(_74HC595_LCD_BACKLIGHT, self._sr)
         # Call superclass initializer with shift register pins.
         super().__init__(reset, enable, dl4, dl5, dl6, dl7, cols, lines,
                          backlight=backlight)
@@ -410,24 +410,24 @@ class Character_LCD_SPI(Character_LCD):
         # slow with overhead of SPI communication).
         gpio = self._sr.gpio
         # Make sure enable is low.
-        gpio = _set_bit(gpio, _74LS595_LCD_EN, False)
+        gpio = _set_bit(gpio, _74HC595_LCD_EN, False)
         # Set character/data bit. (charmode = False).
-        gpio = _set_bit(gpio, _74LS595_LCD_RS, char_mode)
+        gpio = _set_bit(gpio, _74HC595_LCD_RS, char_mode)
         # Set upper 4 bits.
-        gpio = _set_bit(gpio, _74LS595_LCD_D4, ((value >> 4) & 1) > 0)
-        gpio = _set_bit(gpio, _74LS595_LCD_D5, ((value >> 5) & 1) > 0)
-        gpio = _set_bit(gpio, _74LS595_LCD_D6, ((value >> 6) & 1) > 0)
-        gpio = _set_bit(gpio, _74LS595_LCD_D7, ((value >> 7) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D4, ((value >> 4) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D5, ((value >> 5) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D6, ((value >> 6) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D7, ((value >> 7) & 1) > 0)
         self._sr.gpio = gpio
         # Send command.
         self._pulse_enable()
         # Now repeat for lower 4 bits.
         gpio = self._sr.gpio
-        gpio = _set_bit(gpio, _74LS595_LCD_EN, False)
-        gpio = _set_bit(gpio, _74LS595_LCD_RS, char_mode)
-        gpio = _set_bit(gpio, _74LS595_LCD_D4, (value & 1) > 0)
-        gpio = _set_bit(gpio, _74LS595_LCD_D5, ((value >> 1) & 1) > 0)
-        gpio = _set_bit(gpio, _74LS595_LCD_D6, ((value >> 2) & 1) > 0)
-        gpio = _set_bit(gpio, _74LS595_LCD_D7, ((value >> 3) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_EN, False)
+        gpio = _set_bit(gpio, _74HC595_LCD_RS, char_mode)
+        gpio = _set_bit(gpio, _74HC595_LCD_D4, (value & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D5, ((value >> 1) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D6, ((value >> 2) & 1) > 0)
+        gpio = _set_bit(gpio, _74HC595_LCD_D7, ((value >> 3) & 1) > 0)
         self._sr.gpio = gpio
         self._pulse_enable()
