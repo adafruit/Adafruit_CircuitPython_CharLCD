@@ -50,15 +50,21 @@ class MCP23008:
             self._pin = pin_number
             self._mcp = mcp23008
 
-        def switch_to_output(self, value=False):
+        # kwargs in switch functions below are _necessary_ for compatibility
+        # with DigitalInout class (which allows specifying pull, etc. which
+        # is unused by this class).  Do not remove them, instead turn off pylint
+        # in this case.
+        #pylint: disable=unused-argument
+        def switch_to_output(self, value=False, **kwargs):
             """DigitalInOut switch_to_output"""
             self.direction = digitalio.Direction.OUTPUT
             self.value = value
 
-        def switch_to_input(self, pull=None):
+        def switch_to_input(self, pull=None, **kwargs):
             """DigitalInOut switch_to_input"""
             self.direction = digitalio.Direction.INPUT
             self.pull = pull
+        #pylint: enable=unused-argument
 
         @property
         def value(self):

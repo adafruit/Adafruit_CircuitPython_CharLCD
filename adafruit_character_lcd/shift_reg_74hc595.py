@@ -10,6 +10,7 @@ import digitalio
 
 import adafruit_bus_device.spi_device as spi_device
 
+
 #pylint: disable-msg=too-few-public-methods
 #pylint: disable-msg=no-self-use
 class ShiftReg74HC595:
@@ -28,14 +29,20 @@ class ShiftReg74HC595:
             self._pin = pin_number
             self._sr = shift_reg_74ls595
 
-        def switch_to_output(self, value=False):
+        # kwargs in switch functions below are _necessary_ for compatibility
+        # with DigitalInout class (which allows specifying pull, etc. which
+        # is unused by this class).  Do not remove them, instead turn off pylint
+        # in this case.
+        #pylint: disable=unused-argument
+        def switch_to_output(self, value=False, **kwargs):
             """DigitalInOut switch_to_output"""
             self.direction = digitalio.Direction.OUTPUT
             self.value = value
 
-        def switch_to_input(self):
+        def switch_to_input(self, **kwargs):
             """do not call switch_to_input"""
             raise RuntimeError('Unable to use 74HC595 as digital input!')
+        #pylint: enable=unused-argument
 
         @property
         def value(self):
