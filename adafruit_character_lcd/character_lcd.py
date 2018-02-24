@@ -113,17 +113,18 @@ def _set_bit(byte_value, position, val):
 
 #pylint: disable-msg=too-many-instance-attributes
 class Character_LCD(object):
-    """ Interfaces with a character LCD
-          :param ~digitalio.DigitalInOut rs: The reset data line
-          :param ~digitalio.DigitalInOut en: The enable data line
-          :param ~digitalio.DigitalInOut d4: The data line 4
-          :param ~digitalio.DigitalInOut d5: The data line 5
-          :param ~digitalio.DigitalInOut d6: The data line 6
-          :param ~digitalio.DigitalInOut d7: The data line 7
-          :param cols: The columns on the charLCD
-          :param lines: The lines on the charLCD
-          :param ~digitalio.DigitalInOut backlight: The backlight pin, usually
-          the last pin. Check with your datasheet
+    """
+    Interfaces with a character LCD
+    :param ~digitalio.DigitalInOut rs: The reset data line
+    :param ~digitalio.DigitalInOut en: The enable data line
+    :param ~digitalio.DigitalInOut d4: The data line 4
+    :param ~digitalio.DigitalInOut d5: The data line 5
+    :param ~digitalio.DigitalInOut d6: The data line 6
+    :param ~digitalio.DigitalInOut d7: The data line 7
+    :param cols: The columns on the charLCD
+    :param lines: The lines on the charLCD
+    :param ~digitalio.DigitalInOut backlight: The backlight pin, usually
+    the last pin. Check with your datasheet
     """
     #pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
@@ -180,8 +181,10 @@ class Character_LCD(object):
         time.sleep(0.003)
 
     def show_cursor(self, show):
-        """Show or hide the cursor
-            :param show: True to show cursor, False to hide
+        """
+        Show or hide the cursor
+
+        :param show: True to show cursor, False to hide
         """
         if show:
             self.displaycontrol |= LCD_CURSORON
@@ -190,9 +193,11 @@ class Character_LCD(object):
         self._write8(LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def set_cursor(self, col, row):
-        """Sets the cursor to ``row`` and ``col``
-            :param col: column location
-            :param row: row location
+        """
+        Sets the cursor to ``row`` and ``col``
+
+        :param col: column location
+        :param row: row location
         """
         # Clamp row to the last row of the display
         if row > self.lines:
@@ -201,8 +206,10 @@ class Character_LCD(object):
         self._write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
     def blink(self, blink):
-        """Blinks the cursor if blink = true.
-            :param blink: True to blink, False no blink
+        """
+        Blinks the cursor if blink = true.
+
+        :param blink: True to blink, False no blink
         """
         if blink is True:
             self.displaycontrol |= LCD_BLINKON
@@ -229,8 +236,10 @@ class Character_LCD(object):
         self._write8(LCD_ENTRYMODESET | self.displaymode)
 
     def enable_display(self, enable):
-        """Enable or disable the display.
-            :param enable: True to enable display, False to disable
+        """
+        Enable or disable the display.
+
+        :param enable: True to enable display, False to disable
         """
         if enable:
             self.displaycontrol |= LCD_DISPLAYON
@@ -272,8 +281,10 @@ class Character_LCD(object):
         time.sleep(0.0000001)
 
     def set_backlight(self, lighton):
-        """ Set lighton to turn the charLCD backlight on.
-            :param lighton: True to turn backlight on, False to turn off
+        """
+        Set lighton to turn the charLCD backlight on.
+
+        :param lighton: True to turn backlight on, False to turn off
         """
         if lighton:
             self.backlight.value = 0
@@ -282,8 +293,10 @@ class Character_LCD(object):
 
 
     def message(self, text):
-        """Write text to display, can include \n for newline
-            :param text: string to display
+        """
+        Write text to display, can include \n for newline
+
+        :param text: string to display
         """
         line = 0
         #  iterate thru each char
@@ -304,8 +317,9 @@ class Character_LCD(object):
         provide an array of 8 bytes containing the pattern. E.g. you can easyly
         design your custom character at http://www.quinapalus.com/hd44780udg.html
         To show your custom character use eg. lcd.message('\x01')
-            :param location: integer in range(8) to store the created character
-            :param ~bytes pattern: len(8) describes created character
+
+        :param location: integer in range(8) to store the created character
+        :param ~bytes pattern: len(8) describes created character
 
         """
         # only position 0..7 are allowed
