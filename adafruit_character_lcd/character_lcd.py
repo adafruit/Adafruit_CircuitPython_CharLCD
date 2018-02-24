@@ -303,8 +303,9 @@ class Character_LCD(object):
         Write text to display, can include ``\n`` for newline
 
         :param text: string to display
-        
+
         """
+
         line = 0
         #  iterate thru each char
         for char in text:
