@@ -23,8 +23,7 @@
 `adafruit_CircuitPython_CharLCD`
 ====================================================
 
-Character_LCD - module for interfacing with character lcds module for interfacing with character
-lcds
+Character_LCD - module for interfacing with monochromatic character LCDs
 
 * Author(s):
     -Brent Rubell
