@@ -20,15 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`character_lcd`
+`adafruit_character_lcd.character_lcd`
 ====================================================
 
-Character_LCD - module for interfacing with monochromatic character LCDs
+Module for interfacing with monochromatic character LCDs
 
-* Author(s):
-    -Brent Rubell
-    -Asher Lieber
-    -Tony DiCola for the original python charLCD library
+* Author(s): Brent Rubell, Asher Lieber, Tony DiCola (original python charLCD library)
 
 Implementation Notes
 --------------------
