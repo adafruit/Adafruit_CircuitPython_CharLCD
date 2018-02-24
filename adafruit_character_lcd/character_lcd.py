@@ -125,6 +125,7 @@ class Character_LCD(object):
     :param lines: The lines on the charLCD
     :param ~digitalio.DigitalInOut backlight: The backlight pin, usually
     the last pin. Check with your datasheet
+    
     """
     #pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
@@ -185,6 +186,7 @@ class Character_LCD(object):
         Show or hide the cursor
 
         :param show: True to show cursor, False to hide
+        
         """
         if show:
             self.displaycontrol |= LCD_CURSORON
@@ -198,6 +200,7 @@ class Character_LCD(object):
 
         :param col: column location
         :param row: row location
+        
         """
         # Clamp row to the last row of the display
         if row > self.lines:
@@ -210,6 +213,7 @@ class Character_LCD(object):
         Blinks the cursor if blink = true.
 
         :param blink: True to blink, False no blink
+        
         """
         if blink is True:
             self.displaycontrol |= LCD_BLINKON
@@ -240,6 +244,7 @@ class Character_LCD(object):
         Enable or disable the display.
 
         :param enable: True to enable display, False to disable
+        
         """
         if enable:
             self.displaycontrol |= LCD_DISPLAYON
@@ -285,6 +290,7 @@ class Character_LCD(object):
         Set lighton to turn the charLCD backlight on.
 
         :param lighton: True to turn backlight on, False to turn off
+        
         """
         if lighton:
             self.backlight.value = 0
@@ -297,6 +303,7 @@ class Character_LCD(object):
         Write text to display, can include ``\n`` for newline
 
         :param text: string to display
+        
         """
         line = 0
         #  iterate thru each char
