@@ -123,7 +123,7 @@ class Character_LCD(object):
           :param cols: The columns on the charLCD
           :param lines: The lines on the charLCD
           :param ~digitalio.DigitalInOut backlight: The backlight pin, usually
-            the last pin. Check with your datasheet
+          the last pin. Check with your datasheet
     """
     #pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
