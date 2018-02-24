@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_CircuitPython_CharLCD`
+`adafruit_character_lcd.character_lcd_rgb`
 ====================================================
 
 Character_LCD - module for interfacing with RGB character LCDs
