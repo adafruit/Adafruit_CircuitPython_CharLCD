@@ -1,10 +1,17 @@
-"""MCP23008 I2C GPIO Extender Driver
+"""
+`adafruit_character_lcd.mcp23008`
+=========================================
+
+MCP23008 I2C GPIO Extender Driver
 Bare-bones driver for the MCP23008 driver, as used by the character LCD
 backpack.  This exposes the MCP2308 and its pins as standard CircuitPython
 digitalio pins.  Currently this is integrated in the character LCD class for
 simplicity and reduction in dependent imports, but it could be broken out
-into a standalone library later."""
-# Author: Tony DiCola
+into a standalone library later.
+
+* Author: Tony DiCola
+
+"""
 import digitalio
 
 import adafruit_bus_device.i2c_device as i2c_device

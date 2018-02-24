@@ -1,11 +1,16 @@
-"""74HC595 Serial to Paralllel Shift Register Driver
+"""
+`adafruit_character_led.shift_reg_74hc595`
+===============================================
+
+74HC595 Serial to Paralllel Shift Register Driver
 Bare-bones driver for the 74HC595, as used by the character LCD
 backpack.  This exposes the 74HC595 and its pins as standard CircuitPython
 digitalio pins.  Currently this is integrated in the character LCD class for
 simplicity and reduction in dependent imports, but it could be broken out
 into a standalone library later.
+
+* Author: Tony DiCola
 """
-# Author: Tony DiCola
 import digitalio
 
 import adafruit_bus_device.spi_device as spi_device
