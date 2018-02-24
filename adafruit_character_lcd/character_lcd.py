@@ -23,7 +23,8 @@
 `adafruit_CircuitPython_CharLCD`
 ====================================================
 
-Character_LCD - module for interfacing with character lcds module for interfacing with character lcds
+Character_LCD - module for interfacing with character lcds module for interfacing with character
+lcds
 
 * Author(s):
     -Brent Rubell
@@ -42,7 +43,8 @@ Implementation Notes
 
 * Adafruit CircuitPython firmware (2.2.0+) for the ESP8622 and M0-based boards:
   https://github.com/adafruit/circuitpython/releases
-* Adafruit's Bus Device library (when using I2C/SPI): https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+* Adafruit's Bus Device library (when using I2C/SPI):
+  https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
 
@@ -315,7 +317,7 @@ class Character_LCD(object):
 
     def message(self, text):
         """
-        Write text to display. Can include ``\n`` for newline.
+        Write text to display. Can include \\``\n``\\ for newline.
 
         :param text: text string to display
         """
