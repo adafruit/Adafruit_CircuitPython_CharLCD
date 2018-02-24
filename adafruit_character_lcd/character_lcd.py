@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_character_lcd.character_lcd`
+`character_lcd`
 ====================================================
 
 Character_LCD - module for interfacing with monochromatic character LCDs
