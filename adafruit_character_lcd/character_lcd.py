@@ -317,7 +317,7 @@ class Character_LCD(object):
 
     def message(self, text):
         """
-        Write text to display. Can include \\``\n``\\ for newline.
+        Write text to display. Can include ``\\n`` for newline.
 
         :param text: text string to display
         """
