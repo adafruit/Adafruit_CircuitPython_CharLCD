@@ -1,4 +1,3 @@
-"""Character_LCD_RGB - module for interfacing with character lcds
 # The MIT License (MIT)
 #
 # Copyright (c) 2017 Brent Rubell for Adafruit Industries
@@ -20,20 +19,32 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
-`adafruit_CircuitPython_CharLCD`
+"""
+`adafruit_character_lcd.character_lcd_rgb`
 ====================================================
 
+Character_LCD - module for interfacing with RGB character LCDs
 
 * Author(s):
--Brent Rubell
--Asher Lieber
--Tony DiCola for the original python charLCD library
+    -Brent Rubell
+    -Asher Lieber
+    -Tony DiCola for the original python charLCD library
 
+Implementation Notes
+--------------------
 
-:mod:`adafruit_character_lcd_RGB`
-=================================================
-module for interfacing with RGB character lcds
+**Hardware:**
+
+* Adafruit `Character LCDs
+  <http://www.adafruit.com/category/63_96>`_
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware (2.2.0+) for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
+* Adafruit's Bus Device library (when using I2C/SPI):
+  https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+
 """
 import time
 import digitalio
