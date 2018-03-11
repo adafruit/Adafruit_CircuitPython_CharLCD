@@ -10,6 +10,10 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
+.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_CharLCD.svg?branch=master
+    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_CharLCD
+    :alt: Build Status
+
 This library is compatible with standard Character LCDs such as:
 * `Adafruit Standard LCD 16x2 <https://www.adafruit.com/product/181>`_
 * `Adafruit RGB backlight negative LCD 16x2 <https://www.adafruit.com/product/399>`_
