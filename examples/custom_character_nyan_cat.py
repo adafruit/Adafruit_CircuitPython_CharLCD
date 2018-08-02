@@ -1,7 +1,7 @@
 import time
+from board import D7, D8, D9, D10, D11, D12, D13
 import digitalio
 import adafruit_character_lcd
-from board import D7, D8, D9, D10, D11, D12, D13
 
 lcd_columns = 16
 lcd_rows = 2

@@ -1,8 +1,8 @@
 import time
+from board import D3, D4, D5, D7, D8, D9, D10, D11, D12, D13
 import digitalio
 import adafruit_character_lcd
 import pulseio
-from board import D3, D4, D5, D7, D8, D9, D10, D11, D12, D13
 
 #   Character LCD Config:
 #   modify this if you have a different sized charlcd
