@@ -103,6 +103,7 @@ class ShiftReg74HC595:
     def gpio(self, val):
         self._gpio[0] = val & 0xFF
         with self._device as spi:
+            # pylint: disable=no-member
             spi.write(self._gpio)
 
 #pylint: enable-msg=no-self-use

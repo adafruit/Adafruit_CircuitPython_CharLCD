@@ -1,6 +1,6 @@
 import digitalio
-import adafruit_character_lcd
 from board import D7, D8, D9, D10, D11, D12, D13
+import adafruit_character_lcd
 
 
 lcd_columns = 16
