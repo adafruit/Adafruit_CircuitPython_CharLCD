@@ -1,37 +1,36 @@
 import time
-from board import D3, D4, D5, D7, D8, D9, D10, D11, D12, D13
+import board
 import digitalio
 import adafruit_character_lcd
 import pulseio
 
-#   Character LCD Config:
-#   modify this if you have a different sized charlcd
+# Character LCD Config:
+# Modify this if you have a different sized character LCD
 lcd_columns = 16
 lcd_rows = 2
 
-#   Metro m0 Pin Config:
-lcd_rs = digitalio.DigitalInOut(D7)
-lcd_en = digitalio.DigitalInOut(D8)
-lcd_d7 = digitalio.DigitalInOut(D12)
-lcd_d6 = digitalio.DigitalInOut(D11)
-lcd_d5 = digitalio.DigitalInOut(D10)
-lcd_d4 = digitalio.DigitalInOut(D9)
-lcd_backlight = digitalio.DigitalInOut(D13)
-red = pulseio.PWMOut(D3)
-green = pulseio.PWMOut(D4)
-blue = pulseio.PWMOut(D5)
+# Metro M0 Pin Config:
+lcd_rs = digitalio.DigitalInOut(board.D7)
+lcd_en = digitalio.DigitalInOut(board.D8)
+lcd_d7 = digitalio.DigitalInOut(board.D12)
+lcd_d6 = digitalio.DigitalInOut(board.D11)
+lcd_d5 = digitalio.DigitalInOut(board.D10)
+lcd_d4 = digitalio.DigitalInOut(board.D9)
+lcd_backlight = digitalio.DigitalInOut(board.D13)
+red = pulseio.PWMOut(board.D3)
+green = pulseio.PWMOut(board.D4)
+blue = pulseio.PWMOut(board.D5)
 
-#   Init the lcd class
+# Init the LCD class
 lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5,
                                                lcd_d6, lcd_d7, lcd_columns, lcd_rows,
                                                red, green, blue, lcd_backlight)
 
-#pylint: disable-msg=bad-whitespace
-# only red
-RED     = [100, 0,   0]
-GREEN   = [0,   100, 0]
-BLUE    = [0,   0,   100]
-#pylint: enable-msg=bad-whitespace
+
+RED = [100, 0, 0]
+GREEN = [0, 100, 0]
+BLUE = [0, 0, 100]
+
 
 while True:
     lcd.message('CircuitPython\nRGB Test')
