@@ -164,8 +164,7 @@ class Character_LCD_RGB:
             if hasattr(pin, 'direction'):
                 # Assume a digitalio.DigitalInOut or compatible interface:
                 pin.direction = digitalio.Direction.OUTPUT
-            else:
-                if not hasattr(pin, 'duty_cycle'):
+            elif not hasattr(pin, 'duty_cycle'):
                     raise TypeError(
                         'RGB LED objects must be instances of digitalio.DigitalInOut'
                         ' or pulseio.PWMOut, or provide a compatible interface.'
