@@ -90,7 +90,7 @@ _LCD_5X10DOTS            = const(0x04)
 _LCD_5X8DOTS             = const(0x00)
 
 # Offset for up to 4 rows.
-LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
+LCD_ROW_OFFSETS          = (0x00, 0x40, 0x14, 0x54)
 
 #pylint: enable-msg=bad-whitespace
 
@@ -107,7 +107,7 @@ def _map(xval, in_min, in_max, out_min, out_max):
 
 
 #pylint: disable-msg=too-many-instance-attributes
-class Character_LCD_RGB(object):
+class Character_LCD_RGB:
     """ Interfaces with a character LCD
         :param ~digitalio.DigitalInOut rs: The reset data line
         :param ~digitalio.DigitalInOut en: The enable data line
@@ -117,9 +117,9 @@ class Character_LCD_RGB(object):
         :param ~digitalio.DigitalInOut d7: The data line 7
         :param cols: The columns on the charLCD
         :param lines: The lines on the charLCD
-        :param ~pulseio.PWMOut red: Red RGB Anode
-        :param ~pulseio.PWMOut green: Green RGB Anode
-        :param ~pulseio.PWMOut blue: Blue RGB Anode
+        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
+        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
+        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
         :param ~digitalio.DigitalInOut backlight: The backlight pin, usually the last pin.
             Consult the datasheet.  Note that Pin value 0 means backlight is lit.
 
@@ -129,50 +129,61 @@ class Character_LCD_RGB(object):
                  red,
                  green,
                  blue,
-                 backlight=None #,
-                 #enable_pwm = False,
-                 #initial_backlight = 1.0
+                 backlight=None
                 ):
-        #  define columns and lines
         self.cols = cols
         self.lines = lines
-        #  define pin params
+
+        # define pin params
         self.reset = rs
         self.enable = en
         self.dl4 = d4
         self.dl5 = d5
         self.dl6 = d6
         self.dl7 = d7
-        #  define color params
-        self.red = red
-        self.green = green
-        self.blue = blue
-        #  define rgb led
-        self.rgb_led = [red, green, blue]
+
         # define backlight pin
         self.backlight = backlight
-        # self.pwn_enabled = enable_pwm
+
         # set all pins as outputs
         for pin in(rs, en, d4, d5, d6, d7):
             pin.direction = digitalio.Direction.OUTPUT
-        #  setup backlight
+
+        # setup backlight
         if backlight is not None:
             self.backlight.direction = digitalio.Direction.OUTPUT
             self.backlight.value = 0 # turn backlight on
-        #  initialize the display
+
+        # define color params
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.rgb_led = [red, green, blue]
+
+        for pin in self.rgb_led:
+            if hasattr(pin, 'direction'):
+                # Assume a digitalio.DigitalInOut or compatible interface:
+                pin.direction = digitalio.Direction.OUTPUT
+            elif not hasattr(pin, 'duty_cycle'):
+                raise TypeError(
+                    'RGB LED objects must be instances of digitalio.DigitalInOut'
+                    ' or pulseio.PWMOut, or provide a compatible interface.'
+                )
+
+        # initialize the display
         self._write8(0x33)
         self._write8(0x32)
-        #  init. display control
+        # init. display control
         self.displaycontrol = _LCD_DISPLAYON | _LCD_CURSOROFF | _LCD_BLINKOFF
-        #  init display function
+        # init display function
         self.displayfunction = _LCD_4BITMODE | _LCD_1LINE | _LCD_2LINE | _LCD_5X8DOTS
-        #  init display mode
+        # init display mode
         self.displaymode = _LCD_ENTRYLEFT | _LCD_ENTRYSHIFTDECREMENT
-        #  write to display control
+        # write to display control
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
-        #  write displayfunction
+        # write displayfunction
         self._write8(_LCD_FUNCTIONSET | self.displayfunction)
-        #  set the entry mode
+        # set the entry mode
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
         self.clear()
     #pylint: enable-msg=too-many-arguments
@@ -259,25 +270,32 @@ class Character_LCD_RGB(object):
             self.backlight.value = 1
 
     def set_color(self, color):
-        """ Method to set the duty cycle of the RGB LED
-            :param color: list of 3 integers in range(100). ``[R,G,B]`` 0 is no
-                color, 100 it maximum color
+        """Method to set the duty cycle or the on/off value of the RGB LED
+           :param color: list of 3 integers in range(100). ``[R,G,B]`` 0 is no
+               color, 100 is maximum color.  If PWM is unavailable, 0 is off and
+               non-zero is on.
         """
-        self.rgb_led[0].duty_cycle = int(_map(color[0], 0, 100, 65535, 0))
-        self.rgb_led[1].duty_cycle = int(_map(color[1], 0, 100, 65535, 0))
-        self.rgb_led[2].duty_cycle = int(_map(color[2], 0, 100, 65535, 0))
+        for number, pin in enumerate(self.rgb_led):
+            if hasattr(pin, 'duty_cycle'):
+                # Assume a pulseio.PWMOut or compatible interface and set duty cycle:
+                pin.duty_cycle = int(_map(color[number], 0, 100, 65535, 0))
+            elif hasattr(pin, 'value'):
+                # If we don't have a PWM interface, all we can do is turn each color
+                # on / off.  Assume a DigitalInOut (or compatible interface) and write
+                # 0 (on) to pin for any value greater than 0, or 1 (off) for 0:
+                pin.value = 0 if color[number] > 0 else 1
 
     def message(self, text):
         """Write text to display, can include \n for newline
             :param text: string to display
         """
         line = 0
-        #  iterate thru each char
+        # iterate thru each char
         for char in text:
         # if character is \n, go to next line
             if char == '\n':
                 line += 1
-                #  move to left/right depending on text direction
+                # move to left/right depending on text direction
                 col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.cols-1
                 self.set_cursor(col, line)
             # Write character to display
