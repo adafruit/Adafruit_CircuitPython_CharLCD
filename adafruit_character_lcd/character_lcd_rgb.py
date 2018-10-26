@@ -129,8 +129,7 @@ class Character_LCD_RGB(object):
                  red,
                  green,
                  blue,
-                 backlight=None,
-                 enable_pwm=True
+                 backlight=None
                 ):
         self.cols = cols
         self.lines = lines
@@ -145,7 +144,6 @@ class Character_LCD_RGB(object):
 
         # define backlight pin
         self.backlight = backlight
-        self.pwm_enabled = enable_pwm
 
         # set all pins as outputs
         for pin in(rs, en, d4, d5, d6, d7):
@@ -162,9 +160,16 @@ class Character_LCD_RGB(object):
         self.blue = blue
         self.rgb_led = [red, green, blue]
 
-        if not self.pwm_enabled:
-            for pin in self.rgb_led:
+        for pin in self.rgb_led:
+            if hasattr(pin, 'direction'):
+                # Assume a digitalio.DigitalInOut or compatible interface:
                 pin.direction = digitalio.Direction.OUTPUT
+            else:
+                if not hasattr(pin, 'duty_cycle'):
+                   raise TypeError(
+                           'RGB LED objects must be instances of digitalio.DigitalInOut'
+                           ' or pulseio.PWMOut, or provide a compatible interface.'
+                           )
 
         # initialize the display
         self._write8(0x33)
@@ -268,20 +273,18 @@ class Character_LCD_RGB(object):
     def set_color(self, color):
         """Method to set the duty cycle or the on/off value of the RGB LED
            :param color: list of 3 integers in range(100). ``[R,G,B]`` 0 is no
-               color, 100 is maximum color.  If PWM is disabled, 0 is off and
+               color, 100 is maximum color.  If PWM is unavailable, 0 is off and
                non-zero is on.
         """
-        if self.pwm_enabled:
-            self.rgb_led[0].duty_cycle = int(_map(color[0], 0, 100, 65535, 0))
-            self.rgb_led[1].duty_cycle = int(_map(color[1], 0, 100, 65535, 0))
-            self.rgb_led[2].duty_cycle = int(_map(color[2], 0, 100, 65535, 0))
-        else:
-            # If we don't have PWM enabled, all we can do is turn each color
-            # on / off.  Assume a DigitalInOut and write 0 (on) to pin for any
-            # value greater than 0, or 1 (off) for 0:
-            self.rgb_led[0].value = 0 if color[0] > 0 else 1
-            self.rgb_led[1].value = 0 if color[1] > 0 else 1
-            self.rgb_led[2].value = 0 if color[2] > 0 else 1
+        for number, pin in enumerate(self.rgb_led):
+            if hasattr(pin, 'duty_cycle'):
+                # Assume a pulseio.PWMOut or compatible interface and set duty cycle:
+                pin.duty_cycle = int(_map(color[number], 0, 100, 65535, 0))
+            elif hasattr(pin, 'value'):
+                # If we don't have a PWM interface, all we can do is turn each color
+                # on / off.  Assume a DigitalInOut (or compatible interface) and write
+                # 0 (on) to pin for any value greater than 0, or 1 (off) for 0:
+                pin.value = 0 if color[number] > 0 else 1
 
     def message(self, text):
         """Write text to display, can include \n for newline

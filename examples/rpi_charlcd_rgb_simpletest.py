@@ -24,8 +24,7 @@ blue = digitalio.DigitalInOut(board.D18)
 # Init the lcd class
 lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5,
                                                lcd_d6, lcd_d7, lcd_columns, lcd_rows,
-                                               red, green, blue, lcd_backlight,
-                                               enable_pwm=False)
+                                               red, green, blue, lcd_backlight)
 
 RED = [1, 0, 0]
 GREEN = [0, 1, 0]
