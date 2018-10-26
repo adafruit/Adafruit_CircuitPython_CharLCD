@@ -107,7 +107,7 @@ def _map(xval, in_min, in_max, out_min, out_max):
 
 
 #pylint: disable-msg=too-many-instance-attributes
-class Character_LCD_RGB(object):
+class Character_LCD_RGB:
     """ Interfaces with a character LCD
         :param ~digitalio.DigitalInOut rs: The reset data line
         :param ~digitalio.DigitalInOut en: The enable data line
@@ -166,10 +166,10 @@ class Character_LCD_RGB(object):
                 pin.direction = digitalio.Direction.OUTPUT
             else:
                 if not hasattr(pin, 'duty_cycle'):
-                   raise TypeError(
-                           'RGB LED objects must be instances of digitalio.DigitalInOut'
-                           ' or pulseio.PWMOut, or provide a compatible interface.'
-                           )
+                    raise TypeError(
+                        'RGB LED objects must be instances of digitalio.DigitalInOut'
+                        ' or pulseio.PWMOut, or provide a compatible interface.'
+                    )
 
         # initialize the display
         self._write8(0x33)
