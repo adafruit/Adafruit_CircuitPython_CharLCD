@@ -18,8 +18,8 @@ lcd_d5 = digitalio.DigitalInOut(board.D10)
 lcd_d4 = digitalio.DigitalInOut(board.D9)
 lcd_backlight = digitalio.DigitalInOut(board.D13)
 red = pulseio.PWMOut(board.D3)
-green = pulseio.PWMOut(board.D4)
-blue = pulseio.PWMOut(board.D5)
+green = pulseio.PWMOut(board.D5)
+blue = pulseio.PWMOut(board.D6)
 
 # Init the LCD class
 lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5,
@@ -33,6 +33,7 @@ BLUE = [0, 0, 100]
 
 
 while True:
+    lcd.clear()
     lcd.message('CircuitPython\nRGB Test')
     lcd.set_color(RED)
     time.sleep(1)
