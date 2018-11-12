@@ -152,7 +152,11 @@ class Character_LCD_RGB:
         # setup backlight
         if backlight is not None:
             self.backlight.direction = digitalio.Direction.OUTPUT
-            self.backlight.value = 0 # turn backlight on
+        if backlight.inverted is not None:
+            self.backlight.inverted = backlight.inverted
+        else:
+            self.backlight.inverted = True
+        self.set_backlight(True, self.backlight.inverted)
 
         # define color params
         self.red = red
@@ -260,11 +264,12 @@ class Character_LCD_RGB:
         self.enable.value = False
         time.sleep(0.0000001)
 
-    def set_backlight(self, lighton):
-        """ Set lighton to turn the charLCD backlight on.
-            :param lighton: True to turn backlight on, False to turn off
+    def set_backlight(self, lighton, inverted=True):
         """
-        if lighton:
+        Set lighton to turn the charLCD backlight on.
+        :param lighton: True to turn backlight on, False to turn off
+        """
+        if (lighton and inverted) or (not lighton and not inverted):
             self.backlight.value = 0
         else:
             self.backlight.value = 1
