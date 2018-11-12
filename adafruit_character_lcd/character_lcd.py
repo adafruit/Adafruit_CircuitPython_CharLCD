@@ -309,7 +309,7 @@ class Character_LCD(object):
         :param lighton: True to turn backlight on, False to turn off
 
         """
-        if (lighton and inverted) or (lightoff and not inverted):
+        if (lighton and inverted) or (not lighton and not inverted):
             self.backlight.value = 0
         else:
             self.backlight.value = 1
