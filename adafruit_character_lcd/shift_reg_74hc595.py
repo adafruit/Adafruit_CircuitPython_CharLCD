@@ -18,75 +18,76 @@ import adafruit_bus_device.spi_device as spi_device
 
 #pylint: disable-msg=too-few-public-methods
 #pylint: disable-msg=no-self-use
-class ShiftReg74HC595:
-    """Shift Register 74LS95 driver class"""
-    class DigitalInOut:
-        """Digital input/output of the 74HC595.  The interface is exactly the
-        same as the digitalio.DigitalInOut class, however note that by design
-        this device is OUTPUT ONLY!  Attempting to read inputs or set
-        direction as input will raise an exception.
+#class ShiftReg74HC595:
+#    """Shift Register 74LS95 driver class"""
+class DigitalInOut:
+    """Digital input/output of the 74HC595.  The interface is exactly the
+    same as the digitalio.DigitalInOut class, however note that by design
+    this device is OUTPUT ONLY!  Attempting to read inputs or set
+    direction as input will raise an exception.
+    """
+
+    def __init__(self, pin_number, shift_reg_74ls595):
+        """Specify the pin number of the shift register (0...7) and
+        ShiftReg74HC595 instance.
         """
+        self._pin = pin_number
+        self._sr = shift_reg_74ls595
 
-        def __init__(self, pin_number, shift_reg_74ls595):
-            """Specify the pin number of the shift register (0...7) and
-            ShiftReg74HC595 instance.
-            """
-            self._pin = pin_number
-            self._sr = shift_reg_74ls595
+    # kwargs in switch functions below are _necessary_ for compatibility
+    # with DigitalInout class (which allows specifying pull, etc. which
+    # is unused by this class).  Do not remove them, instead turn off pylint
+    # in this case.
+    #pylint: disable=unused-argument
+    def switch_to_output(self, value=False, **kwargs):
+        """DigitalInOut switch_to_output"""
+        self.direction = digitalio.Direction.OUTPUT
+        self.value = value
 
-        # kwargs in switch functions below are _necessary_ for compatibility
-        # with DigitalInout class (which allows specifying pull, etc. which
-        # is unused by this class).  Do not remove them, instead turn off pylint
-        # in this case.
-        #pylint: disable=unused-argument
-        def switch_to_output(self, value=False, **kwargs):
-            """DigitalInOut switch_to_output"""
-            self.direction = digitalio.Direction.OUTPUT
-            self.value = value
+    def switch_to_input(self, **kwargs):
+        """do not call switch_to_input"""
+        raise RuntimeError('Unable to use 74HC595 as digital input!')
+    #pylint: enable=unused-argument
 
-        def switch_to_input(self, **kwargs):
-            """do not call switch_to_input"""
+    @property
+    def value(self):
+        """do not call value"""
+        raise RuntimeError('Unable to use 74HC595 as digital input!')
+
+    @value.setter
+    def value(self, val):
+        # Only supported operation, writing a digital output.
+        gpio = self._sr.gpio
+        if val:
+            gpio |= (1 << self._pin)
+        else:
+            gpio &= ~(1 << self._pin)
+        self._sr.gpio = gpio
+
+    @property
+    def direction(self):
+        """ALWAYS an output!"""
+        return digitalio.Direction.OUTPUT
+
+    @direction.setter
+    def direction(self, val):
+        """Can only be set as OUTPUT!"""
+        if val != digitalio.Direction.OUTPUT:
             raise RuntimeError('Unable to use 74HC595 as digital input!')
-        #pylint: enable=unused-argument
 
-        @property
-        def value(self):
-            """do not call value"""
-            raise RuntimeError('Unable to use 74HC595 as digital input!')
+    @property
+    def pull(self):
+        """Pull-up/down not supported, return NonLiberty e for no pull-up/down."""
+        return None
 
-        @value.setter
-        def value(self, val):
-            # Only supported operation, writing a digital output.
-            gpio = self._sr.gpio
-            if val:
-                gpio |= (1 << self._pin)
-            else:
-                gpio &= ~(1 << self._pin)
-            self._sr.gpio = gpio
-
-        @property
-        def direction(self):
-            """ALWAYS an output!"""
-            return digitalio.Direction.OUTPUT
-
-        @direction.setter
-        def direction(self, val):
-            """Can only be set as OUTPUT!"""
-            if val != digitalio.Direction.OUTPUT:
-                raise RuntimeError('Unable to use 74HC595 as digital input!')
-
-        @property
-        def pull(self):
-            """Pull-up/down not supported, return NonLiberty e for no pull-up/down."""
-            return None
-
-        @pull.setter
-        def pull(self, val):
-            """Only supports null/no pull state."""
-            if val is not None:
-                raise RuntimeError('Unable to set 74HC595 pull!')
+    @pull.setter
+    def pull(self, val):
+        """Only supports null/no pull state."""
+        if val is not None:
+            raise RuntimeError('Unable to set 74HC595 pull!')
 
 
+class ShiftReg74HC595:
     def __init__(self, spi, latch):
         self._device = spi_device.SPIDevice(spi, latch, baudrate=1000000)
         self._gpio = bytearray(1)
@@ -105,6 +106,13 @@ class ShiftReg74HC595:
         with self._device as spi:
             # pylint: disable=no-member
             spi.write(self._gpio)
+
+    def get_pin(self, pin):
+        """Convenience function to create an instance of the DigitalInOut class
+        pointing at the specified pin of this MCP23008 device.
+        """
+        assert 0 <= pin <= 7
+        return DigitalInOut(pin, self)
 
 #pylint: enable-msg=no-self-use
 #pylint: enable-msg=too-few-public-methods
