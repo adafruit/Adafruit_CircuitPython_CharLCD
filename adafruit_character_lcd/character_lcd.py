@@ -384,10 +384,10 @@ class Character_LCD_SPI(Character_LCD):
         #   https://learn.adafruit.com/assets/35681
         reset = self._sr.get_pin(1)
         enable = self._sr.get_pin(2)
-        d4 = self._sr.get_pin(3)
-        d5 = self._sr.get_pin(4)
-        d6 = self._sr.get_pin(5)
-        d7 = self._sr.get_pin(6)
+        d4 = self._sr.get_pin(6)
+        d5 = self._sr.get_pin(5)
+        d6 = self._sr.get_pin(4)
+        d7 = self._sr.get_pin(3)
         backlight = self._sr.get_pin(7)
         super().__init__(reset, enable, d4, d5, d6, d7, cols, lines,
                          backlight=backlight)
