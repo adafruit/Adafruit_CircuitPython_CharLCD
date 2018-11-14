@@ -51,7 +51,7 @@ from micropython import const
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
-#pylint: disable-msg=bad-whitespace
+# pylint: disable-msg=bad-whitespace
 # Commands
 LCD_CLEARDISPLAY        = const(0x01)
 LCD_RETURNHOME          = const(0x02)
@@ -93,25 +93,8 @@ LCD_5X8DOTS             = const(0x00)
 # Offset for up to 4 rows.
 LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
-# MCP23008 I2C backpack pin mapping from LCD logical pin to MCP23008 pin.
-_MCP23008_LCD_RS         = const(1)
-_MCP23008_LCD_EN         = const(2)
-_MCP23008_LCD_D4         = const(3)
-_MCP23008_LCD_D5         = const(4)
-_MCP23008_LCD_D6         = const(5)
-_MCP23008_LCD_D7         = const(6)
-_MCP23008_LCD_BACKLIGHT  = const(7)
+# pylint: enable-msg=bad-whitespace
 
-# 74HC595 SPI backpack pin mapping from LCD logical pin to 74HC595 pin.
-_74HC595_LCD_RS          = const(1)
-_74HC595_LCD_EN          = const(2)
-_74HC595_LCD_D4          = const(6)
-_74HC595_LCD_D5          = const(5)
-_74HC595_LCD_D6          = const(4)
-_74HC595_LCD_D7          = const(3)
-_74HC595_LCD_BACKLIGHT   = const(7)
-
-#pylint: enable-msg=bad-whitespace
 
 def _set_bit(byte_value, position, val):
     # Given the specified byte_value set the bit at position to the provided
@@ -124,7 +107,8 @@ def _set_bit(byte_value, position, val):
 
     return ret
 
-#pylint: disable-msg=too-many-instance-attributes
+
+# pylint: disable-msg=too-many-instance-attributes
 class Character_LCD(object):
     """
     Interfaces with a character LCD
@@ -140,12 +124,12 @@ class Character_LCD(object):
     the last pin. Check with your datasheet
 
     """
-    #pylint: disable-msg=too-many-arguments
+    # pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
-                 backlight=None #,
-                 #enable_pwm = False,
-                 #initial_backlight = 1.0
-                ):
+                 backlight=None  # ,
+                 # enable_pwm = False,
+                 # initial_backlight = 1.0
+                 ):
 
         self.cols = cols
         self.lines = lines
@@ -182,7 +166,7 @@ class Character_LCD(object):
         #  set the entry mode
         self._write8(LCD_ENTRYMODESET | self.displaymode)
         self.clear()
-    #pylint: enable-msg=too-many-arguments
+    # pylint: enable-msg=too-many-arguments
 
     def home(self):
         """Moves the cursor back home pos(1,1)"""
@@ -310,7 +294,6 @@ class Character_LCD(object):
         else:
             self.backlight.value = 1
 
-
     def message(self, text):
         """
         Write text to display. Can include ``\\n`` for newline.
@@ -348,7 +331,7 @@ class Character_LCD(object):
         for i in range(8):
             self._write8(pattern[i], char_mode=True)
 
-#pylint: enable-msg=too-many-instance-attributes
+# pylint: enable-msg=too-many-instance-attributes
 
 
 class Character_LCD_I2C(Character_LCD):

@@ -26,9 +26,10 @@
 Character_LCD - module for interfacing with RGB character LCDs
 
 * Author(s):
-    -Brent Rubell
-    -Asher Lieber
-    -Tony DiCola for the original python charLCD library
+    - Kattni Rembor
+    - Brent Rubell
+    - Asher Lieber
+    - Tony DiCola for the original python charLCD library
 
 Implementation Notes
 --------------------
@@ -70,7 +71,7 @@ _LCD_ENTRYSHIFTDECREMENT = const(0x00)
 # Control flags
 _LCD_DISPLAYON           = const(0x04)
 _LCD_DISPLAYOFF          = const(0x00)
-LCD_CURSORON            = const(0x02)
+_LCD_CURSORON            = const(0x02)
 _LCD_CURSOROFF           = const(0x00)
 _LCD_BLINKON             = const(0x01)
 _LCD_BLINKOFF            = const(0x00)
@@ -90,7 +91,7 @@ _LCD_5X10DOTS            = const(0x04)
 _LCD_5X8DOTS             = const(0x00)
 
 # Offset for up to 4 rows.
-LCD_ROW_OFFSETS          = (0x00, 0x40, 0x14, 0x54)
+_LCD_ROW_OFFSETS          = (0x00, 0x40, 0x14, 0x54)
 
 #pylint: enable-msg=bad-whitespace
 
@@ -129,6 +130,7 @@ class Character_LCD_RGB:
                  red,
                  green,
                  blue,
+                 read_write=None,
                  backlight=None
                 ):
         self.cols = cols
@@ -142,6 +144,9 @@ class Character_LCD_RGB:
         self.dl6 = d6
         self.dl7 = d7
 
+        # Define read_write (rw) pin
+        self.read_write = read_write
+
         # define backlight pin
         self.backlight = backlight
 
@@ -149,10 +154,14 @@ class Character_LCD_RGB:
         for pin in(rs, en, d4, d5, d6, d7):
             pin.direction = digitalio.Direction.OUTPUT
 
+        # Setup rw pin if used
+        if read_write is not None:
+            self.read_write.direction = digitalio.Direction.OUTPUT
+
         # setup backlight
         if backlight is not None:
             self.backlight.direction = digitalio.Direction.OUTPUT
-            self.backlight.value = 0 # turn backlight on
+            self.backlight.value = 0  # turn backlight on
 
         # define color params
         self.red = red
@@ -201,7 +210,7 @@ class Character_LCD_RGB:
     def show_cursor(self, show):
         """Show or hide the cursor"""
         if show:
-            self.displaycontrol |= LCD_CURSORON
+            self.displaycontrol |= _LCD_CURSORON
         else:
             self.displaycontrol &= ~_LCD_DISPLAYON
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
@@ -215,7 +224,38 @@ class Character_LCD_RGB:
         if row > self.lines:
             row = self.lines - 1
         # Set location
-        self._write8(_LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
+        self._write8(_LCD_SETDDRAMADDR | (col + _LCD_ROW_OFFSETS[row]))
+
+    def blink(self, blink):
+        """
+        Blinks the cursor if blink = true.
+
+        :param blink: True to blink, False no blink
+
+        """
+        if blink is True:
+            self.displaycontrol |= _LCD_BLINKON
+        else:
+            self.displaycontrol &= ~_LCD_BLINKON
+        self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
+
+    def move_left(self):
+        """Moves display left one position"""
+        self._write8(_LCD_CURSORSHIFT | _LCD_DISPLAYMOVE | _LCD_MOVELEFT)
+
+    def move_right(self):
+        """Moves display right one position"""
+        self._write8(_LCD_CURSORSHIFT | _LCD_DISPLAYMOVE | _LCD_MOVERIGHT)
+
+    def set_left_to_right(self):
+        """Set direction of text to read from left to right"""
+        self.displaymode |= _LCD_ENTRYLEFT
+        self._write8(_LCD_ENTRYMODESET | self.displaymode)
+
+    def set_right_to_left(self):
+        """Set direction of text to read from right to left"""
+        self.displaymode |= _LCD_ENTRYLEFT
+        self._write8(_LCD_ENTRYMODESET | self.displaymode)
 
     def enable_display(self, enable):
         """Enable or disable the display.
@@ -303,3 +343,21 @@ class Character_LCD_RGB:
                 self._write8(ord(char), True)
 
 #pylint: enable-msg=too-many-instance-attributes
+
+
+class Character_LCD_I2C_RGB(Character_LCD_RGB):
+    def __init__(self, i2c, cols, lines):
+        import adafruit_mcp230xx
+        self._mcp = adafruit_mcp230xx.MCP23017(i2c)
+        reset = self._mcp.get_pin(15)
+        read_write = self._mcp.get_pin(14)
+        enable = self._mcp.get_pin(13)
+        d4 = self._mcp.get_pin(12)
+        d5 = self._mcp.get_pin(11)
+        d6 = self._mcp.get_pin(10)
+        d7 = self._mcp.get_pin(9)
+        red = self._mcp.get_pin(6)
+        green = self._mcp.get_pin(7)
+        blue = self._mcp.get_pin(8)
+        super().__init__(reset, enable, d4, d5, d6, d7, cols, lines, red, green, blue, read_write,
+                         backlight=None)

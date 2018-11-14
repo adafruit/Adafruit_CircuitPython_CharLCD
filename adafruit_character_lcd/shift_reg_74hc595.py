@@ -12,14 +12,12 @@ into a standalone library later.
 * Author: Tony DiCola
 """
 import digitalio
-
 import adafruit_bus_device.spi_device as spi_device
 
 
 #pylint: disable-msg=too-few-public-methods
 #pylint: disable-msg=no-self-use
-#class ShiftReg74HC595:
-#    """Shift Register 74LS95 driver class"""
+
 class DigitalInOut:
     """Digital input/output of the 74HC595.  The interface is exactly the
     same as the digitalio.DigitalInOut class, however note that by design
@@ -109,7 +107,7 @@ class ShiftReg74HC595:
 
     def get_pin(self, pin):
         """Convenience function to create an instance of the DigitalInOut class
-        pointing at the specified pin of this MCP23008 device.
+        pointing at the specified pin of this 74HC595 device.
         """
         assert 0 <= pin <= 7
         return DigitalInOut(pin, self)
