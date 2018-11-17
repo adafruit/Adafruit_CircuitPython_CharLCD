@@ -173,6 +173,7 @@ class Character_LCD(object):
         self.clear()
 
         self._message = None
+        self._enable = None
     #pylint: enable-msg=too-many-arguments
 
     def home(self):
@@ -305,7 +306,13 @@ class Character_LCD(object):
             self.displaymode &= ~_LCD_ENTRYLEFT
             self._write8(_LCD_ENTRYMODESET | self.displaymode)
 
+    @property
+    def backlight(self):
+        return self._enable
+
+    @backlight.setter
     def backlight(self, enable):
+        self._enable = enable
         """
         Set lighton to turn the charLCD backlight on.
 
@@ -321,9 +328,9 @@ class Character_LCD(object):
         """
         Fill one of the first 8 CGRAM locations with custom characters.
         The location parameter should be between 0 and 7 and pattern should
-        provide an array of 8 bytes containing the pattern. E.g. you can easyly
+        provide an array of 8 bytes containing the pattern. E.g. you can easily
         design your custom character at http://www.quinapalus.com/hd44780udg.html
-        To show your custom character use eg. lcd.message('\x01')
+        To show your custom character use eg. lcd.message = "\x01"
 
         :param location: integer in range(8) to store the created character
         :param ~bytes pattern: len(8) describes created character
