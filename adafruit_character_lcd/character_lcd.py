@@ -49,8 +49,6 @@ Implementation Notes
 import time
 import digitalio
 from micropython import const
-import adafruit_mcp230xx
-import adafruit_74hc595
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
@@ -556,6 +554,7 @@ class Character_LCD_I2C(Character_LCD):
         on the specified I2C bus with the specified number of columns and
         lines on the display. Optionally specify if backlight is inverted.
         """
+        import adafruit_mcp230xx
         self._mcp = adafruit_mcp230xx.MCP23008(i2c)
         reset = self._mcp.get_pin(1)
         enable = self._mcp.get_pin(2)
@@ -583,6 +582,7 @@ class Character_LCD_SPI(Character_LCD):
         inverted.
         """
         # pylint: enable=too-many-arguments
+        import adafruit_74hc595
         self._shift_register = adafruit_74hc595.ShiftRegister74HC595(spi, latch)
         reset = self._shift_register.get_pin(1)
         enable = self._shift_register.get_pin(2)

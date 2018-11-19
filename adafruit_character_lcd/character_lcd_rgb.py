@@ -48,7 +48,6 @@ Implementation Notes
 import time
 import digitalio
 from micropython import const
-import adafruit_mcp230xx
 
 # pylint: disable-msg=bad-whitespace
 # Commands
@@ -572,6 +571,7 @@ class Character_LCD_I2C_RGB(Character_LCD_RGB):
         on the specified I2C bus with the specified number of columns and lines
         on the display.
         """
+        import adafruit_mcp230xx
         self._mcp = adafruit_mcp230xx.MCP23017(i2c)
         reset = self._mcp.get_pin(15)
         read_write = self._mcp.get_pin(14)
