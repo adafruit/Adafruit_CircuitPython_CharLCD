@@ -62,14 +62,11 @@ _LCD_SETCGRAMADDR        = const(0x40)
 _LCD_SETDDRAMADDR        = const(0x80)
 
 # Entry flags
-_LCD_ENTRYRIGHT          = const(0x00)
 _LCD_ENTRYLEFT           = const(0x02)
-_LCD_ENTRYSHIFTINCREMENT = const(0x01)
 _LCD_ENTRYSHIFTDECREMENT = const(0x00)
 
 # Control flags
 _LCD_DISPLAYON           = const(0x04)
-_LCD_DISPLAYOFF          = const(0x00)
 _LCD_CURSORON            = const(0x02)
 _LCD_CURSOROFF           = const(0x00)
 _LCD_BLINKON             = const(0x01)
@@ -77,16 +74,13 @@ _LCD_BLINKOFF            = const(0x00)
 
 # Move flags
 _LCD_DISPLAYMOVE         = const(0x08)
-_LCD_CURSORMOVE          = const(0x00)
 _LCD_MOVERIGHT           = const(0x04)
 _LCD_MOVELEFT            = const(0x00)
 
 # Function set flags
-_LCD_8BITMODE            = const(0x10)
 _LCD_4BITMODE            = const(0x00)
 _LCD_2LINE               = const(0x08)
 _LCD_1LINE               = const(0x00)
-_LCD_5X10DOTS            = const(0x04)
 _LCD_5X8DOTS             = const(0x00)
 
 # Offset for up to 4 rows.
@@ -108,6 +102,9 @@ def _map(xval, in_min, in_max, out_min, out_max):
 
 # pylint: disable-msg=too-many-instance-attributes
 class Character_LCD_RGB:
+    """Base class for RGB character LCD."""
+    LEFT_TO_RIGHT = const(0)
+    RIGHT_TO_LEFT = const(1)
     """ Interfaces with a character LCD
         :param ~digitalio.DigitalInOut rs: The reset data line
         :param ~digitalio.DigitalInOut en: The enable data line
@@ -115,7 +112,7 @@ class Character_LCD_RGB:
         :param ~digitalio.DigitalInOut d5: The data line 5
         :param ~digitalio.DigitalInOut d6: The data line 6
         :param ~digitalio.DigitalInOut d7: The data line 7
-        :param cols: The columns on the charLCD
+        :param columns: The columns on the charLCD
         :param lines: The lines on the charLCD
         :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
         :param ~pulseio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
@@ -125,13 +122,13 @@ class Character_LCD_RGB:
 
     """
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, d4, d5, d6, d7, cols, lines,
+    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines,
                  red,
                  green,
                  blue,
                  read_write=None
                 ):
-        self.cols = cols
+        self.columns = columns
         self.lines = lines
 
         # define pin params
@@ -188,26 +185,63 @@ class Character_LCD_RGB:
 
         self._color = [0, 0, 0]
         self._message = None
+        self._direction = None
     # pylint: enable-msg=too-many-arguments
 
     def home(self):
-        """Moves the cursor back home pos(1,1)"""
+        """Moves the cursor "home" to position (1, 1)."""
         self._write8(_LCD_RETURNHOME)
         time.sleep(0.003)
 
     def clear(self):
-        """Clears the LCD"""
+        """Clears everything displayed on the LCD.
+
+        The following example displays, "Hello, world!", then clears the LCD.
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+            lcd.clear()
+        """
         self._write8(_LCD_CLEARDISPLAY)
         time.sleep(0.003)
 
     @property
     def cursor(self):
-        """True if cursor is visible, otherwise False."""
+        """True if cursor is visible. False to stop displaying the cursor.
+
+        The following example shows the cursor after a displayed message:
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+
+            lcd.cursor = True
+            lcd.message = "Cursor! "
+            time.sleep(5)
+
+        """
         return self.displaycontrol & _LCD_CURSORON == _LCD_CURSORON
 
     @cursor.setter
     def cursor(self, show):
-        """True if cursor is visible, otherwise False."""
         if show:
             self.displaycontrol |= _LCD_CURSORON
         else:
@@ -216,6 +250,7 @@ class Character_LCD_RGB:
 
     def cursor_position(self, column, row):
         """Move the cursor to position ``column`` and ``row``
+
             :param column: column location
             :param row: row location
         """
@@ -227,17 +262,31 @@ class Character_LCD_RGB:
 
     @property
     def blink(self):
-        """Blinks the cursor"""
+        """
+        Blink the cursor. True to blink the cursor. False to stop blinking.
+
+        The following example shows a message followed by a blinking cursor for five seconds.
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+
+            lcd.blink = True
+            lcd.message = "Blinky cursor!"
+            time.sleep(5)
+            lcd.blink = False
+        """
         return self.displaycontrol & _LCD_BLINKON == _LCD_BLINKON
 
     @blink.setter
     def blink(self, blink):
-        """
-        Blinks the cursor if blink = true.
-
-        :param blink: True to blink, False no blink
-
-        """
         if blink:
             self.displaycontrol |= _LCD_BLINKON
         else:
@@ -246,16 +295,36 @@ class Character_LCD_RGB:
 
     @property
     def color(self):
+        """
+        The color of the display. Provide a list of three integers ranging 0 - 100, ``[R, G, B]``.
+        ``0`` is no color, or "off". ``100`` is maximum color. For example, the brightest red would
+        be ``[100, 0, 0]``, and a half-bright purple would be, ``[50, 0, 50]``.
+
+        If PWM is unavailable, ``0`` is off, and non-zero is on. For example, ``[1, 0, 0]`` would
+        be red.
+
+        The following example turns the LCD red and displays, "Hello, world!".
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+
+            lcd.color = [100, 0, 0]
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+        """
         return self._color
 
     @color.setter
     def color(self, color):
         self._color = color
-        """Method to set the duty cycle or the on/off value of the RGB LED
-           :param color: list of 3 integers in range(100). ``[R,G,B]`` 0 is no
-               color, 100 is maximum color.  If PWM is unavailable, 0 is off and
-               non-zero is on.
-        """
         for number, pin in enumerate(self.rgb_led):
             if hasattr(pin, 'duty_cycle'):
                 # Assume a pulseio.PWMOut or compatible interface and set duty cycle:
@@ -268,16 +337,30 @@ class Character_LCD_RGB:
 
     @property
     def display(self):
+        """
+        Enable or disable the display. True to enable the display. False to disable the display.
+
+        The following example displays, "Hello, world!" on the LCD and then turns the display off.
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+            lcd.display = False
+        """
         return self.displaycontrol & _LCD_DISPLAYON == _LCD_DISPLAYON
 
     @display.setter
     def display(self, enable):
-        """
-        Enable or disable the display.
-
-        :param enable: True to enable display, False to disable
-
-        """
         if enable:
             self.displaycontrol |= _LCD_DISPLAYON
         else:
@@ -286,13 +369,28 @@ class Character_LCD_RGB:
 
     @property
     def message(self):
+        """Display a string of text on the character LCD.
+
+        The following example displays, "Hello, world!" on the LCD.
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+        """
         return self._message
 
     @message.setter
     def message(self, message):
-        """Write text to display, can include \n for newline
-            :param message: string to display
-        """
         self._message = message
         line = 0
         # Track times through iteration, to act on the initial character of the message
@@ -300,48 +398,133 @@ class Character_LCD_RGB:
         # iterate through each character
         for character in message:
             if initial_character == 0:
-                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.cols - 1
+                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
                 self.cursor_position(col, line)
                 initial_character += 1
             # if character is \n, go to next line
             if character == '\n':
                 line += 1
                 # move to left/right depending on text direction
-                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.cols - 1
+                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
                 self.cursor_position(col, line)
             # Write character to display
             else:
                 self._write8(ord(character), True)
 
     def move_left(self):
-        """Moves display left one position"""
+        """Moves displayed text left one column.
+
+        The following example scrolls a message to the left off the screen.
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+
+            scroll_message = "<-- Scroll"
+            lcd.message = scroll_message
+            time.sleep(2)
+            for i in range(len(scroll_message)):
+                lcd.move_left()
+                time.sleep(0.5)
+        """
         self._write8(_LCD_CURSORSHIFT | _LCD_DISPLAYMOVE | _LCD_MOVELEFT)
 
     def move_right(self):
-        """Moves display right one position"""
+        """Moves displayed text right one column.
+
+        The following example scrolls a message to the right off the screen.
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd_columns = 16
+            lcd_rows = 2
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, lcd_columns, lcd_rows)
+
+            scroll_message = "Scroll -->"
+            lcd.message = scroll_message
+            time.sleep(2)
+            for i in range(len(scroll_message) + lcd_columns):
+                lcd.move_right()
+                time.sleep(0.5)
+        """
         return self._write8(_LCD_CURSORSHIFT | _LCD_DISPLAYMOVE | _LCD_MOVERIGHT)
 
     @property
-    def left_to_right(self):
-        return self.displaymode & _LCD_ENTRYLEFT == _LCD_ENTRYLEFT
+    def text_direction(self):
+        """The direction the text is displayed. To display the text left to right beginning on the
+        left side of the LCD, set ``text_direction = LEFT_TO_RIGHT``. To display the text right
+        to left beginning on the right size of the LCD, set ``text_direction = RIGHT_TO_LEFT``.
+        Text defaults to displaying from left to right.
 
-    @left_to_right.setter
-    def left_to_right(self, left_to_right):
-        """Direction of text to read from left to right"""
-        if left_to_right:
-            self.displaymode |= _LCD_ENTRYLEFT
-            self._write8(_LCD_ENTRYMODESET | self.displaymode)
+        The following example displays "Hello, world!" from right to left.
 
-    @property
-    def right_to_left(self):
-        return self.displaymode & _LCD_ENTRYLEFT != _LCD_ENTRYLEFT
+        .. code-block:: python
 
-    @right_to_left.setter
-    def right_to_left(self, right_to_left):
-        """Direction of text to read from right to left"""
-        if right_to_left:
-            self.displaymode &= ~_LCD_ENTRYLEFT
-            self._write8(_LCD_ENTRYMODESET | self.displaymode)
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+
+            lcd.text_direction = lcd.RIGHT_TO_LEFT
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+        """
+        return self._direction
+
+    @text_direction.setter
+    def text_direction(self, direction):
+        self._direction = direction
+        if direction == self.LEFT_TO_RIGHT:
+            self._left_to_right()
+        elif direction == self.RIGHT_TO_LEFT:
+            self._right_to_left()
+
+    def _left_to_right(self):
+        # Displays text from left to right on the LCD.
+        self.displaymode |= _LCD_ENTRYLEFT
+        self._write8(_LCD_ENTRYMODESET | self.displaymode)
+
+    def _right_to_left(self):
+        # Displays text from right to left on the LCD.
+        self.displaymode &= ~_LCD_ENTRYLEFT
+        self._write8(_LCD_ENTRYMODESET | self.displaymode)
+
+    def create_char(self, location, pattern):
+        """
+        Fill one of the first 8 CGRAM locations with custom characters.
+        The location parameter should be between 0 and 7 and pattern should
+        provide an array of 8 bytes containing the pattern. E.g. you can easily
+        design your custom character at http://www.quinapalus.com/hd44780udg.html
+        To show your custom character use, for example, ``lcd.message = "\x01"``
+
+        :param location: integer in range(8) to store the created character
+        :param ~bytes pattern: len(8) describes created character
+
+        """
+        # only position 0..7 are allowed
+        location &= 0x7
+        self._write8(_LCD_SETCGRAMADDR | (location << 3))
+        for i in range(8):
+            self._write8(pattern[i], char_mode=True)
 
     def _write8(self, value, char_mode=False):
         # Sends 8b ``value`` in ``char_mode``.
@@ -380,16 +563,25 @@ class Character_LCD_RGB:
 
 
 class Character_LCD_I2C_RGB(Character_LCD_RGB):
-    def __init__(self, i2c, cols, lines):
+    """RGB Character LCD connected to I2C shield using I2C connection.
+    This is a subclass of Character_LCD_RGB and implements all of the same
+    functions and functionality.
+    """
+    def __init__(self, i2c, columns, lines):
+        """Initialize RGB character LCD connected to shield using I2C connection
+        on the specified I2C bus with the specified number of columns and lines
+        on the display.
+        """
         self._mcp = adafruit_mcp230xx.MCP23017(i2c)
         reset = self._mcp.get_pin(15)
         read_write = self._mcp.get_pin(14)
         enable = self._mcp.get_pin(13)
-        d4 = self._mcp.get_pin(12)
-        d5 = self._mcp.get_pin(11)
-        d6 = self._mcp.get_pin(10)
-        d7 = self._mcp.get_pin(9)
+        db4 = self._mcp.get_pin(12)
+        db5 = self._mcp.get_pin(11)
+        db6 = self._mcp.get_pin(10)
+        db7 = self._mcp.get_pin(9)
         red = self._mcp.get_pin(6)
         green = self._mcp.get_pin(7)
         blue = self._mcp.get_pin(8)
-        super().__init__(reset, enable, d4, d5, d6, d7, cols, lines, red, green, blue, read_write)
+        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines, red, green, blue,
+                         read_write)

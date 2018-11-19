@@ -75,7 +75,7 @@ To verify that your pins are correct, print a hello message to the CharLCD:
 
 .. code-block:: python
 
-    lcd.message('hello\ncircuitpython')
+    lcd.message = "Hello\nCircuitPython"
 
 
 Custom character example with create_char() is provided within /examples/

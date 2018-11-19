@@ -18,33 +18,43 @@ i2c = busio.I2C(board.SCL, board.SDA)
 #   Init the lcd class
 lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)
 
-#   Print a 2x line message
-lcd.message('hello\ncircuitpython')
+# Turn on backlight
+lcd.backlight = True
+# Print a two line message
+lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
-#   Demo showing cursor
 lcd.clear()
-lcd.show_cursor(True)
-lcd.message('showing cursor ')
-#   Wait 5s
+# Print two line message right to left
+lcd.text_direction = lcd.RIGHT_TO_LEFT
+lcd.message = "Hello\nCircuitPython"
+# Wait 5s
 time.sleep(5)
-#   Demo showing the blinking cursor
+# Return text direction to left to right
+lcd.text_direction = lcd.LEFT_TO_RIGHT
+# Demo showing cursor
 lcd.clear()
-lcd.blink(True)
-lcd.message('Blinky Cursor!')
-#   Wait 5s
+lcd.cursor = True
+lcd.message = "Cursor! "
+# Wait 5s
 time.sleep(5)
-lcd.blink(False)
-#   Demo scrolling message LEFT
+# Demo showing the blinking cursor
 lcd.clear()
-scroll_msg = 'Scroll'
-lcd.message(scroll_msg)
-#   Scroll to the left
-for i in range(lcd_columns - len(scroll_msg)):
+lcd.blink = True
+lcd.message = "Blinky Cursor!"
+# Wait 5s
+time.sleep(5)
+lcd.blink = False
+# Demo scrolling message LEFT
+lcd.clear()
+scroll_msg = '<-- Scroll'
+lcd.message = scroll_msg
+# Scroll to the left
+for i in range(len(scroll_msg)):
     time.sleep(0.5)
     lcd.move_left()
-#   Demo turning backlight off
 lcd.clear()
-lcd.message("going to sleep\ncya later!")
-lcd.set_backlight(False)
+lcd.message = "Going to sleep\nCya later!"
+# Demo turning backlight off
+lcd.backlight = False
 time.sleep(2)

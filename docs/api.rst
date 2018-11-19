@@ -3,3 +3,8 @@
 
 .. automodule:: adafruit_character_lcd.character_lcd
    :members:
+   :inherited-members:
+
+.. automodule:: adafruit_character_lcd.character_lcd_rgb
+   :members:
+   :inherited-members:

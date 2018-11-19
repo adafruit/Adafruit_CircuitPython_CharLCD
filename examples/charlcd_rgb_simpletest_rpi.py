@@ -32,16 +32,16 @@ BLUE = [0, 0, 1]
 
 while True:
     lcd.clear()
-    lcd.message('CircuitPython\nRGB Test: RED')
-    lcd.set_color(RED)
+    lcd.message = 'CircuitPython\nRGB Test: RED'
+    lcd.color = RED
     time.sleep(1)
 
     lcd.clear()
-    lcd.message('CircuitPython\nRGB Test: GREEN')
-    lcd.set_color(GREEN)
+    lcd.message = 'CircuitPython\nRGB Test: GREEN'
+    lcd.color = GREEN
     time.sleep(1)
 
     lcd.clear()
-    lcd.message('CircuitPython\nRGB Test: BLUE')
-    lcd.set_color(BLUE)
+    lcd.message = 'CircuitPython\nRGB Test: BLUE'
+    lcd.color = BLUE
     time.sleep(1)
