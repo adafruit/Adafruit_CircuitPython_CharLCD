@@ -103,6 +103,18 @@ def _set_bit(byte_value, position, val):
     return ret
 
 
+def _map(xval, in_min, in_max, out_min, out_max):
+    # Affine transfer/map with constrained output.
+    outrange = float(out_max - out_min)
+    inrange = float(in_max - in_min)
+    ret = (xval - in_min) * (outrange / inrange) + out_min
+    if out_max > out_min:
+        ret = max(min(ret, out_max), out_min)
+    else:
+        ret = max(min(ret, out_min), out_max)
+    return ret
+
+
 # pylint: disable-msg=too-many-instance-attributes
 class Character_LCD:
     """Base class for character LCD."""
@@ -125,9 +137,7 @@ class Character_LCD:
 
     """
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines,
-                 backlight_pin=None,
-                 backlight_inverted=False
+    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines
                 ):
 
         self.columns = columns
@@ -139,33 +149,25 @@ class Character_LCD:
         self.dl5 = d5
         self.dl6 = d6
         self.dl7 = d7
-        # backlight pin
-        self.backlight_pin = backlight_pin
-        self.backlight_inverted = backlight_inverted
+
         # set all pins as outputs
         for pin in(rs, en, d4, d5, d6, d7):
             pin.direction = digitalio.Direction.OUTPUT
-        #  Setup backlight
-        if backlight_pin is not None:
-            self.backlight_pin.direction = digitalio.Direction.OUTPUT
-            if backlight_inverted:
-                self.backlight_pin.value = 0  # turn backlight on
-            else:
-                self.backlight_pin.value = 1  # turn backlight on
-        #  initialize the display
+
+        # Initialise the display
         self._write8(0x33)
         self._write8(0x32)
-        #  init. display control
+        # Initialise display control
         self.displaycontrol = _LCD_DISPLAYON | _LCD_CURSOROFF | _LCD_BLINKOFF
-        #  init display function
+        # Initialise display function
         self.displayfunction = _LCD_4BITMODE | _LCD_1LINE | _LCD_2LINE | _LCD_5X8DOTS
-        #  init display mode
+        # Initialise display mode
         self.displaymode = _LCD_ENTRYLEFT | _LCD_ENTRYSHIFTDECREMENT
-        #  write to display control
+        # Write to displaycontrol
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
-        #  write displayfunction
+        # Write to displayfunction
         self._write8(_LCD_FUNCTIONSET | self.displayfunction)
-        #  set the entry mode
+        # Set entry mode
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
         self.clear()
 
@@ -456,42 +458,6 @@ class Character_LCD:
         self.displaymode &= ~_LCD_ENTRYLEFT
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
 
-    @property
-    def backlight(self):
-        """Enable or disable backlight. True if backlight is on. False if backlight is off.
-
-        The following example turns the backlight off, then displays, "Hello, world?", then turns
-        the backlight on and displays, "Hello, world!"
-
-        .. code-block:: python
-
-            import time
-            import board
-            import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
-
-            i2c = busio.I2C(board.SCL, board.SDA)
-
-            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
-
-            lcd.backlight = False
-            lcd.message = "Hello, world?"
-            time.sleep(5)
-            lcd.backlight = True
-            lcd.message = "Hello, world!"
-            time.sleep(5)
-
-        """
-        return self._enable
-
-    @backlight.setter
-    def backlight(self, enable):
-        self._enable = enable
-        if enable and not self.backlight_inverted or not enable and self.backlight_inverted:
-            self.backlight_pin.value = 1
-        if enable and self.backlight_inverted or not enable and not self.backlight_inverted:
-            self.backlight_pin.value = 0
-
     def create_char(self, location, pattern):
         """
         Fill one of the first 8 CGRAM locations with custom characters.
@@ -543,6 +509,183 @@ class Character_LCD:
         self.enable.value = False
         time.sleep(0.0000001)
 # pylint: enable-msg=too-many-instance-attributes
+
+
+# pylint: disable-msg=too-many-instance-attributes
+class Character_LCD_Mono(Character_LCD):
+    """Base class for character LCD."""
+    """
+    Interfaces with a character LCD
+    :param ~digitalio.DigitalInOut rs: The reset data line
+    :param ~digitalio.DigitalInOut en: The enable data line
+    :param ~digitalio.DigitalInOut d4: The data line 4
+    :param ~digitalio.DigitalInOut d5: The data line 5
+    :param ~digitalio.DigitalInOut d6: The data line 6
+    :param ~digitalio.DigitalInOut d7: The data line 7
+    :param columns: The columns on the charLCD
+    :param lines: The lines on the charLCD
+    :param ~digitalio.DigitalInOut backlight_pin: The backlight pin, usually
+    the last pin. Check with your datasheet
+    :param bool backlight_inverted: False if LCD is not inverted, i.e. backlight pin is connected
+    to common anode. True if LCD is inverted i.e. backlight pin is connected to common cathode.
+
+    """
+    # pylint: disable-msg=too-many-arguments
+    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines,
+                 backlight_pin=None, backlight_inverted=False):
+        reset = rs
+        enable = en
+        db4 = d4
+        db5 = d5
+        db6 = d6
+        db7 = d7
+
+        # Backlight pin and inversion
+        self.backlight_pin = backlight_pin
+        self.backlight_inverted = backlight_inverted
+
+        #  Setup backlight
+        if backlight_pin is not None:
+            self.backlight_pin.direction = digitalio.Direction.OUTPUT
+            if backlight_inverted:
+                self.backlight_pin.value = 0  # Turn inverted backlight on
+            else:
+                self.backlight_pin.value = 1  # Turn backlight on
+        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines)
+    # pylint: enable-msg=too-many-arguments
+
+    @property
+    def backlight(self):
+        """Enable or disable backlight. True if backlight is on. False if backlight is off.
+
+        The following example turns the backlight off, then displays, "Hello, world?", then turns
+        the backlight on and displays, "Hello, world!"
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
+
+            lcd.backlight = False
+            lcd.message = "Hello, world?"
+            time.sleep(5)
+            lcd.backlight = True
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+
+        """
+        return self._enable
+
+    @backlight.setter
+    def backlight(self, enable):
+        self._enable = enable
+        if enable and not self.backlight_inverted or not enable and self.backlight_inverted:
+            self.backlight_pin.value = 1
+        if enable and self.backlight_inverted or not enable and not self.backlight_inverted:
+            self.backlight_pin.value = 0
+
+
+class Character_LCD_RGB(Character_LCD):
+    """Base class for RGB character LCD."""
+
+    """ Interfaces with an RGB character LCD
+        :param ~digitalio.DigitalInOut rs: The reset data line
+        :param ~digitalio.DigitalInOut en: The enable data line
+        :param ~digitalio.DigitalInOut d4: The data line 4
+        :param ~digitalio.DigitalInOut d5: The data line 5
+        :param ~digitalio.DigitalInOut d6: The data line 6
+        :param ~digitalio.DigitalInOut d7: The data line 7
+        :param columns: The columns on the charLCD
+        :param lines: The lines on the charLCD
+        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
+        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
+        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
+        :param ~digitalio.DigitalInOut read_write: The rw pin. Determines whether to read to or
+            write from the display. Not necessary if only writing to the display. Used on shield.
+
+    """
+    # pylint: disable-msg=too-many-arguments
+    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines, red, green, blue, read_write=None):
+        reset = rs
+        enable = en
+        db4 = d4
+        db5 = d5
+        db6 = d6
+        db7 = d7
+
+        # Define read_write (rw) pin
+        self.read_write = read_write
+
+        # Setup rw pin if used
+        if read_write is not None:
+            self.read_write.direction = digitalio.Direction.OUTPUT
+
+        # define color params
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.rgb_led = [red, green, blue]
+
+        for pin in self.rgb_led:
+            if hasattr(pin, 'direction'):
+                # Assume a digitalio.DigitalInOut or compatible interface:
+                pin.direction = digitalio.Direction.OUTPUT
+            elif not hasattr(pin, 'duty_cycle'):
+                raise TypeError(
+                    'RGB LED objects must be instances of digitalio.DigitalInOut'
+                    ' or pulseio.PWMOut, or provide a compatible interface.'
+                )
+
+        self._color = [0, 0, 0]
+        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines)
+
+    @property
+    def color(self):
+        """
+        The color of the display. Provide a list of three integers ranging 0 - 100, ``[R, G, B]``.
+        ``0`` is no color, or "off". ``100`` is maximum color. For example, the brightest red would
+        be ``[100, 0, 0]``, and a half-bright purple would be, ``[50, 0, 50]``.
+
+        If PWM is unavailable, ``0`` is off, and non-zero is on. For example, ``[1, 0, 0]`` would
+        be red.
+
+        The following example turns the LCD red and displays, "Hello, world!".
+
+        .. code-block:: python
+
+            import time
+            import board
+            import busio
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
+
+            i2c = busio.I2C(board.SCL, board.SDA)
+
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+
+            lcd.color = [100, 0, 0]
+            lcd.message = "Hello, world!"
+            time.sleep(5)
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color):
+        self._color = color
+        for number, pin in enumerate(self.rgb_led):
+            if hasattr(pin, 'duty_cycle'):
+                # Assume a pulseio.PWMOut or compatible interface and set duty cycle:
+                pin.duty_cycle = int(_map(color[number], 0, 100, 65535, 0))
+            elif hasattr(pin, 'value'):
+                # If we don't have a PWM interface, all we can do is turn each color
+                # on / off.  Assume a DigitalInOut (or compatible interface) and write
+                # 0 (on) to pin for any value greater than 0, or 1 (off) for 0:
+                pin.value = 0 if color[number] > 0 else 1
 
 
 class Character_LCD_I2C(Character_LCD):

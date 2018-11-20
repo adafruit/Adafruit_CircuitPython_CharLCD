@@ -165,20 +165,20 @@ class Character_LCD_RGB:
                     ' or pulseio.PWMOut, or provide a compatible interface.'
                 )
 
-        # initialize the display
+        # Initialise the display
         self._write8(0x33)
         self._write8(0x32)
-        # init. display control
+        # Initialise display control
         self.displaycontrol = _LCD_DISPLAYON | _LCD_CURSOROFF | _LCD_BLINKOFF
-        # init display function
+        # Initialise display function
         self.displayfunction = _LCD_4BITMODE | _LCD_1LINE | _LCD_2LINE | _LCD_5X8DOTS
-        # init display mode
+        # Initialise display mode
         self.displaymode = _LCD_ENTRYLEFT | _LCD_ENTRYSHIFTDECREMENT
-        # write to display control
+        # Write to displaycontrol
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
-        # write displayfunction
+        # Write to displayfunction
         self._write8(_LCD_FUNCTIONSET | self.displayfunction)
-        # set the entry mode
+        # Set entry mode
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
         self.clear()
 
