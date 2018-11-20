@@ -531,14 +531,8 @@ class Character_LCD_Mono(Character_LCD):
 
     """
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines,
+    def __init__(self, rs, en, db4, db5, db6, db7, columns, lines,
                  backlight_pin=None, backlight_inverted=False):
-        reset = rs
-        enable = en
-        db4 = d4
-        db5 = d5
-        db6 = d6
-        db7 = d7
 
         # Backlight pin and inversion
         self.backlight_pin = backlight_pin
@@ -548,10 +542,8 @@ class Character_LCD_Mono(Character_LCD):
         if backlight_pin is not None:
             self.backlight_pin.direction = digitalio.Direction.OUTPUT
             if backlight_inverted:
-                self.backlight_pin.value = 0  # Turn inverted backlight on
-            else:
-                self.backlight_pin.value = 1  # Turn backlight on
-        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines)
+                self.backlight_pin.value = not backlight_inverted  # Turn backlight on
+        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
     # pylint: enable-msg=too-many-arguments
 
     @property
@@ -611,13 +603,7 @@ class Character_LCD_RGB(Character_LCD):
 
     """
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines, red, green, blue, read_write=None):
-        reset = rs
-        enable = en
-        db4 = d4
-        db5 = d5
-        db6 = d6
-        db7 = d7
+    def __init__(self, rs, en, db4, db5, db6, db7, columns, lines, red, green, blue, read_write=None):
 
         # Define read_write (rw) pin
         self.read_write = read_write
@@ -643,7 +629,7 @@ class Character_LCD_RGB(Character_LCD):
                 )
 
         self._color = [0, 0, 0]
-        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines)
+        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
 
     @property
     def color(self):
