@@ -53,7 +53,7 @@ from micropython import const
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
-#pylint: disable-msg=bad-whitespace
+# pylint: disable-msg=bad-whitespace
 # Commands
 _LCD_CLEARDISPLAY        = const(0x01)
 _LCD_RETURNHOME          = const(0x02)
@@ -90,6 +90,7 @@ _LCD_5X8DOTS             = const(0x00)
 _LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
 # pylint: enable-msg=bad-whitespace
+
 
 def _set_bit(byte_value, position, val):
     # Given the specified byte_value set the bit at position to the provided
@@ -188,11 +189,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
             time.sleep(5)
@@ -212,11 +213,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.cursor = True
             lcd.message = "Cursor! "
@@ -257,11 +258,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.blink = True
             lcd.message = "Blinky cursor!"
@@ -290,11 +291,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
             time.sleep(5)
@@ -321,11 +322,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
             time.sleep(5)
@@ -368,11 +369,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             scroll_message = "<-- Scroll"
             lcd.message = scroll_message
@@ -393,14 +394,14 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
             lcd_columns = 16
             lcd_rows = 2
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)
+            lcd = character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)
 
             scroll_message = "Scroll -->"
             lcd.message = scroll_message
@@ -425,11 +426,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.text_direction = lcd.RIGHT_TO_LEFT
             lcd.message = "Hello, world!"
@@ -467,11 +468,11 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_mono as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.backlight = False
             lcd.message = "Hello, world?"
@@ -548,6 +549,17 @@ class Character_LCD_I2C(Character_LCD):
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
     This is a subclass of Character_LCD and implements all of the same
     functions and functionality.
+
+    To use, import and initialise as follows:
+
+    .. code-block:: python
+
+    import board
+    import busio
+    import adafruit_character_lcd.character_lcd_mono as character_lcd
+
+    i2c = busio.I2C(board.SCL, board.SDA)
+    lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
     """
     def __init__(self, i2c, columns, lines, backlight_inverted=False):
         """Initialize character LCD connectedto backpack using I2C connection
@@ -572,6 +584,19 @@ class Character_LCD_SPI(Character_LCD):
     """Character LCD connected to I2C/SPI backpack using its SPI connection.
     This is a subclass of Character_LCD and implements all of the same
     functions and functionality.
+
+    To use, import and initialise as follows:
+
+    .. code-block:: python
+
+        import board
+        import busio
+        import digitalio
+        import adafruit_character_lcd.character_lcd_mono as character_lcd
+
+        spi = busio.SPI(board.SCK, MOSI=board.MOSI)
+        latch = digitalio.DigitalInOut(board.D5)
+        lcd = character_lcd.Character_LCD_SPI(spi, latch, 16, 2)
     """
 
     def __init__(self, spi, latch, columns, lines, backlight_inverted=False):

@@ -1,10 +1,10 @@
+# Simple test for RGB character LCD on Raspberry Pi
 import time
 import board
 import digitalio
-import adafruit_character_lcd
+import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
-# Character LCD Config:
-# modify this if you have a different sized charlcd
+# Modify this if you have a different sized character LCD
 lcd_columns = 16
 lcd_rows = 2
 
@@ -21,10 +21,9 @@ red = digitalio.DigitalInOut(board.D21)
 green = digitalio.DigitalInOut(board.D12)
 blue = digitalio.DigitalInOut(board.D18)
 
-# Init the lcd class
-lcd = adafruit_character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5,
-                                               lcd_d6, lcd_d7, lcd_columns, lcd_rows,
-                                               red, green, blue, lcd_backlight)
+# Initialise the LCD class
+lcd = character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns,
+                                      lcd_rows, red, green, blue, lcd_backlight)
 
 RED = [1, 0, 0]
 GREEN = [0, 1, 0]

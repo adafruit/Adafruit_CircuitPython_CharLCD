@@ -202,11 +202,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
             time.sleep(5)
@@ -226,11 +226,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
 
             lcd.cursor = True
             lcd.message = "Cursor! "
@@ -271,11 +271,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.blink = True
             lcd.message = "Blinky cursor!"
@@ -309,11 +309,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
 
             lcd.color = [100, 0, 0]
             lcd.message = "Hello, world!"
@@ -346,11 +346,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
             time.sleep(5)
@@ -377,11 +377,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
             time.sleep(5)
@@ -420,11 +420,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
 
             scroll_message = "<-- Scroll"
             lcd.message = scroll_message
@@ -445,14 +445,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd_columns = 16
-            lcd_rows = 2
-
-            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, lcd_columns, lcd_rows)
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
 
             scroll_message = "Scroll -->"
             lcd.message = scroll_message
@@ -477,11 +474,11 @@ class Character_LCD_RGB:
             import time
             import board
             import busio
-            import adafruit_character_lcd
+            import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
 
             lcd.text_direction = lcd.RIGHT_TO_LEFT
             lcd.message = "Hello, world!"
@@ -565,6 +562,17 @@ class Character_LCD_I2C_RGB(Character_LCD_RGB):
     """RGB Character LCD connected to I2C shield using I2C connection.
     This is a subclass of Character_LCD_RGB and implements all of the same
     functions and functionality.
+
+    To use, import and initialise as follows:
+
+    .. code-block:: python
+
+    import board
+    import busio
+    import adafruit_character_lcd.character_lcd_rgb as character_lcd
+
+    i2c = busio.I2C(board.SCL, board.SDA)
+    lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
     """
     def __init__(self, i2c, columns, lines):
         """Initialize RGB character LCD connected to shield using I2C connection

@@ -1,17 +1,18 @@
+# Simple test for I2C RGB character LCD shield kit
 import time
 import board
 import busio
-import adafruit_character_lcd
+import adafruit_character_lcd.character_lcd_rgb as character_lcd
 
-#   Character LCD Config:
+# Modify this if you have a different sized Character LCD
 lcd_columns = 16
 lcd_rows = 2
 
-#   Initialize I2C bus.
+# Initialise I2C bus.
 i2c = busio.I2C(board.SCL, board.SDA)
 
-#   Init the lcd class
-lcd = adafruit_character_lcd.Character_LCD_I2C_RGB(i2c, lcd_columns, lcd_rows)
+# Initialise the LCD class
+lcd = character_lcd.Character_LCD_I2C_RGB(i2c, lcd_columns, lcd_rows)
 
 lcd.clear()
 # Set LCD color to red
@@ -38,21 +39,21 @@ lcd.message = "Hello\nCircuitPython"
 time.sleep(5)
 # Return text direction to left to right
 lcd.text_direction = lcd.LEFT_TO_RIGHT
-# Demo showing cursor
+# Display cursor
 lcd.clear()
 lcd.cursor = True
 lcd.message = "Cursor! "
 # Wait 5s
 time.sleep(5)
-# Demo showing the blinking cursor
+# Display blinking cursor
 lcd.clear()
 lcd.blink = True
 lcd.message = "Blinky Cursor!"
 # Wait 5s
 time.sleep(5)
 lcd.blink = False
-# Demo scrolling message LEFT
 lcd.clear()
+# Create message to scroll
 scroll_msg = '<-- Scroll'
 lcd.message = scroll_msg
 # Scroll to the left
@@ -63,6 +64,6 @@ lcd.clear()
 time.sleep(1)
 lcd.message = "Going to sleep\nCya later!"
 time.sleep(5)
-# Turn off LCD
+# Turn off LCD backlights and clear text
 lcd.color = [0, 0, 0]
 lcd.clear()
