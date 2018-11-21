@@ -48,6 +48,7 @@ from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
+
 class Character_LCD_I2C(Character_LCD_Mono):
     # pylint: disable=too-few-public-methods
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
@@ -79,6 +80,5 @@ class Character_LCD_I2C(Character_LCD_Mono):
         db6 = self._mcp.get_pin(5)
         db7 = self._mcp.get_pin(6)
         backlight_pin = self._mcp.get_pin(7)
-        self.backlight_inverted = backlight_inverted
         super().__init__(reset, enable, db4, db5, db6, db7, columns, lines,
                          backlight_pin=backlight_pin, backlight_inverted=backlight_inverted)

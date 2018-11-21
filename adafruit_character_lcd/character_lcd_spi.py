@@ -85,6 +85,5 @@ class Character_LCD_SPI(Character_LCD_Mono):
         db6 = self._shift_register.get_pin(4)
         db7 = self._shift_register.get_pin(3)
         backlight_pin = self._shift_register.get_pin(7)
-        self.backlight_inverted = backlight_inverted
         super().__init__(reset, enable, db4, db5, db6, db7, columns, lines,
                          backlight_pin=backlight_pin, backlight_inverted=backlight_inverted)

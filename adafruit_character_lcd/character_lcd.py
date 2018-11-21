@@ -524,8 +524,7 @@ class Character_LCD_Mono(Character_LCD):
         #  Setup backlight
         if backlight_pin is not None:
             self.backlight_pin.direction = digitalio.Direction.OUTPUT
-            if backlight_inverted:
-                self.backlight_pin.value = not backlight_inverted  # Turn backlight on
+            self.backlight = True
         super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
     # pylint: enable-msg=too-many-arguments
 
