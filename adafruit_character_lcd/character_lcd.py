@@ -236,8 +236,11 @@ class Character_LCD:
             :param row: row location
         """
         # Clamp row to the last row of the display
-        if row > self.lines:
+        if row >= self.lines:
             row = self.lines - 1
+        # Clamp to last column of display
+        if column >= self.columns:
+            column = self.columns - 1
         # Set location
         self._write8(_LCD_SETDDRAMADDR | (column + _LCD_ROW_OFFSETS[row]))
 
