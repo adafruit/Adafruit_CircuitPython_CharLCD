@@ -1,8 +1,8 @@
-# Simple test for monochromatic character LCD on Raspberry Pi
+"""Simple test for monochromatic character LCD on Raspberry Pi"""
 import time
 import board
 import digitalio
-import adafruit_character_lcd.character_lcd_mono as character_lcd
+import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD
 lcd_columns = 16
@@ -18,8 +18,8 @@ lcd_d4 = digitalio.DigitalInOut(board.D25)
 lcd_backlight = digitalio.DigitalInOut(board.D4)
 
 # Initialise the lcd class
-lcd = character_lcd.Character_LCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
-                                  lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
+                                      lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
 # Turn backlight on
 lcd.backlight = True

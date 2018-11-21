@@ -11,10 +11,10 @@ Ensure your device works with this simple test.
     :caption: examples/charlcd_rgb_simpletest.py
     :linenos:
 
-.. literalinclude:: ../examples/charlcd_I2C_simpletest.py
-    :caption: examples/charlcd_I2C_simpletest.py
+.. literalinclude:: ../examples/charlcd_i2c_mono_simpletest.py
+    :caption: examples/charlcd_i2c_mono_simpletest.py
     :linenos:
 
-.. literalinclude:: ../examples/charlcd_SPI_simpletest.py
-    :caption: examples/charlcd_SPI_simpletest.py
+.. literalinclude:: ../examples/charlcd_spi_mono_simpletest.py
+    :caption: examples/charlcd_spi_mono_simpletest.py
     :linenos:

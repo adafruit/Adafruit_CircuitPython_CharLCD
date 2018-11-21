@@ -1,9 +1,9 @@
-# Simple test for RGB character LCD
+"""Simple test for RGB character LCD"""
 import time
 import board
 import digitalio
 import pulseio
-import adafruit_character_lcd.character_lcd_rgb as character_lcd
+import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD
 lcd_columns = 16
@@ -21,8 +21,8 @@ green = pulseio.PWMOut(board.D5)
 blue = pulseio.PWMOut(board.D6)
 
 # Initialise the LCD class
-lcd = character_lcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns,
-                                      lcd_rows, red, green, blue)
+lcd = characterlcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns,
+                                     lcd_rows, red, green, blue)
 
 lcd.clear()
 # Set LCD color to red

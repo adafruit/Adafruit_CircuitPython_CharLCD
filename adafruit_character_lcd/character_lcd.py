@@ -34,8 +34,7 @@ Implementation Notes
 
 **Hardware:**
 
-* Adafruit `Character LCDs
-  <http://www.adafruit.com/category/63_96>`_
+"* `Adafruit Character LCDs <http://www.adafruit.com/category/63_96>`_"
 
 **Software and Dependencies:**
 
@@ -117,11 +116,8 @@ def _map(xval, in_min, in_max, out_min, out_max):
 
 # pylint: disable-msg=too-many-instance-attributes
 class Character_LCD:
-    """Base class for character LCD."""
-    LEFT_TO_RIGHT = const(0)
-    RIGHT_TO_LEFT = const(1)
-    """
-    Interfaces with a character LCD
+    """Base class for character LCD.
+
     :param ~digitalio.DigitalInOut rs: The reset data line
     :param ~digitalio.DigitalInOut en: The enable data line
     :param ~digitalio.DigitalInOut d4: The data line 4
@@ -130,12 +126,11 @@ class Character_LCD:
     :param ~digitalio.DigitalInOut d7: The data line 7
     :param columns: The columns on the charLCD
     :param lines: The lines on the charLCD
-    :param ~digitalio.DigitalInOut backlight_pin: The backlight pin, usually
-    the last pin. Check with your datasheet
-    :param bool backlight_inverted: False if LCD is not inverted, i.e. backlight pin is connected
-    to common anode. True if LCD is inverted i.e. backlight pin is connected to common cathode.
 
     """
+    LEFT_TO_RIGHT = const(0)
+    RIGHT_TO_LEFT = const(1)
+
     # pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, columns, lines
                 ):
@@ -191,10 +186,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
@@ -215,10 +209,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.cursor = True
@@ -260,10 +253,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.blink = True
@@ -293,10 +285,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
@@ -324,10 +315,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.message = "Hello, world!"
@@ -371,10 +361,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             scroll_message = "<-- Scroll"
@@ -396,19 +385,15 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
-            lcd_columns = 16
-            lcd_rows = 2
-
-            lcd = character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)
+            lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             scroll_message = "Scroll -->"
             lcd.message = scroll_message
             time.sleep(2)
-            for i in range(len(scroll_message) + lcd_columns):
+            for i in range(len(scroll_message) + 16):
                 lcd.move_right()
                 time.sleep(0.5)
         """
@@ -428,10 +413,9 @@ class Character_LCD:
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
-
             lcd = character_lcd.Character_LCD_I2C(i2c, 16, 2)
 
             lcd.text_direction = lcd.RIGHT_TO_LEFT
@@ -513,21 +497,20 @@ class Character_LCD:
 
 # pylint: disable-msg=too-many-instance-attributes
 class Character_LCD_Mono(Character_LCD):
-    """Base class for character LCD."""
-    """
-    Interfaces with a character LCD
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut d4: The data line 4
-    :param ~digitalio.DigitalInOut d5: The data line 5
-    :param ~digitalio.DigitalInOut d6: The data line 6
-    :param ~digitalio.DigitalInOut d7: The data line 7
-    :param columns: The columns on the charLCD
-    :param lines: The lines on the charLCD
-    :param ~digitalio.DigitalInOut backlight_pin: The backlight pin, usually
-    the last pin. Check with your datasheet
-    :param bool backlight_inverted: False if LCD is not inverted, i.e. backlight pin is connected
-    to common anode. True if LCD is inverted i.e. backlight pin is connected to common cathode.
+    """Interfaces with monochromatic character LCDs.
+
+        :param ~digitalio.DigitalInOut rs: The reset data line
+        :param ~digitalio.DigitalInOut en: The enable data line
+        :param ~digitalio.DigitalInOut d4: The data line 4
+        :param ~digitalio.DigitalInOut d5: The data line 5
+        :param ~digitalio.DigitalInOut d6: The data line 6
+        :param ~digitalio.DigitalInOut d7: The data line 7
+        :param columns: The columns on the charLCD
+        :param lines: The lines on the charLCD
+        :param ~digitalio.DigitalInOut backlight_pin: The backlight pin
+        :param bool backlight_inverted: ``False`` if LCD is not inverted, i.e. backlight pin is
+            connected to common anode. ``True`` if LCD is inverted i.e. backlight pin is connected
+            to common cathode.
 
     """
     # pylint: disable-msg=too-many-arguments
@@ -558,7 +541,7 @@ class Character_LCD_Mono(Character_LCD):
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_mono as character_lcd
+            import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
@@ -577,22 +560,21 @@ class Character_LCD_Mono(Character_LCD):
     @backlight.setter
     def backlight(self, enable):
         self._enable = enable
-        if enable and not self.backlight_inverted or not enable and self.backlight_inverted:
-            self.backlight_pin.value = 1
-        if enable and self.backlight_inverted or not enable and not self.backlight_inverted:
-            self.backlight_pin.value = 0
+        if enable:
+            self.backlight_pin.value = not self.backlight_inverted
+        else:
+            self.backlight_pin.value = self.backlight_inverted
 
 
 class Character_LCD_RGB(Character_LCD):
-    """Base class for RGB character LCD."""
+    """Interfaces with RGB character LCDs.
 
-    """ Interfaces with an RGB character LCD
         :param ~digitalio.DigitalInOut rs: The reset data line
         :param ~digitalio.DigitalInOut en: The enable data line
-        :param ~digitalio.DigitalInOut d4: The data line 4
-        :param ~digitalio.DigitalInOut d5: The data line 5
-        :param ~digitalio.DigitalInOut d6: The data line 6
-        :param ~digitalio.DigitalInOut d7: The data line 7
+        :param ~digitalio.DigitalInOut db4: The data line 4
+        :param ~digitalio.DigitalInOut db5: The data line 5
+        :param ~digitalio.DigitalInOut db6: The data line 6
+        :param ~digitalio.DigitalInOut db7: The data line 7
         :param columns: The columns on the charLCD
         :param lines: The lines on the charLCD
         :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
@@ -603,7 +585,8 @@ class Character_LCD_RGB(Character_LCD):
 
     """
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, db4, db5, db6, db7, columns, lines, red, green, blue, read_write=None):
+    def __init__(self, rs, en, db4, db5, db6, db7, columns, lines,
+                 red, green, blue, read_write=None):
 
         # Define read_write (rw) pin
         self.read_write = read_write
@@ -613,9 +596,6 @@ class Character_LCD_RGB(Character_LCD):
             self.read_write.direction = digitalio.Direction.OUTPUT
 
         # define color params
-        self.red = red
-        self.green = green
-        self.blue = blue
         self.rgb_led = [red, green, blue]
 
         for pin in self.rgb_led:
@@ -648,11 +628,11 @@ class Character_LCD_RGB(Character_LCD):
             import time
             import board
             import busio
-            import adafruit_character_lcd.character_lcd_rgb as character_lcd
+            import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 
             i2c = busio.I2C(board.SCL, board.SDA)
 
-            lcd = character_lcd.Character_LCD_I2C_RGB(i2c, 16, 2)
+            lcd = character_lcd.Character_LCD_RGB_I2C(i2c, 16, 2)
 
             lcd.color = [100, 0, 0]
             lcd.message = "Hello, world!"
@@ -671,5 +651,4 @@ class Character_LCD_RGB(Character_LCD):
                 # If we don't have a PWM interface, all we can do is turn each color
                 # on / off.  Assume a DigitalInOut (or compatible interface) and write
                 # 0 (on) to pin for any value greater than 0, or 1 (off) for 0:
-                pin.value = 0 if color[number] > 0 else 1
-
+                pin.value = not color[number] > 1

@@ -1,8 +1,8 @@
-# Simple test for 16x2 character lcd connected to an MCP23008 I2C LCD backpack.
+"""Simple test for 16x2 character lcd connected to an MCP23008 I2C LCD backpack."""
 import time
 import board
 import busio
-import adafruit_character_lcd.character_lcd_mono as character_lcd
+import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
 # Modify this if you have a different sized Character LCD
 lcd_columns = 16
@@ -51,6 +51,7 @@ for i in range(len(scroll_msg)):
     lcd.move_left()
 lcd.clear()
 lcd.message = "Going to sleep\nCya later!"
+time.sleep(5)
 # Turn backlight off
 lcd.backlight = False
 time.sleep(2)
