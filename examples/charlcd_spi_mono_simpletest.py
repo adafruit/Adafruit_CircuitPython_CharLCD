@@ -1,25 +1,25 @@
-"""Simple test for monochromatic character LCD"""
+"""Simple test for 16x2 character LCD connected to 74HC595 SPI LCD backpack."""
 import time
 import board
+import busio
 import digitalio
-import adafruit_character_lcd.character_lcd as characterlcd
+import adafruit_character_lcd.character_lcd_spi as character_lcd
 
 # Modify this if you have a different sized character LCD
 lcd_columns = 16
 lcd_rows = 2
 
-# Metro M0/M4 Pin Config:
-lcd_rs = digitalio.DigitalInOut(board.D7)
-lcd_en = digitalio.DigitalInOut(board.D8)
-lcd_d7 = digitalio.DigitalInOut(board.D12)
-lcd_d6 = digitalio.DigitalInOut(board.D11)
-lcd_d5 = digitalio.DigitalInOut(board.D10)
-lcd_d4 = digitalio.DigitalInOut(board.D9)
-lcd_backlight = digitalio.DigitalInOut(board.D13)
+# Backpack connection configuration:
+clk = board.SCK  # Pin connected to backpack CLK.
+data = board.MOSI  # Pin connected to backpack DAT/data.
+latch = board.D5  # Pin connected to backpack LAT/latch.
+
+# Initialise SPI bus.
+spi = busio.SPI(clk, MOSI=data)
 
 # Initialise the LCD class
-lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
-                                      lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+latch = digitalio.DigitalInOut(latch)
+lcd = character_lcd.Character_LCD_SPI(spi, latch, lcd_columns, lcd_rows)
 
 # Turn backlight on
 lcd.backlight = True
@@ -58,7 +58,6 @@ for i in range(len(scroll_msg)):
     lcd.move_left()
 lcd.clear()
 lcd.message = "Going to sleep\nCya later!"
-time.sleep(3)
 # Turn backlight off
 lcd.backlight = False
 time.sleep(2)

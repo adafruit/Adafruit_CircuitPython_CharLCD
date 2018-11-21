@@ -1,28 +1,18 @@
-"""Simple test for RGB character LCD"""
+"""Simple test for I2C RGB character LCD shield kit"""
 import time
 import board
-import digitalio
-import pulseio
-import adafruit_character_lcd.character_lcd as characterlcd
+import busio
+import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 
-# Modify this if you have a different sized character LCD
+# Modify this if you have a different sized Character LCD
 lcd_columns = 16
 lcd_rows = 2
 
-# Metro M0/M4 Pin Config:
-lcd_rs = digitalio.DigitalInOut(board.D7)
-lcd_en = digitalio.DigitalInOut(board.D8)
-lcd_d7 = digitalio.DigitalInOut(board.D12)
-lcd_d6 = digitalio.DigitalInOut(board.D11)
-lcd_d5 = digitalio.DigitalInOut(board.D10)
-lcd_d4 = digitalio.DigitalInOut(board.D9)
-red = pulseio.PWMOut(board.D3)
-green = pulseio.PWMOut(board.D5)
-blue = pulseio.PWMOut(board.D6)
+# Initialise I2C bus.
+i2c = busio.I2C(board.SCL, board.SDA)
 
 # Initialise the LCD class
-lcd = characterlcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns,
-                                     lcd_rows, red, green, blue)
+lcd = character_lcd.Character_LCD_RGB_I2C(i2c, lcd_columns, lcd_rows)
 
 lcd.clear()
 # Set LCD color to red

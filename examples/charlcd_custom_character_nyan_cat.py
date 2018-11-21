@@ -1,19 +1,25 @@
+"""Use custom characters to display Nyan cat"""
 import time
-from board import D7, D8, D9, D10, D11, D12, D13
+import board
 import digitalio
-import adafruit_character_lcd
+import adafruit_character_lcd.character_lcd as characterlcd
 
+# Modify this if you have a different sized character LCD
 lcd_columns = 16
 lcd_rows = 2
-lcd_rs = digitalio.DigitalInOut(D7)
-lcd_en = digitalio.DigitalInOut(D8)
-lcd_d7 = digitalio.DigitalInOut(D12)
-lcd_d6 = digitalio.DigitalInOut(D11)
-lcd_d5 = digitalio.DigitalInOut(D10)
-lcd_d4 = digitalio.DigitalInOut(D9)
-lcd_backlight = digitalio.DigitalInOut(D13)
-lcd = adafruit_character_lcd.Character_LCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
-                                           lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+
+# Metro M0/M4 Pin Config:
+lcd_rs = digitalio.DigitalInOut(board.D7)
+lcd_en = digitalio.DigitalInOut(board.D8)
+lcd_d7 = digitalio.DigitalInOut(board.D12)
+lcd_d6 = digitalio.DigitalInOut(board.D11)
+lcd_d5 = digitalio.DigitalInOut(board.D10)
+lcd_d4 = digitalio.DigitalInOut(board.D9)
+lcd_backlight = digitalio.DigitalInOut(board.D13)
+
+# Initialise the LCD class
+lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
+                                      lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
 head = [31, 17, 27, 17, 17, 21, 17, 31]
 
@@ -65,21 +71,10 @@ lcd.create_char(7, tail_neutral)
 
 lcd.clear()
 
-body_width = 3
 lcd.move_right()
-for i in range(4):
-    lcd.message('\x02')
-lcd.message('\x01')
-for i in range(body_width):
-    lcd.message('\x00')
-lcd.message('\x06')
-lcd.message('\n')
-lcd.message('\x02\x02\x02')
-lcd.message('\x07')
-lcd.message('\x03')
-for i in range(body_width):
-    lcd.message('\x04')
-lcd.message('\x05')
+lcd.message = "\x02\x02\x02\x02\x01\x00\x00\x00\x06\n\x02\x02\x02\x07\x03\x04\x04\x04\x05"
+
+lcd.backlight = True
 
 while True:
     lcd.create_char(4, bot_body2)

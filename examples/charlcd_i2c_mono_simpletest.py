@@ -1,25 +1,18 @@
-"""Simple test for monochromatic character LCD"""
+"""Simple test for 16x2 character lcd connected to an MCP23008 I2C LCD backpack."""
 import time
 import board
-import digitalio
-import adafruit_character_lcd.character_lcd as characterlcd
+import busio
+import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
-# Modify this if you have a different sized character LCD
+# Modify this if you have a different sized Character LCD
 lcd_columns = 16
 lcd_rows = 2
 
-# Metro M0/M4 Pin Config:
-lcd_rs = digitalio.DigitalInOut(board.D7)
-lcd_en = digitalio.DigitalInOut(board.D8)
-lcd_d7 = digitalio.DigitalInOut(board.D12)
-lcd_d6 = digitalio.DigitalInOut(board.D11)
-lcd_d5 = digitalio.DigitalInOut(board.D10)
-lcd_d4 = digitalio.DigitalInOut(board.D9)
-lcd_backlight = digitalio.DigitalInOut(board.D13)
+# Initialise I2C bus.
+i2c = busio.I2C(board.SCL, board.SDA)
 
-# Initialise the LCD class
-lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
-                                      lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+# Initialise the lcd class
+lcd = character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)
 
 # Turn backlight on
 lcd.backlight = True
@@ -58,7 +51,7 @@ for i in range(len(scroll_msg)):
     lcd.move_left()
 lcd.clear()
 lcd.message = "Going to sleep\nCya later!"
-time.sleep(3)
+time.sleep(5)
 # Turn backlight off
 lcd.backlight = False
 time.sleep(2)
