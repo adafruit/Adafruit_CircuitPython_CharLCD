@@ -19,6 +19,31 @@ This library is compatible with standard Character LCDs such as:
 * `Adafruit RGB backlight negative LCD 16x2 <https://www.adafruit.com/product/399>`_
 * `Adafruit RGB backlight negative LCD 20x4 <https://www.adafruit.com/product/498>`_
 
+Installing from PyPI
+--------------------
+
+On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
+PyPI <https://pypi.org/project/adafruit-circuitpython-charlcd/>`_. To install for current user:
+
+.. code-block:: shell
+
+    pip3 install adafruit-circuitpython-charlcd
+
+To install system-wide (this may be required in some cases):
+
+.. code-block:: shell
+
+    sudo pip3 install adafruit-circuitpython-charlcd
+
+To install in a virtual environment in your current project:
+
+.. code-block:: shell
+
+    mkdir project-name && cd project-name
+    python3 -m venv .env
+    source .env/bin/activate
+    pip3 install adafruit-circuitpython-charlcd
+
 Dependencies
 =============
 This driver depends on:
