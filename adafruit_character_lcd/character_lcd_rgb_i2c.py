@@ -56,7 +56,7 @@ Implementation Notes
 import digitalio
 from adafruit_character_lcd.character_lcd import Character_LCD_RGB
 
-__version__ = "3.0.3"
+__version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
