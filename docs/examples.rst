@@ -18,3 +18,7 @@ Ensure your device works with this simple test.
 .. literalinclude:: ../examples/charlcd_spi_mono_simpletest.py
     :caption: examples/charlcd_spi_mono_simpletest.py
     :linenos:
+
+.. literalinclude:: ../examples/charlcd_keypad_simpletest.py
+    :caption: examples/charlcd_keypad_simpletest.py
+    :linenos:
