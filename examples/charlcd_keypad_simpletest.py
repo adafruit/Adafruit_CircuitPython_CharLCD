@@ -21,19 +21,19 @@ while True:
         print("Left!")
         lcd.message = "Left!"
 
-    if lcd.up_button:
+    elif lcd.up_button:
         print("Up!")
         lcd.message = "Up!"
 
-    if lcd.down_button:
+    elif lcd.down_button:
         print("Down!")
         lcd.message = "Down!"
 
-    if lcd.right_button:
+    elif lcd.right_button:
         print("Right!")
         lcd.message = "Right!"
 
-    if lcd.select_button:
+    elif lcd.select_button:
         print("Select!")
         lcd.message = "Select!"
 
