@@ -110,8 +110,8 @@ Custom character example with ``create_char()`` is provided within /examples/
 Contributing
 ============
 
-Contributions are welcome! Please read our [Code of Conduct](https://github.com/adafruit/Adafruit_CircuitPython_CircuitPython_CharLCD/blob/master/CODE_OF_CONDUCT.md)
-before contributing to help this project stay welcoming.
+Contributions are welcome! Please read our `Code of Conduct
+<https://github.com/adafruit/Adafruit_CircuitPython_CharLCD/blob/master/CODE_OF_CONDUCT.md>`_ before contributing to help this project stay welcoming.
 
 Installation
 ============
