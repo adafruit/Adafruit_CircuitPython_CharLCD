@@ -48,11 +48,13 @@ Implementation Notes
 import time
 import digitalio
 from micropython import const
+import microcontroller
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
-# pylint: disable-msg=bad-whitespace
+# pylint: disable-msg=bad-whitespace,unexpected-line-ending-format
+
 # Commands
 _LCD_CLEARDISPLAY        = const(0x01)
 _LCD_RETURNHOME          = const(0x02)
@@ -64,18 +66,26 @@ _LCD_SETCGRAMADDR        = const(0x40)
 _LCD_SETDDRAMADDR        = const(0x80)
 
 # Entry flags
+_LCD_ENTRYRIGHT          = const(0x00)
 _LCD_ENTRYLEFT           = const(0x02)
+_LCD_ENTRYSHIFTINCREMENT = const(0x01)
 _LCD_ENTRYSHIFTDECREMENT = const(0x00)
 
 # Control flags
 _LCD_DISPLAYON           = const(0x04)
+_LCD_DISPLAYOFF          = const(0x00)
 _LCD_CURSORON            = const(0x02)
 _LCD_CURSOROFF           = const(0x00)
 _LCD_BLINKON             = const(0x01)
 _LCD_BLINKOFF            = const(0x00)
 
+# Flags for backlight control
+LCD_BACKLIGHT = const(0x08)
+LCD_NOBACKLIGHT = const(0x00)
+
 # Move flags
 _LCD_DISPLAYMOVE         = const(0x08)
+_LCD_CURSORMOVE          = const(0x00)
 _LCD_MOVERIGHT           = const(0x04)
 _LCD_MOVELEFT            = const(0x00)
 
@@ -88,7 +98,14 @@ _LCD_5X8DOTS             = const(0x00)
 # Offset for up to 4 rows.
 _LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
 
-# pylint: enable-msg=bad-whitespace
+# Flags for RS pin modes
+_RS_INSTRUCTION          = const(0x00)
+_RS_DATA                 = const(0x01)
+
+# Pin bitmasks
+PIN_ENABLE               = const(0x4)
+PIN_READ_WRITE           = const(0x2)
+PIN_REGISTER_SELECT      = const(0x1)
 
 
 def _set_bit(byte_value, position, val):
@@ -133,10 +150,11 @@ class Character_LCD:
 
     # pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, d4, d5, d6, d7, columns, lines
-                ):
+                , interface=None):
 
         self.columns = columns
         self.lines = lines
+        
         #  save pin numbers
         self.reset = rs
         self.enable = en
@@ -145,9 +163,12 @@ class Character_LCD:
         self.dl6 = d6
         self.dl7 = d7
 
-        # set all pins as outputs
-        for pin in(rs, en, d4, d5, d6, d7):
-            pin.direction = digitalio.Direction.OUTPUT
+        if interface:
+            self.interface = interface
+        else:
+            # set all pins as outputs
+            for pin in (rs, en, d4, d5, d6, d7):
+                pin.direction = digitalio.Direction.OUTPUT
 
         # Initialise the display
         self._write8(0x33)
@@ -470,21 +491,25 @@ class Character_LCD:
         # data only, True for character bits.
         #  one ms delay to prevent writing too quickly.
         time.sleep(0.001)
-        #  set character/data bit. (charmode = False)
-        self.reset.value = char_mode
-        # WRITE upper 4 bits
-        self.dl4.value = ((value >> 4) & 1) > 0
-        self.dl5.value = ((value >> 5) & 1) > 0
-        self.dl6.value = ((value >> 6) & 1) > 0
-        self.dl7.value = ((value >> 7) & 1) > 0
-        #  send command
-        self._pulse_enable()
-        # WRITE lower 4 bits
-        self.dl4.value = (value & 1) > 0
-        self.dl5.value = ((value >> 1) & 1) > 0
-        self.dl6.value = ((value >> 2) & 1) > 0
-        self.dl7.value = ((value >> 3) & 1) > 0
-        self._pulse_enable()
+        if self.interface:
+            self.interface.send(value, _RS_DATA if char_mode else _RS_INSTRUCTION)
+            microcontroller.delay_us(50)
+        else:
+            #  set character/data bit. (charmode = False)
+            self.reset.value = char_mode
+            # WRITE upper 4 bits
+            self.dl4.value = ((value >> 4) & 1) > 0
+            self.dl5.value = ((value >> 5) & 1) > 0
+            self.dl6.value = ((value >> 6) & 1) > 0
+            self.dl7.value = ((value >> 7) & 1) > 0
+            #  send command
+            self._pulse_enable()
+            # WRITE lower 4 bits
+            self.dl4.value = (value & 1) > 0
+            self.dl5.value = ((value >> 1) & 1) > 0
+            self.dl6.value = ((value >> 2) & 1) > 0
+            self.dl7.value = ((value >> 3) & 1) > 0
+            self._pulse_enable()
 
     def _pulse_enable(self):
         # Pulses (lo->hi->lo) to send commands.
@@ -518,18 +543,20 @@ class Character_LCD_Mono(Character_LCD):
     """
     # pylint: disable-msg=too-many-arguments
     def __init__(self, rs, en, db4, db5, db6, db7, columns, lines,
-                 backlight_pin=None, backlight_inverted=False):
+                 backlight_pin=None, backlight_inverted=False, interface=None):
+        if interface:
+            super().__init__(rs, en, db4, db5, db6, db7, columns, lines, interface)
+        else:
+            # Backlight pin and inversion
+            self.backlight_pin = backlight_pin
+            self.backlight_inverted = backlight_inverted
 
-        # Backlight pin and inversion
-        self.backlight_pin = backlight_pin
-        self.backlight_inverted = backlight_inverted
-
-        #  Setup backlight
-        if backlight_pin is not None:
-            self.backlight_pin.direction = digitalio.Direction.OUTPUT
-            self.backlight = True
-        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
-    # pylint: enable-msg=too-many-arguments
+            #  Setup backlight
+            if backlight_pin is not None:
+                self.backlight_pin.direction = digitalio.Direction.OUTPUT
+                self.backlight = True
+            super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
+        # pylint: enable-msg=too-many-arguments
 
     @property
     def backlight(self):
