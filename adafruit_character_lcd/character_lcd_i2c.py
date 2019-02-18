@@ -44,6 +44,7 @@ Implementation Notes
 """
 
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
+from micropython import const
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
@@ -66,19 +67,35 @@ class Character_LCD_I2C(Character_LCD_Mono):
         i2c = busio.I2C(board.SCL, board.SDA)
         lcd = Character_LCD_I2C(i2c, 16, 2)
     """
-    def __init__(self, i2c, columns, lines, backlight_inverted=False):
+    def __init__(self, i2c, columns, lines, backlight_inverted=False, usingPCF=False, address=None):
         """Initialize character LCD connected to backpack using I2C connection
         on the specified I2C bus with the specified number of columns and
         lines on the display. Optionally specify if backlight is inverted.
         """
-        import adafruit_mcp230xx
-        self._mcp = adafruit_mcp230xx.MCP23008(i2c)
-        reset = self._mcp.get_pin(1)
-        enable = self._mcp.get_pin(2)
-        db4 = self._mcp.get_pin(3)
-        db5 = self._mcp.get_pin(4)
-        db6 = self._mcp.get_pin(5)
-        db7 = self._mcp.get_pin(6)
-        backlight_pin = self._mcp.get_pin(7)
-        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines,
-                         backlight_pin=backlight_pin, backlight_inverted=backlight_inverted)
+        if usingPCF:
+            from pcf8574 import pcf8574
+            if address:
+                self.interface = pcf8574(i2c, const(address))
+            else:
+                raise NameError('No address argument')
+            dummyPinArr = [i for i in range(6)]
+            super().__init__(
+                dummyPinArr[0], 
+                dummyPinArr[1],
+                dummyPinArr[2],
+                dummyPinArr[3],
+                dummyPinArr[4],
+                dummyPinArr[5],
+                columns, lines, interface=self.interface)
+        else:
+            import adafruit_mcp230xx
+            self._mcp = adafruit_mcp230xx.MCP23008(i2c)
+            reset = self._mcp.get_pin(1)
+            enable = self._mcp.get_pin(2)
+            db4 = self._mcp.get_pin(3)
+            db5 = self._mcp.get_pin(4)
+            db6 = self._mcp.get_pin(5)
+            db7 = self._mcp.get_pin(6)
+            backlight_pin = self._mcp.get_pin(7)
+            super().__init__(reset, enable, db4, db5, db6, db7, columns, lines,
+                            backlight_pin=backlight_pin, backlight_inverted=backlight_inverted)
