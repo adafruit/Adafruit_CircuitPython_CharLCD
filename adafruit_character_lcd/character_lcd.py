@@ -589,10 +589,14 @@ class Character_LCD_Mono(Character_LCD):
     @backlight.setter
     def backlight(self, enable):
         self._enable = enable
-        if enable:
-            self.backlight_pin.value = not self.backlight_inverted
+        if self.interface:
+            self.interface.backlight = enable
+            self.interface.send(ord(' '), _RS_DATA)
         else:
-            self.backlight_pin.value = self.backlight_inverted
+            if enable:
+                self.backlight_pin.value = not self.backlight_inverted
+            else:
+                self.backlight_pin.value = self.backlight_inverted
 
 
 class Character_LCD_RGB(Character_LCD):
