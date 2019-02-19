@@ -53,6 +53,7 @@ This driver depends on:
 I2C & SPI displays also depend on:
 
 * `Bus Device <https://github.com/adafruit/Adafruit_CircuitPython_BusDevice>`_
+* `PCF8574 Driver <https://github.com/Tim-Jackins/pcf8574>`_
 
 Please ensure all dependencies are available on the CircuitPython filesystem.
 This is easily achieved by downloading
