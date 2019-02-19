@@ -21,6 +21,9 @@ lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
 lcd.clear()
+# Print two line message right to left
+lcd.text_direction = lcd.RIGHT_TO_LEFT
+lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
 # Display cursor
