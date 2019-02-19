@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2017 Brent Rubell for Adafruit Industries
 # Copyright (c) 2018 Kattni Rembor for Adafruit Industries
+# Copyright (c) 2018 Jack Timmins
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
