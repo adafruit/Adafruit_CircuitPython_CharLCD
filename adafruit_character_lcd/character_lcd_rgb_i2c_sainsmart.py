@@ -5,11 +5,9 @@ class Character_LCD_RGB_I2C_Sainsmart(Character_LCD_RGB):
     def __init__(self, i2c, columns, lines, backlight_on=True):
         import adafruit_mcp230xx
         self._mcp = adafruit_mcp230xx.MCP23017(i2c)
-       
+      
         self._mcp.iodira=0x1F
-        self._mcp.gppua=0x1F
-        self._mcp._write_u16le(adafruit_mcp230xx._MCP23017_IPOLA, 0x1F)
-
+        
         reset = self._mcp.get_pin(15)
         read_write = self._mcp.get_pin(14)
         enable = self._mcp.get_pin(13)
