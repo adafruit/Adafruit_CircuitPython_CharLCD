@@ -12,8 +12,10 @@ Implementation Notes
 <https://www.sainsmart.com/products/16x2-i2c-iic-interface-rgb-led-screen-keypad-for-raspberry-pi>`_"
 
 **Software and Dependencies:**
+
 * Adafruit CircuitPython firmware:
   https://github.com/adafruit/circuitpython/releases
+
 * Adafruit's Bus Device library (when using I2C/SPI):
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
