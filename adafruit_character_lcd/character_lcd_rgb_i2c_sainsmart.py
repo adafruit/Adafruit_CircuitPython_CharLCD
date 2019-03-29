@@ -1,6 +1,28 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2018 Kattni Rembor for Adafruit Industries
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 """
-`adafruit_character_lcd.character_lcd_i2c_sainsmart`
-====================================================
+`adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart`
+========================================================
+
 Module for using I2C with I2C Sainsmart LCD and LED
 
 Implementation Notes
@@ -23,9 +45,16 @@ Implementation Notes
 
 import digitalio
 from adafruit_character_lcd.character_lcd import Character_LCD_RGB
+from adafruit_character_lcd.character_lcd import _set_bit as set_bit
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
+
+def modify_bit(value, position, bit_value):
+    """Modify given integer value at position bit value.
+    """
+    mask = 1 << position
+    return (value & ~mask) | ((bit_value << position) & mask)
 
 class Character_LCD_RGB_I2C_Sainsmart(Character_LCD_RGB):
     """
@@ -44,7 +73,7 @@ class Character_LCD_RGB_I2C_Sainsmart(Character_LCD_RGB):
 
         # The backlight is connected to GPA5, which is the 6th bit of port A.
         # We need to set this to 0. Port start from 0 to 7, so 6th bit is 5
-        self._mcp.iodira = Character_LCD_RGB_I2C_Sainsmart.modify_bit(self._mcp.iodira, 5, 0)
+        self._mcp.iodira = set_bit(self._mcp.iodira, 5, 0)
 
         reset = self._mcp.get_pin(15)
         read_write = self._mcp.get_pin(14)
@@ -74,24 +103,17 @@ class Character_LCD_RGB_I2C_Sainsmart(Character_LCD_RGB):
         if backlight_on:
             self.backlight_on()
 
-    @staticmethod
-    def modify_bit(value, position, bit_value):
-        """Modify given integer value at position bit value.
-        """
-        mask = 1 << position
-        return (value & ~mask) | ((bit_value << position) & mask)
-
     def backlight_on(self, clear_led=True):
         """Turning on backlight. LED will become purple, clear the LED by default.
         """
-        self._mcp.gpioa = Character_LCD_RGB_I2C_Sainsmart.modify_bit(self._mcp.gpioa, 5, 0)
+        self._mcp.gpioa = set_bit(self._mcp.gpioa, 5, 0)
         if clear_led:
             self.color = [0, 0, 0]
 
     def backlight_off(self, clear_led=True):
         """Turning off backlight. LED will also be clear by default.
         """
-        self._mcp.gpioa = Character_LCD_RGB_I2C_Sainsmart.modify_bit(self._mcp.gpioa, 5, 1)
+        self._mcp.gpioa = set_bit(self._mcp.gpioa, 5, 1)
         if clear_led:
             self.color = [0, 0, 0]
 
