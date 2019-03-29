@@ -12,3 +12,6 @@
 
 .. automodule:: adafruit_character_lcd.character_lcd_rgb_i2c
    :members:
+
+.. automodule:: adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart
+   :members:
