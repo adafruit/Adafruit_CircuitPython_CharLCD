@@ -1,13 +1,55 @@
+"""
+`adafruit_character_lcd.character_lcd_i2c_sainsmart`
+====================================================
+Module for using I2C with I2C Sainsmart LCD and LED
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+"* `16x2 I2C IIC Interface RGB LED Screen + Keypad For Raspberry Pi
+<https://www.sainsmart.com/products/16x2-i2c-iic-interface-rgb-led-screen-keypad-for-raspberry-pi>`_"
+
+**Software and Dependencies:**
+* Adafruit CircuitPython firmware:
+  https://github.com/adafruit/circuitpython/releases
+* Adafruit's Bus Device library (when using I2C/SPI):
+  https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+  
+"""
+
 import digitalio
 from adafruit_character_lcd.character_lcd import Character_LCD_RGB
 
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
+
 class Character_LCD_RGB_I2C_Sainsmart(Character_LCD_RGB):
+    """RGB Character with Sainsmart LCD and LED connected to I2C shield or Pi plate using I2C connection.
+    This is a subclass of Character_LCD_RGB and implements all of the same
+    functions and functionality.
+    To use, import and initialise as follows:
+    .. code-block:: python
+        import board
+        import busio
+        from adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart import Character_LCD_RGB_I2C_Sainsmart
+        i2c = busio.I2C(board.SCL, board.SDA)
+        lcd = Character_LCD_RGB_I2C_Sainsmart(i2c, 16, 2)
+    """
     def __init__(self, i2c, columns, lines, backlight_on=True):
+        # pylint: disable=too-many-locals
+        """Initialize RGB character LCD connected to shield using I2C connection
+        on the specified I2C bus with the specified number of columns and lines
+        on the display. Backlight will switch ON by default
+        """
         import adafruit_mcp230xx
         self._mcp = adafruit_mcp230xx.MCP23017(i2c)
+   
+        # The backlight is connected to GPA5, which is the 6th bit of port A. We need to set this to 0
+        # Port start from 0 to 7, so 6th bit is 5
+        self._mcp.iodira = self._modify_bit(self._mcp.iodira, 5, 0)
       
-        self._mcp.iodira=0x1F
-        
         reset = self._mcp.get_pin(15)
         read_write = self._mcp.get_pin(14)
         enable = self._mcp.get_pin(13)
@@ -35,35 +77,103 @@ class Character_LCD_RGB_I2C_Sainsmart(Character_LCD_RGB):
 
         if backlight_on:
             self.backlight_on()
-
+    
+    def _modify_bit(self, n, p, b):
+        """Modify given integer value (n) at p ( bit position ) to b ( bit value )
+        """
+        mask = 1 << p
+        return (n & ~mask) | ((b << p) & mask)
 
     def backlight_on(self, clear_led=True):
-        self._mcp.gpioa = 0x1F
+        """Turning on backlight. During first on, LED will become purple so we clear it by default
+        """
+        self._mcp.gpioa = self._modify_bit(self._mcp.gpioa, 5, 0)
         if clear_led:
-            self.color = [0, 0, 0]
+           self.color = [0, 0, 0]
  
     def backlight_off(self, clear_led=True):
-        self._mcp.gpioa = 0x3F
+        """Turning off backlight. LED will also be clear by default
+        """
+        self._mcp.gpioa = self._modify_bit(self._mcp.gpioa, 5, 1)
         if clear_led:
             self.color = [0, 0, 0]
 
     @property
     def left_button(self):
+        """The left button on the RGB Character LCD I2C Shield or Pi plate.
+        The following example prints "Left!" to the LCD when the left button is pressed:
+        .. code-block:: python
+            import board
+            import busio
+            from adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart import Character_LCD_RGB_I2C_Sainsmart
+            i2c = busio.I2C(board.SCL, board.SDA)
+            lcd = Character_LCD_RGB_I2C_Sainsmart(i2c, 16, 2)
+            while True:
+                if lcd.left_button:
+                    lcd.message = "Left!"
+        """
         return not self._left_button.value
 
     @property
     def up_button(self):
+        """The up button on the RGB Character LCD I2C Shield or Pi plate.
+        The following example prints "Up!" to the LCD when the up button is pressed:
+        .. code-block:: python
+            import board
+            import busio
+            from adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart import Character_LCD_RGB_I2C_Sainsmart
+            i2c = busio.I2C(board.SCL, board.SDA)
+            lcd = Character_LCD_RGB_I2C_Sainsmart(i2c, 16, 2)
+            while True:
+                if lcd.up_button:
+                    lcd.message = "Up!"
+        """
         return not self._up_button.value
 
     @property
     def down_button(self):
+        """The down button on the RGB Character LCD I2C Shield or Pi plate.
+        The following example prints "Down!" to the LCD when the down button is pressed:
+        .. code-block:: python
+            import board
+            import busio
+            from adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart import Character_LCD_RGB_I2C_Sainsmart
+            i2c = busio.I2C(board.SCL, board.SDA)
+            lcd = Character_LCD_RGB_I2C_Sainsmart(i2c, 16, 2)
+            while True:
+                if lcd.down_button:
+                    lcd.message = "Down!"
+        """
         return not self._down_button.value
 
     @property
     def right_button(self):
+        """The down button on the RGB Character LCD I2C Shield or Pi plate.
+        The following example prints "Down!" to the LCD when the down button is pressed:
+        .. code-block:: python
+            import board
+            import busio
+            from adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart import Character_LCD_RGB_I2C_Sainsmart
+            i2c = busio.I2C(board.SCL, board.SDA)
+            lcd = Character_LCD_RGB_I2C_Sainsmart(i2c, 16, 2)
+            while True:
+                if lcd.down_button:
+                    lcd.message = "Right!"
+        """
         return not self._right_button.value
 
     @property
     def select_button(self):
+        """The select button on the RGB Character LCD I2C Shield or Pi plate.
+        The following example prints "Select!" to the LCD when the select button is pressed:
+        .. code-block:: python
+            import board
+            import busio
+            from adafruit_character_lcd.character_lcd_rgb_i2c_sainsmart import Character_LCD_RGB_I2C_Sainsmart
+            i2c = busio.I2C(board.SCL, board.SDA)
+            lcd = Character_LCD_RGB_I2C_Sainsmart(i2c, 16, 2)
+            while True:
+                if lcd.select_button:
+                    lcd.message = "Select!"
+        """
         return not self._select_button.value
-
