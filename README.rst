@@ -116,8 +116,7 @@ Contributions are welcome! Please read our `Code of Conduct
 Installation
 ============
 
-This library is **NOT** built into CircuitPython to make it easy to update. To
-install it either follow the directions below or :ref:`install the library bundle <bundle_installation>`.
+This library is **NOT** built into CircuitPython to make it easy to update.
 
 To install:
 
