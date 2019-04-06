@@ -169,6 +169,10 @@ class Character_LCD:
         self._message = None
         self._enable = None
         self._direction = None
+        # track row and column used in cursor_position
+        # itialize to 0,0
+        self.row = 0
+        self.column = 0
     # pylint: enable-msg=too-many-arguments
 
     def home(self):
@@ -243,6 +247,9 @@ class Character_LCD:
             column = self.columns - 1
         # Set location
         self._write8(_LCD_SETDDRAMADDR | (column + _LCD_ROW_OFFSETS[row]))
+        # Update self.row and self.column to match setter
+        self.row = row
+        self.column = column
 
     @property
     def blink(self):
@@ -331,7 +338,8 @@ class Character_LCD:
     @message.setter
     def message(self, message):
         self._message = message
-        line = 0
+        # Set line to match self.row from cursor_position()
+        line = self.row
         # Track times through iteration, to act on the initial character of the message
         initial_character = 0
         # iterate through each character
@@ -340,7 +348,8 @@ class Character_LCD:
             if initial_character == 0:
                 # Start at (1, 1) unless direction is set right to left, in which case start
                 # on the opposite side of the display.
-                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
+                # start at self.column instead of 0
+                col = self.column if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
                 self.cursor_position(col, line)
                 initial_character += 1
             # If character is \n, go to next line
@@ -348,7 +357,8 @@ class Character_LCD:
                 line += 1
                 # Start the second line at (1, 1) unless direction is set right to left in which
                 # case start on the opposite side of the display.
-                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
+                # start at self.column instead of 0
+                col = self.column if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
                 self.cursor_position(col, line)
             # Write string to display
             else:
