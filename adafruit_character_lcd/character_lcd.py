@@ -356,8 +356,10 @@ class Character_LCD:
                 # If cursor_position is set then starts at the specified location for
                 # LEFT_TO_RIGHT. If RIGHT_TO_LEFT cursor_position is determined from right.
                 # allows for cursor_position to work in RIGHT_TO_LEFT mode
-                col = self.column if self.displaymode & _LCD_ENTRYLEFT > 0
-                      else self.columns - 1 - self.column
+                if self.displaymode & _LCD_ENTRYLEFT > 0:
+                    col = self.column
+                else:
+                    col = self.columns - 1 - self.column
                 self.cursor_position(col, line)
                 initial_character += 1
             # If character is \n, go to next line
