@@ -25,14 +25,41 @@ lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
 lcd.backlight = True
 # Print a two line message
 lcd.message = "Hello\nCircuitPython"
+# Wait 3s
+time.sleep(3)
+# Print two line message with cursor set to column 2
+lcd.clear()
+lcd.cursor_position(2,0)
+lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
+lcd.clear()
+# Stars across the display one a time on second row from L to R
+# using cursor_position
+for i in range(16):
+    lcd.cursor_position(i,1)
+    lcd.message = "*"
+    time.sleep(0.1)
 lcd.clear()
 # Print two line message right to left
 lcd.text_direction = lcd.RIGHT_TO_LEFT
 lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
+# Print two line R to L message with cursor set to column 3
+lcd.clear()
+lcd.text_direction = lcd.RIGHT_TO_LEFT
+lcd.cursor_position(3,0)
+lcd.message = "Hello\nCircuitPython"
+# Wait 3s
+time.sleep(3)
+# Stars across the display one a time on second row from R to L
+lcd.clear()
+for i in range(16):
+    lcd.cursor_position(i,1)
+    lcd.message = "*"
+    time.sleep(0.1)
+lcd.clear()
 # Return text direction to left to right
 lcd.text_direction = lcd.LEFT_TO_RIGHT
 # Display cursor
@@ -50,10 +77,11 @@ time.sleep(5)
 lcd.blink = False
 lcd.clear()
 # Create message to scroll
+lcd.cursor_position(5,0)
 scroll_msg = '<-- Scroll'
 lcd.message = scroll_msg
 # Scroll message to the left
-for i in range(len(scroll_msg)):
+for i in range(len(scroll_msg)+5):
     time.sleep(0.5)
     lcd.move_left()
 lcd.clear()
