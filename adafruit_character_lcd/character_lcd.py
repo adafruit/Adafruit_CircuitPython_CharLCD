@@ -320,7 +320,7 @@ class Character_LCD:
         Start position is (0,0) if cursor_position is not set.
         If cursor_position is set, message starts at the set
         position from the left for left to right text and from
-        the right for right to left text. Resets cursor column 
+        the right for right to left text. Resets cursor column
         and row to (0,0) after displaying the message.
 
         The following example displays, "Hello, world!" on the LCD.
@@ -356,15 +356,17 @@ class Character_LCD:
                 # If cursor_position is set then starts at the specified location for
                 # LEFT_TO_RIGHT. If RIGHT_TO_LEFT cursor_position is determined from right.
                 # allows for cursor_position to work in RIGHT_TO_LEFT mode
-                col = self.column if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1 - self.column
+                col = self.column if self.displaymode & _LCD_ENTRYLEFT > 0
+                      else self.columns - 1 - self.column
                 self.cursor_position(col, line)
                 initial_character += 1
             # If character is \n, go to next line
             if character == '\n':
                 line += 1
-                # Start the second line at (0, 1) unless direction is set right to left in which
-                # case start on the opposite side of the display if cursor_position is (0,0) or not set.
-                # Start second line at same column as first line when cursor_position is set 
+                # Start the second line at (0, 1) unless direction is set right to left in
+                # which case start on the opposite side of the display if cursor_position
+                # is (0,0) or not set. Start second line at same column as first line when
+                # cursor_position is set
                 self.cursor_position(col, line)
             # Write string to display
             else:
@@ -372,7 +374,6 @@ class Character_LCD:
         # reset column and row to (0,0) after message is displayed
         self.column, self.row = 0, 0
         
-
     def move_left(self):
         """Moves displayed text left one column.
 
