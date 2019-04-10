@@ -29,7 +29,7 @@ lcd.message = "Hello\nCircuitPython"
 time.sleep(3)
 # Print two line message with cursor set to column 2
 lcd.clear()
-lcd.cursor_position(2,0)
+lcd.cursor_position(2, 0)
 lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
@@ -37,7 +37,7 @@ lcd.clear()
 # Stars across the display one a time on second row from L to R
 # using cursor_position
 for i in range(16):
-    lcd.cursor_position(i,1)
+    lcd.cursor_position(i, 1)
     lcd.message = "*"
     time.sleep(0.1)
 lcd.clear()
@@ -49,14 +49,14 @@ time.sleep(5)
 # Print two line R to L message with cursor set to column 3
 lcd.clear()
 lcd.text_direction = lcd.RIGHT_TO_LEFT
-lcd.cursor_position(3,0)
+lcd.cursor_position(3, 0)
 lcd.message = "Hello\nCircuitPython"
 # Wait 3s
 time.sleep(3)
 # Stars across the display one a time on second row from R to L
 lcd.clear()
 for i in range(16):
-    lcd.cursor_position(i,1)
+    lcd.cursor_position(i, 1)
     lcd.message = "*"
     time.sleep(0.1)
 lcd.clear()
@@ -77,7 +77,7 @@ time.sleep(5)
 lcd.blink = False
 lcd.clear()
 # Create message to scroll
-lcd.cursor_position(5,0)
+lcd.cursor_position(5, 0)
 scroll_msg = '<-- Scroll'
 lcd.message = scroll_msg
 # Scroll message to the left
