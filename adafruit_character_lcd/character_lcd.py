@@ -169,6 +169,11 @@ class Character_LCD:
         self._message = None
         self._enable = None
         self._direction = None
+        # track row and column used in cursor_position
+        # initialize to 0,0
+        self.row = 0
+        self.column = 0
+        self._column_align = False
     # pylint: enable-msg=too-many-arguments
 
     def home(self):
@@ -197,6 +202,20 @@ class Character_LCD:
         """
         self._write8(_LCD_CLEARDISPLAY)
         time.sleep(0.003)
+
+    @property
+    def column_align(self):
+        """If True, message text after '\\n' starts directly below start of first
+        character in message. If False, text after '\\n' starts at column zero.
+        """
+        return self._column_align
+
+    @column_align.setter
+    def column_align(self, enable):
+        if isinstance(enable, bool):
+            self._column_align = enable
+        else:
+            raise ValueError('The column_align value must be either True or False')
 
     @property
     def cursor(self):
@@ -230,7 +249,8 @@ class Character_LCD:
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def cursor_position(self, column, row):
-        """Move the cursor to position ``column``, ``row``
+        """Move the cursor to position ``column``, ``row`` for the next
+        message only. Displaying a message resets the cursor position to (0, 0).
 
             :param column: column location
             :param row: row location
@@ -243,6 +263,9 @@ class Character_LCD:
             column = self.columns - 1
         # Set location
         self._write8(_LCD_SETDDRAMADDR | (column + _LCD_ROW_OFFSETS[row]))
+        # Update self.row and self.column to match setter
+        self.row = row
+        self.column = column
 
     @property
     def blink(self):
@@ -310,6 +333,11 @@ class Character_LCD:
     @property
     def message(self):
         """Display a string of text on the character LCD.
+        Start position is (0,0) if cursor_position is not set.
+        If cursor_position is set, message starts at the set
+        position from the left for left to right text and from
+        the right for right to left text. Resets cursor column
+        and row to (0,0) after displaying the message.
 
         The following example displays, "Hello, world!" on the LCD.
 
@@ -331,28 +359,45 @@ class Character_LCD:
     @message.setter
     def message(self, message):
         self._message = message
-        line = 0
+        # Set line to match self.row from cursor_position()
+        line = self.row
         # Track times through iteration, to act on the initial character of the message
         initial_character = 0
         # iterate through each character
         for character in message:
             # If this is the first character in the string:
             if initial_character == 0:
-                # Start at (1, 1) unless direction is set right to left, in which case start
-                # on the opposite side of the display.
-                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
+                # Start at (0, 0) unless direction is set right to left, in which case start
+                # on the opposite side of the display if cursor_position not set or (0,0)
+                # If cursor_position is set then starts at the specified location for
+                # LEFT_TO_RIGHT. If RIGHT_TO_LEFT cursor_position is determined from right.
+                # allows for cursor_position to work in RIGHT_TO_LEFT mode
+                if self.displaymode & _LCD_ENTRYLEFT > 0:
+                    col = self.column
+                else:
+                    col = self.columns - 1 - self.column
                 self.cursor_position(col, line)
                 initial_character += 1
             # If character is \n, go to next line
             if character == '\n':
                 line += 1
-                # Start the second line at (1, 1) unless direction is set right to left in which
-                # case start on the opposite side of the display.
-                col = 0 if self.displaymode & _LCD_ENTRYLEFT > 0 else self.columns - 1
+                # Start the second line at (0, 1) unless direction is set right to left in
+                # which case start on the opposite side of the display if cursor_position
+                # is (0,0) or not set. Start second line at same column as first line when
+                # cursor_position is set
+                if self.displaymode & _LCD_ENTRYLEFT > 0:
+                    col = self.column * self._column_align
+                else:
+                    if self._column_align:
+                        col = self.column
+                    else:
+                        col = self.columns - 1
                 self.cursor_position(col, line)
             # Write string to display
             else:
                 self._write8(ord(character), True)
+        # reset column and row to (0,0) after message is displayed
+        self.column, self.row = 0, 0
 
     def move_left(self):
         """Moves displayed text left one column.

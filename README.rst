@@ -113,16 +113,6 @@ Contributing
 Contributions are welcome! Please read our `Code of Conduct
 <https://github.com/adafruit/Adafruit_CircuitPython_CharLCD/blob/master/CODE_OF_CONDUCT.md>`_ before contributing to help this project stay welcoming.
 
-Installation
-============
-
-This library is **NOT** built into CircuitPython to make it easy to update. To
-install it either follow the directions below or :ref:`install the library bundle <bundle_installation>`.
-
-To install:
-
-#. Download and unzip the `latest release zip <https://github.com/adafruit/Adafruit_CircuitPython_CharLCD/releases>`_.
-#. Copy the unzipped ``adafruit_character_lcd`` to the ``lib`` directory on the ``CIRCUITPY`` or ``MICROPYTHON`` drive.
 
 Building locally
 ================
