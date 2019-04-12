@@ -202,7 +202,7 @@ class Character_LCD:
         """
         self._write8(_LCD_CLEARDISPLAY)
         time.sleep(0.003)
-    
+
     @property
     def column_align(self):
         """If True, message text after '\n' starts directly below start of first
@@ -212,7 +212,10 @@ class Character_LCD:
 
     @column_align.setter
     def column_align(self, enable):
-        self._column_align = enable
+        if isinstance(enable, bool):
+            self._column_align = enable
+        else:
+            raise ValueError('The column_align value must be either True or False')
 
     @property
     def cursor(self):
@@ -248,7 +251,7 @@ class Character_LCD:
     def cursor_position(self, column, row):
         """Move the cursor to position ``column``, ``row`` for the next
         message only. Displaying a message resets the cursor position to (0, 0).
-        
+
             :param column: column location
             :param row: row location
         """
@@ -395,7 +398,7 @@ class Character_LCD:
                 self._write8(ord(character), True)
         # reset column and row to (0,0) after message is displayed
         self.column, self.row = 0, 0
-        
+
     def move_left(self):
         """Moves displayed text left one column.
 
