@@ -170,7 +170,7 @@ class Character_LCD:
         self._enable = None
         self._direction = None
         # track row and column used in cursor_position
-        # itialize to 0,0
+        # initialize to 0,0
         self.row = 0
         self.column = 0
         self._column_align = False
@@ -205,8 +205,8 @@ class Character_LCD:
 
     @property
     def column_align(self):
-        """If True, message text after '\n' starts directly below start of first
-        character in message. If False, text after '\n' starts at column zero.
+        """If True, message text after '\\n' starts directly below start of first
+        character in message. If False, text after '\\n' starts at column zero.
         """
         return self._column_align
 
