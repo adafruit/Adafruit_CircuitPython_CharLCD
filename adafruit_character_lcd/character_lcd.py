@@ -173,6 +173,7 @@ class Character_LCD:
         # itialize to 0,0
         self.row = 0
         self.column = 0
+        self._column_align = False
     # pylint: enable-msg=too-many-arguments
 
     def home(self):
@@ -201,6 +202,17 @@ class Character_LCD:
         """
         self._write8(_LCD_CLEARDISPLAY)
         time.sleep(0.003)
+    
+    @property
+    def column_align(self):
+        """If True, message text after '\n' starts directly below start of first
+        character in message. If False, text after '\n' starts at column zero.
+        """
+        return self._column_align
+
+    @column_align.setter
+    def column_align(self, enable):
+        self._column_align = enable
 
     @property
     def cursor(self):
@@ -234,8 +246,9 @@ class Character_LCD:
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     def cursor_position(self, column, row):
-        """Move the cursor to position ``column``, ``row``
-
+        """Move the cursor to position ``column``, ``row`` for the next
+        message only. Displaying a message resets the cursor position to (0, 0).
+        
             :param column: column location
             :param row: row location
         """
@@ -369,6 +382,13 @@ class Character_LCD:
                 # which case start on the opposite side of the display if cursor_position
                 # is (0,0) or not set. Start second line at same column as first line when
                 # cursor_position is set
+                if self.displaymode & _LCD_ENTRYLEFT > 0:
+                    col = self.column * self._column_align
+                else:
+                    if self._column_align:
+                        col = self.column
+                    else:
+                        col = self.columns - 1
                 self.cursor_position(col, line)
             # Write string to display
             else:
