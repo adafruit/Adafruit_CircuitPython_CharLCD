@@ -33,7 +33,6 @@ lcd.text_direction = lcd.RIGHT_TO_LEFT
 lcd.message = "Hello\nCircuitPython"
 # Wait 5s
 time.sleep(5)
-lcd.clear()
 # Return text direction to left to right
 lcd.text_direction = lcd.LEFT_TO_RIGHT
 # Display cursor
@@ -54,7 +53,7 @@ lcd.clear()
 scroll_msg = '<-- Scroll'
 lcd.message = scroll_msg
 # Scroll message to the left
-for i in range(len(scroll_msg)+5):
+for i in range(len(scroll_msg)):
     time.sleep(0.5)
     lcd.move_left()
 lcd.clear()
