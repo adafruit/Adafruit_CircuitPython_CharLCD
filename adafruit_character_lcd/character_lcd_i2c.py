@@ -71,14 +71,14 @@ class Character_LCD_I2C(Character_LCD_Mono):
         on the specified I2C bus with the specified number of columns and
         lines on the display. Optionally specify if backlight is inverted.
         """
-        import adafruit_mcp230xx
-        self._mcp = adafruit_mcp230xx.MCP23008(i2c)
-        reset = self._mcp.get_pin(1)
-        enable = self._mcp.get_pin(2)
-        db4 = self._mcp.get_pin(3)
-        db5 = self._mcp.get_pin(4)
-        db6 = self._mcp.get_pin(5)
-        db7 = self._mcp.get_pin(6)
-        backlight_pin = self._mcp.get_pin(7)
-        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines,
-                         backlight_pin=backlight_pin, backlight_inverted=backlight_inverted)
+        from adafruit_mcp230xx.mcp23008 import MCP23008
+        mcp = MCP23008(i2c)
+        super().__init__(mcp.get_pin(1),
+                         mcp.get_pin(2),
+                         mcp.get_pin(3),
+                         mcp.get_pin(4),
+                         mcp.get_pin(5),
+                         mcp.get_pin(6),
+                         columns, lines,
+                         backlight_pin=mcp.get_pin(7),
+                         backlight_inverted=backlight_inverted)
