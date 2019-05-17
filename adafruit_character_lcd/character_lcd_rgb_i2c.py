@@ -84,7 +84,7 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         on the display.
         """
         from adafruit_mcp230xx.mcp23017 import MCP23017
-        mcp = MCP2317(i2c)
+        mcp = MCP23017(i2c)
 
         self._left_button = mcp.get_pin(4)
         self._up_button = mcp.get_pin(3)
@@ -94,6 +94,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
 
         self._buttons = [self._left_button, self._up_button, self._down_button, self._right_button,
                          self._select_button]
+
+        for pin in self._buttons:
+            pin.switch_to_input(pull=digitalio.Pull.UP)
 
         super().__init__(mcp.get_pin(15),
                          mcp.get_pin(13),
