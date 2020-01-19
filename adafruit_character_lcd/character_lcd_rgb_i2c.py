@@ -77,14 +77,17 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
     """
-    def __init__(self, i2c, columns, lines):
+    def __init__(self, i2c, columns, lines, address=None):
         # pylint: disable=too-many-locals
         """Initialize RGB character LCD connected to shield using I2C connection
         on the specified I2C bus with the specified number of columns and lines
         on the display.
         """
         from adafruit_mcp230xx.mcp23017 import MCP23017
-        mcp = MCP23017(i2c)
+        if address:
+            mcp = MCP23017(i2c, address=address)
+        else:
+            mcp = MCP23017(i2c)
 
         self._left_button = mcp.get_pin(4)
         self._up_button = mcp.get_pin(3)
