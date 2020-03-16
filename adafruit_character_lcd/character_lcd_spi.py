@@ -43,6 +43,7 @@ Implementation Notes
 
 """
 
+import adafruit_74hc595
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
 __version__ = "0.0.0-auto.0"
@@ -76,7 +77,7 @@ class Character_LCD_SPI(Character_LCD_Mono):
         inverted.
         """
         # pylint: enable=too-many-arguments
-        import adafruit_74hc595
+
         self._shift_register = adafruit_74hc595.ShiftRegister74HC595(spi, latch)
         reset = self._shift_register.get_pin(1)
         enable = self._shift_register.get_pin(2)
@@ -85,5 +86,15 @@ class Character_LCD_SPI(Character_LCD_Mono):
         db6 = self._shift_register.get_pin(4)
         db7 = self._shift_register.get_pin(3)
         backlight_pin = self._shift_register.get_pin(7)
-        super().__init__(reset, enable, db4, db5, db6, db7, columns, lines,
-                         backlight_pin=backlight_pin, backlight_inverted=backlight_inverted)
+        super().__init__(
+            reset,
+            enable,
+            db4,
+            db5,
+            db6,
+            db7,
+            columns,
+            lines,
+            backlight_pin=backlight_pin,
+            backlight_inverted=backlight_inverted,
+        )

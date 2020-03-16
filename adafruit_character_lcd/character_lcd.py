@@ -54,39 +54,39 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 # pylint: disable-msg=bad-whitespace
 # Commands
-_LCD_CLEARDISPLAY        = const(0x01)
-_LCD_RETURNHOME          = const(0x02)
-_LCD_ENTRYMODESET        = const(0x04)
-_LCD_DISPLAYCONTROL      = const(0x08)
-_LCD_CURSORSHIFT         = const(0x10)
-_LCD_FUNCTIONSET         = const(0x20)
-_LCD_SETCGRAMADDR        = const(0x40)
-_LCD_SETDDRAMADDR        = const(0x80)
+_LCD_CLEARDISPLAY = const(0x01)
+_LCD_RETURNHOME = const(0x02)
+_LCD_ENTRYMODESET = const(0x04)
+_LCD_DISPLAYCONTROL = const(0x08)
+_LCD_CURSORSHIFT = const(0x10)
+_LCD_FUNCTIONSET = const(0x20)
+_LCD_SETCGRAMADDR = const(0x40)
+_LCD_SETDDRAMADDR = const(0x80)
 
 # Entry flags
-_LCD_ENTRYLEFT           = const(0x02)
+_LCD_ENTRYLEFT = const(0x02)
 _LCD_ENTRYSHIFTDECREMENT = const(0x00)
 
 # Control flags
-_LCD_DISPLAYON           = const(0x04)
-_LCD_CURSORON            = const(0x02)
-_LCD_CURSOROFF           = const(0x00)
-_LCD_BLINKON             = const(0x01)
-_LCD_BLINKOFF            = const(0x00)
+_LCD_DISPLAYON = const(0x04)
+_LCD_CURSORON = const(0x02)
+_LCD_CURSOROFF = const(0x00)
+_LCD_BLINKON = const(0x01)
+_LCD_BLINKOFF = const(0x00)
 
 # Move flags
-_LCD_DISPLAYMOVE         = const(0x08)
-_LCD_MOVERIGHT           = const(0x04)
-_LCD_MOVELEFT            = const(0x00)
+_LCD_DISPLAYMOVE = const(0x08)
+_LCD_MOVERIGHT = const(0x04)
+_LCD_MOVELEFT = const(0x00)
 
 # Function set flags
-_LCD_4BITMODE            = const(0x00)
-_LCD_2LINE               = const(0x08)
-_LCD_1LINE               = const(0x00)
-_LCD_5X8DOTS             = const(0x00)
+_LCD_4BITMODE = const(0x00)
+_LCD_2LINE = const(0x08)
+_LCD_1LINE = const(0x00)
+_LCD_5X8DOTS = const(0x00)
 
 # Offset for up to 4 rows.
-_LCD_ROW_OFFSETS         = (0x00, 0x40, 0x14, 0x54)
+_LCD_ROW_OFFSETS = (0x00, 0x40, 0x14, 0x54)
 
 # pylint: enable-msg=bad-whitespace
 
@@ -128,12 +128,12 @@ class Character_LCD:
     :param lines: The lines on the charLCD
 
     """
+
     LEFT_TO_RIGHT = const(0)
     RIGHT_TO_LEFT = const(1)
 
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines
-                ):
+    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines):
 
         self.columns = columns
         self.lines = lines
@@ -146,7 +146,7 @@ class Character_LCD:
         self.dl7 = d7
 
         # set all pins as outputs
-        for pin in(rs, en, d4, d5, d6, d7):
+        for pin in (rs, en, d4, d5, d6, d7):
             pin.direction = digitalio.Direction.OUTPUT
 
         # Initialise the display
@@ -174,6 +174,7 @@ class Character_LCD:
         self.row = 0
         self.column = 0
         self._column_align = False
+
     # pylint: enable-msg=too-many-arguments
 
     def home(self):
@@ -215,7 +216,7 @@ class Character_LCD:
         if isinstance(enable, bool):
             self._column_align = enable
         else:
-            raise ValueError('The column_align value must be either True or False')
+            raise ValueError("The column_align value must be either True or False")
 
     @property
     def cursor(self):
@@ -379,7 +380,7 @@ class Character_LCD:
                 self.cursor_position(col, line)
                 initial_character += 1
             # If character is \n, go to next line
-            if character == '\n':
+            if character == "\n":
                 line += 1
                 # Start the second line at (0, 1) unless direction is set right to left in
                 # which case start on the opposite side of the display if cursor_position
@@ -540,6 +541,8 @@ class Character_LCD:
         time.sleep(0.0000001)
         self.enable.value = False
         time.sleep(0.0000001)
+
+
 # pylint: enable-msg=too-many-instance-attributes
 
 
@@ -561,9 +564,21 @@ class Character_LCD_Mono(Character_LCD):
             to common cathode.
 
     """
+
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, db4, db5, db6, db7, columns, lines,
-                 backlight_pin=None, backlight_inverted=False):
+    def __init__(
+        self,
+        rs,
+        en,
+        db4,
+        db5,
+        db6,
+        db7,
+        columns,
+        lines,
+        backlight_pin=None,
+        backlight_inverted=False,
+    ):
 
         # Backlight pin and inversion
         self.backlight_pin = backlight_pin
@@ -574,6 +589,7 @@ class Character_LCD_Mono(Character_LCD):
             self.backlight_pin.direction = digitalio.Direction.OUTPUT
             self.backlight = True
         super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
+
     # pylint: enable-msg=too-many-arguments
 
     @property
@@ -631,9 +647,23 @@ class Character_LCD_RGB(Character_LCD):
             write from the display. Not necessary if only writing to the display. Used on shield.
 
     """
+
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, rs, en, db4, db5, db6, db7, columns, lines,
-                 red, green, blue, read_write=None):
+    def __init__(
+        self,
+        rs,
+        en,
+        db4,
+        db5,
+        db6,
+        db7,
+        columns,
+        lines,
+        red,
+        green,
+        blue,
+        read_write=None,
+    ):
 
         # Define read_write (rw) pin
         self.read_write = read_write
@@ -646,13 +676,13 @@ class Character_LCD_RGB(Character_LCD):
         self.rgb_led = [red, green, blue]
 
         for pin in self.rgb_led:
-            if hasattr(pin, 'direction'):
+            if hasattr(pin, "direction"):
                 # Assume a digitalio.DigitalInOut or compatible interface:
                 pin.direction = digitalio.Direction.OUTPUT
-            elif not hasattr(pin, 'duty_cycle'):
+            elif not hasattr(pin, "duty_cycle"):
                 raise TypeError(
-                    'RGB LED objects must be instances of digitalio.DigitalInOut'
-                    ' or pulseio.PWMOut, or provide a compatible interface.'
+                    "RGB LED objects must be instances of digitalio.DigitalInOut"
+                    " or pulseio.PWMOut, or provide a compatible interface."
                 )
 
         self._color = [0, 0, 0]
@@ -691,10 +721,10 @@ class Character_LCD_RGB(Character_LCD):
     def color(self, color):
         self._color = color
         for number, pin in enumerate(self.rgb_led):
-            if hasattr(pin, 'duty_cycle'):
+            if hasattr(pin, "duty_cycle"):
                 # Assume a pulseio.PWMOut or compatible interface and set duty cycle:
                 pin.duty_cycle = int(_map(color[number], 0, 100, 65535, 0))
-            elif hasattr(pin, 'value'):
+            elif hasattr(pin, "value"):
                 # If we don't have a PWM interface, all we can do is turn each color
                 # on / off.  Assume a DigitalInOut (or compatible interface) and write
                 # 0 (on) to pin for any value greater than 0, or 1 (off) for 0:

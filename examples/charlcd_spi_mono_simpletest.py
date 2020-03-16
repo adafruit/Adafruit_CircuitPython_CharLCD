@@ -50,7 +50,7 @@ time.sleep(5)
 lcd.blink = False
 lcd.clear()
 # Create message to scroll
-scroll_msg = '<-- Scroll'
+scroll_msg = "<-- Scroll"
 lcd.message = scroll_msg
 # Scroll message to the left
 for i in range(len(scroll_msg)):
