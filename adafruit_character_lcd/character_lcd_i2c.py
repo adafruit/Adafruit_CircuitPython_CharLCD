@@ -43,8 +43,8 @@ Implementation Notes
 
 """
 
-from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 from adafruit_mcp230xx.mcp23008 import MCP23008
+from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
