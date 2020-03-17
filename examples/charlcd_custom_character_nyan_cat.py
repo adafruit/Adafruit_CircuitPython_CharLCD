@@ -18,8 +18,9 @@ lcd_d4 = digitalio.DigitalInOut(board.D9)
 lcd_backlight = digitalio.DigitalInOut(board.D13)
 
 # Initialise the LCD class
-lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
-                                      lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+lcd = characterlcd.Character_LCD_Mono(
+    lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight
+)
 
 head = [31, 17, 27, 17, 17, 21, 17, 31]
 
@@ -72,7 +73,9 @@ lcd.create_char(7, tail_neutral)
 lcd.clear()
 
 lcd.move_right()
-lcd.message = "\x02\x02\x02\x02\x01\x00\x00\x00\x06\n\x02\x02\x02\x07\x03\x04\x04\x04\x05"
+lcd.message = (
+    "\x02\x02\x02\x02\x01\x00\x00\x00\x06\n\x02\x02\x02\x07\x03\x04\x04\x04\x05"
+)
 
 lcd.backlight = True
 
@@ -81,9 +84,9 @@ while True:
     lcd.create_char(7, tail_up)
     lcd.create_char(2, rainbow2)
     lcd.move_right()
-    time.sleep(.4)
+    time.sleep(0.4)
     lcd.create_char(4, bot_body)
     lcd.create_char(7, tail_neutral)
     lcd.create_char(2, rainbow)
     lcd.move_left()
-    time.sleep(.4)
+    time.sleep(0.4)

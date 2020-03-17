@@ -21,8 +21,19 @@ green = pulseio.PWMOut(board.D5)
 blue = pulseio.PWMOut(board.D6)
 
 # Initialise the LCD class
-lcd = characterlcd.Character_LCD_RGB(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns,
-                                     lcd_rows, red, green, blue)
+lcd = characterlcd.Character_LCD_RGB(
+    lcd_rs,
+    lcd_en,
+    lcd_d4,
+    lcd_d5,
+    lcd_d6,
+    lcd_d7,
+    lcd_columns,
+    lcd_rows,
+    red,
+    green,
+    blue,
+)
 
 lcd.clear()
 # Set LCD color to red
@@ -64,7 +75,7 @@ time.sleep(5)
 lcd.blink = False
 lcd.clear()
 # Create message to scroll
-scroll_msg = '<-- Scroll'
+scroll_msg = "<-- Scroll"
 lcd.message = scroll_msg
 # Scroll to the left
 for i in range(len(scroll_msg)):

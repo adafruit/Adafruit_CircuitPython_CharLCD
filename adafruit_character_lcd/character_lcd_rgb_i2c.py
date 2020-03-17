@@ -54,6 +54,7 @@ Implementation Notes
 """
 
 import digitalio
+from adafruit_mcp230xx.mcp23017 import MCP23017
 from adafruit_character_lcd.character_lcd import Character_LCD_RGB
 
 __version__ = "0.0.0-auto.0"
@@ -77,13 +78,14 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
     """
+
     def __init__(self, i2c, columns, lines, address=None):
         # pylint: disable=too-many-locals
         """Initialize RGB character LCD connected to shield using I2C connection
         on the specified I2C bus with the specified number of columns and lines
         on the display.
         """
-        from adafruit_mcp230xx.mcp23017 import MCP23017
+
         if address:
             mcp = MCP23017(i2c, address=address)
         else:
@@ -95,25 +97,31 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         self._right_button = mcp.get_pin(1)
         self._select_button = mcp.get_pin(0)
 
-        self._buttons = [self._left_button, self._up_button, self._down_button, self._right_button,
-                         self._select_button]
+        self._buttons = [
+            self._left_button,
+            self._up_button,
+            self._down_button,
+            self._right_button,
+            self._select_button,
+        ]
 
         for pin in self._buttons:
             pin.switch_to_input(pull=digitalio.Pull.UP)
 
-        super().__init__(mcp.get_pin(15),
-                         mcp.get_pin(13),
-                         mcp.get_pin(12),
-                         mcp.get_pin(11),
-                         mcp.get_pin(10),
-                         mcp.get_pin(9),
-                         columns,
-                         lines,
-                         mcp.get_pin(6),
-                         mcp.get_pin(7),
-                         mcp.get_pin(8),
-                         mcp.get_pin(14))
-
+        super().__init__(
+            mcp.get_pin(15),
+            mcp.get_pin(13),
+            mcp.get_pin(12),
+            mcp.get_pin(11),
+            mcp.get_pin(10),
+            mcp.get_pin(9),
+            columns,
+            lines,
+            mcp.get_pin(6),
+            mcp.get_pin(7),
+            mcp.get_pin(8),
+            mcp.get_pin(14),
+        )
 
     @property
     def left_button(self):
