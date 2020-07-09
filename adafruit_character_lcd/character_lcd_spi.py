@@ -50,7 +50,7 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
-class Character_LCD_SPI(Character_LCD_Mono):
+class Character_LCD_SPI(Character_LCD_Mono): # pylint: disable=too-few-public-methods
     """Character LCD connected to I2C/SPI backpack using its SPI connection.
     This is a subclass of Character_LCD and implements all of the same
     functions and functionality.
