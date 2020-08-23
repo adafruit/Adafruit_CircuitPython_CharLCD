@@ -52,7 +52,6 @@ from micropython import const
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
-# pylint: disable-msg=bad-whitespace
 # Commands
 _LCD_CLEARDISPLAY = const(0x01)
 _LCD_RETURNHOME = const(0x02)
@@ -88,7 +87,6 @@ _LCD_5X8DOTS = const(0x00)
 # Offset for up to 4 rows.
 _LCD_ROW_OFFSETS = (0x00, 0x40, 0x14, 0x54)
 
-# pylint: enable-msg=bad-whitespace
 
 
 def _set_bit(byte_value, position, val):
