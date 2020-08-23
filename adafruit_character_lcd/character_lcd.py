@@ -88,7 +88,6 @@ _LCD_5X8DOTS = const(0x00)
 _LCD_ROW_OFFSETS = (0x00, 0x40, 0x14, 0x54)
 
 
-
 def _set_bit(byte_value, position, val):
     # Given the specified byte_value set the bit at position to the provided
     # boolean value val and return the modified byte.
