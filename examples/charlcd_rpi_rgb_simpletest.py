@@ -15,7 +15,6 @@ lcd_d7 = digitalio.DigitalInOut(board.D27)  # pin 14
 lcd_d6 = digitalio.DigitalInOut(board.D22)  # pin 13
 lcd_d5 = digitalio.DigitalInOut(board.D24)  # pin 12
 lcd_d4 = digitalio.DigitalInOut(board.D25)  # pin 11
-lcd_backlight = digitalio.DigitalInOut(board.D4)
 
 red = digitalio.DigitalInOut(board.D21)
 green = digitalio.DigitalInOut(board.D12)
@@ -34,7 +33,6 @@ lcd = characterlcd.Character_LCD_RGB(
     red,
     green,
     blue,
-    lcd_backlight,
 )
 
 RED = [1, 0, 0]
