@@ -18,14 +18,16 @@ lcd_d5 = digitalio.DigitalInOut(board.D24)  # LCD pin 12
 lcd_d4 = digitalio.DigitalInOut(board.D25)  # LCD pin 11
 lcd_rw = digitalio.DigitalInOut(
     board.D4
-)  # LCD pin 5.  Determines whether to read to or write from the display. Not necessary if only writing to the display. Used on shield.
+)  # LCD pin 5.  Determines whether to read to or write from the display.
+# Not necessary if only writing to the display. Used on shield.
 
 red = pulseio.PWMOut(board.D21)
 green = pulseio.PWMOut(board.D12)
 blue = pulseio.PWMOut(board.D18)
 
 # Initialize the LCD class
-# The lcd_rw parameter is optional.  You can omit the line below if you're only writing to the display.
+# The lcd_rw parameter is optional.  You can omit the line below if you're only
+# writing to the display.
 lcd = characterlcd.Character_LCD_RGB(
     lcd_rs,
     lcd_en,
