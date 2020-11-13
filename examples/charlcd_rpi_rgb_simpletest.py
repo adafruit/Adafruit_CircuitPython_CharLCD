@@ -16,7 +16,9 @@ lcd_d7 = digitalio.DigitalInOut(board.D27)  # LCD pin 14
 lcd_d6 = digitalio.DigitalInOut(board.D22)  # LCD pin 13
 lcd_d5 = digitalio.DigitalInOut(board.D24)  # LCD pin 12
 lcd_d4 = digitalio.DigitalInOut(board.D25)  # LCD pin 11
-lcd_rw = digitalio.DigitalInOut(board.D4)   # LCD pin 5.  Determines whether to read to or write from the display. Not necessary if only writing to the display. Used on shield.
+lcd_rw = digitalio.DigitalInOut(
+    board.D4
+)  # LCD pin 5.  Determines whether to read to or write from the display. Not necessary if only writing to the display. Used on shield.
 
 red = pulseio.PWMOut(board.D21)
 green = pulseio.PWMOut(board.D12)
