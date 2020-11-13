@@ -547,18 +547,18 @@ class Character_LCD:
 class Character_LCD_Mono(Character_LCD):
     """Interfaces with monochromatic character LCDs.
 
-        :param ~digitalio.DigitalInOut rs: The reset data line
-        :param ~digitalio.DigitalInOut en: The enable data line
-        :param ~digitalio.DigitalInOut d4: The data line 4
-        :param ~digitalio.DigitalInOut d5: The data line 5
-        :param ~digitalio.DigitalInOut d6: The data line 6
-        :param ~digitalio.DigitalInOut d7: The data line 7
-        :param columns: The columns on the charLCD
-        :param lines: The lines on the charLCD
-        :param ~digitalio.DigitalInOut backlight_pin: The backlight pin
-        :param bool backlight_inverted: ``False`` if LCD is not inverted, i.e. backlight pin is
-            connected to common anode. ``True`` if LCD is inverted i.e. backlight pin is connected
-            to common cathode.
+    :param ~digitalio.DigitalInOut rs: The reset data line
+    :param ~digitalio.DigitalInOut en: The enable data line
+    :param ~digitalio.DigitalInOut d4: The data line 4
+    :param ~digitalio.DigitalInOut d5: The data line 5
+    :param ~digitalio.DigitalInOut d6: The data line 6
+    :param ~digitalio.DigitalInOut d7: The data line 7
+    :param columns: The columns on the charLCD
+    :param lines: The lines on the charLCD
+    :param ~digitalio.DigitalInOut backlight_pin: The backlight pin
+    :param bool backlight_inverted: ``False`` if LCD is not inverted, i.e. backlight pin is
+        connected to common anode. ``True`` if LCD is inverted i.e. backlight pin is connected
+        to common cathode.
 
     """
 
@@ -629,19 +629,19 @@ class Character_LCD_Mono(Character_LCD):
 class Character_LCD_RGB(Character_LCD):
     """Interfaces with RGB character LCDs.
 
-        :param ~digitalio.DigitalInOut rs: The reset data line
-        :param ~digitalio.DigitalInOut en: The enable data line
-        :param ~digitalio.DigitalInOut db4: The data line 4
-        :param ~digitalio.DigitalInOut db5: The data line 5
-        :param ~digitalio.DigitalInOut db6: The data line 6
-        :param ~digitalio.DigitalInOut db7: The data line 7
-        :param columns: The columns on the charLCD
-        :param lines: The lines on the charLCD
-        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
-        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
-        :param ~pulseio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
-        :param ~digitalio.DigitalInOut read_write: The rw pin. Determines whether to read to or
-            write from the display. Not necessary if only writing to the display. Used on shield.
+    :param ~digitalio.DigitalInOut rs: The reset data line
+    :param ~digitalio.DigitalInOut en: The enable data line
+    :param ~digitalio.DigitalInOut db4: The data line 4
+    :param ~digitalio.DigitalInOut db5: The data line 5
+    :param ~digitalio.DigitalInOut db6: The data line 6
+    :param ~digitalio.DigitalInOut db7: The data line 7
+    :param columns: The columns on the charLCD
+    :param lines: The lines on the charLCD
+    :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
+    :param ~pulseio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
+    :param ~pulseio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
+    :param ~digitalio.DigitalInOut read_write: The rw pin. Determines whether to read to or
+        write from the display. Not necessary if only writing to the display. Used on shield.
 
     """
 
