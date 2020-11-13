@@ -40,57 +40,64 @@ RED = [100, 0, 0]
 GREEN = [0, 100, 0]
 BLUE = [0, 0, 100]
 
-lcd.clear()
-# Set LCD color to red
-lcd.color = [100, 0, 0]
-time.sleep(1)
-# Print two line message
-lcd.message = "Hello\nCircuitPython"
-# Wait 5s
-time.sleep(5)
-# Set LCD color to blue
-lcd.color = [0, 100, 0]
-time.sleep(1)
-# Set LCD color to green
-lcd.color = [0, 0, 100]
-time.sleep(1)
-# Set LCD color to purple
-lcd.color = [50, 0, 50]
-time.sleep(1)
-lcd.clear()
-# Print two line message right to left
-lcd.text_direction = lcd.RIGHT_TO_LEFT
-lcd.message = "Hello\nCircuitPython"
-# Wait 5s
-time.sleep(5)
-# Return text direction to left to right
-lcd.text_direction = lcd.LEFT_TO_RIGHT
-# Display cursor
-lcd.clear()
-lcd.cursor = True
-lcd.message = "Cursor! "
-# Wait 5s
-time.sleep(5)
-# Display blinking cursor
-lcd.clear()
-lcd.blink = True
-lcd.message = "Blinky Cursor!"
-# Wait 5s
-time.sleep(5)
-lcd.blink = False
-lcd.clear()
-# Create message to scroll
-scroll_msg = "<-- Scroll"
-lcd.message = scroll_msg
-# Scroll to the left
-for i in range(len(scroll_msg)):
-    time.sleep(0.5)
-    lcd.move_left()
-lcd.clear()
-time.sleep(1)
-lcd.message = "Going to sleep\nCya later!"
-time.sleep(5)
-# Turn off LCD backlights and clear text
-lcd.color = [0, 0, 0]
-lcd.clear()
+while True:
+    lcd.clear()
+    # Set LCD color to red
+    lcd.color = [100, 0, 0]
+    time.sleep(1)
 
+    # Print two line message
+    lcd.message = "Hello\nCircuitPython"
+
+    # Wait 5s
+    time.sleep(5)
+
+    # Set LCD color to blue
+    lcd.color = [0, 100, 0]
+    time.sleep(1)
+    # Set LCD color to green
+    lcd.color = [0, 0, 100]
+    time.sleep(1)
+    # Set LCD color to purple
+    lcd.color = [50, 0, 50]
+    time.sleep(1)
+    lcd.clear()
+
+    # Print two line message right to left
+    lcd.text_direction = lcd.RIGHT_TO_LEFT
+    lcd.message = "Hello\nCircuitPython"
+    # Wait 5s
+    time.sleep(5)
+
+    # Return text direction to left to right
+    lcd.text_direction = lcd.LEFT_TO_RIGHT
+
+    # Display cursor
+    lcd.clear()
+    lcd.cursor = True
+    lcd.message = "Cursor! "
+    # Wait 5s
+    time.sleep(5)
+
+    # Display blinking cursor
+    lcd.clear()
+    lcd.blink = True
+    lcd.message = "Blinky Cursor!"
+    # Wait 5s
+    time.sleep(5)
+    lcd.blink = False
+    lcd.clear()
+
+    # Create message to scroll
+    scroll_msg = "<-- Scroll"
+    lcd.message = scroll_msg
+    # Scroll to the left
+    for i in range(len(scroll_msg)):
+        time.sleep(0.5)
+        lcd.move_left()
+    lcd.clear()
+
+    # Turn off LCD backlights and clear text
+    lcd.color = [0, 0, 0]
+    lcd.clear()
+    time.sleep(1)
