@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """Simple test for 16x2 character lcd connected to an MCP23008 I2C LCD backpack."""
 import time
 import board
