@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """Simple test for 16x2 character LCD connected to 74HC595 SPI LCD backpack."""
 import time
 import board

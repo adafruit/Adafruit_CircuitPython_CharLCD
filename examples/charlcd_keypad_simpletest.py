@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """Simple test for keypad on I2C RGB character LCD Shield or Pi Plate kits"""
 import time
 import board
