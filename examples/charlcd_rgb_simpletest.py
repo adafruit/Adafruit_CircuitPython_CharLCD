@@ -5,7 +5,7 @@
 import time
 import board
 import digitalio
-import pulseio
+import pwmio
 import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD
@@ -19,9 +19,9 @@ lcd_d7 = digitalio.DigitalInOut(board.D12)
 lcd_d6 = digitalio.DigitalInOut(board.D11)
 lcd_d5 = digitalio.DigitalInOut(board.D10)
 lcd_d4 = digitalio.DigitalInOut(board.D9)
-red = pulseio.PWMOut(board.D3)
-green = pulseio.PWMOut(board.D5)
-blue = pulseio.PWMOut(board.D6)
+red = pwmio.PWMOut(board.D3)
+green = pwmio.PWMOut(board.D5)
+blue = pwmio.PWMOut(board.D6)
 
 # Initialise the LCD class
 lcd = characterlcd.Character_LCD_RGB(

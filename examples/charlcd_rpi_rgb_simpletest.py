@@ -5,7 +5,7 @@
 import time
 import board
 import digitalio
-import pulseio
+import pwmio
 import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD
@@ -24,9 +24,9 @@ lcd_rw = digitalio.DigitalInOut(
 )  # LCD pin 5.  Determines whether to read to or write from the display.
 # Not necessary if only writing to the display. Used on shield.
 
-red = pulseio.PWMOut(board.D21)
-green = pulseio.PWMOut(board.D12)
-blue = pulseio.PWMOut(board.D18)
+red = pwmio.PWMOut(board.D21)
+green = pwmio.PWMOut(board.D12)
+blue = pwmio.PWMOut(board.D18)
 
 # Initialize the LCD class
 # The lcd_rw parameter is optional.  You can omit the line below if you're only

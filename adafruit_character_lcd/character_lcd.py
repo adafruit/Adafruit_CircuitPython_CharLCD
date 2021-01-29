@@ -620,9 +620,9 @@ class Character_LCD_RGB(Character_LCD):
     :param ~digitalio.DigitalInOut db7: The data line 7
     :param columns: The columns on the charLCD
     :param lines: The lines on the charLCD
-    :param ~pulseio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
-    :param ~pulseio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
-    :param ~pulseio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
+    :param ~pwmio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
+    :param ~pwmio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
+    :param ~pwmio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
     :param ~digitalio.DigitalInOut read_write: The rw pin. Determines whether to read to or
         write from the display. Not necessary if only writing to the display. Used on shield.
 
@@ -662,7 +662,7 @@ class Character_LCD_RGB(Character_LCD):
             elif not hasattr(pin, "duty_cycle"):
                 raise TypeError(
                     "RGB LED objects must be instances of digitalio.DigitalInOut"
-                    " or pulseio.PWMOut, or provide a compatible interface."
+                    " or pwmio.PWMOut, or provide a compatible interface."
                 )
 
         self._color = [0, 0, 0]
@@ -702,7 +702,7 @@ class Character_LCD_RGB(Character_LCD):
         self._color = color
         for number, pin in enumerate(self.rgb_led):
             if hasattr(pin, "duty_cycle"):
-                # Assume a pulseio.PWMOut or compatible interface and set duty cycle:
+                # Assume a pwmio.PWMOut or compatible interface and set duty cycle:
                 pin.duty_cycle = int(_map(color[number], 0, 100, 65535, 0))
             elif hasattr(pin, "value"):
                 # If we don't have a PWM interface, all we can do is turn each color
