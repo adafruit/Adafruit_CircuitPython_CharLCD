@@ -158,7 +158,7 @@ class Character_LCD:
     # pylint: enable-msg=too-many-arguments
 
     def home(self):
-        """Moves the cursor "home" to position (1, 1)."""
+        """Moves the cursor "home" to position (0, 0)."""
         self._write8(_LCD_RETURNHOME)
         time.sleep(0.003)
 
