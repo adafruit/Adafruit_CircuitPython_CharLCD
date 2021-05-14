@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-`adafruit_character_lcd.character_lcd_i2c`
+`adafruit_character_lcd.character_lcd_rgb_i2c`
 ====================================================
 
 Module for using I2C with I2C RGB LCD Shield or I2C RGB LCD Pi Plate
@@ -15,17 +15,17 @@ Implementation Notes
 
 **Hardware:**
 
-"* `RGB LCD Shield Kit w/ 16x2 Character Display - Negative Display
-<https://www.adafruit.com/product/714>`_"
+* `RGB LCD Shield Kit w/ 16x2 Character Display - Negative Display
+  <https://www.adafruit.com/product/714>`_
 
-"* `RGB LCD Shield Kit w/ 16x2 Character Display - Positive Display
-<https://www.adafruit.com/product/716>`_"
+* `RGB LCD Shield Kit w/ 16x2 Character Display - Positive Display
+  <https://www.adafruit.com/product/716>`_
 
-"* `Adafruit RGB Negative 16x2 LCD+Keypad Kit for Raspberry Pi
-<https://www.adafruit.com/product/1110>`_"
+* `Adafruit RGB Negative 16x2 LCD+Keypad Kit for Raspberry Pi
+  <https://www.adafruit.com/product/1110>`_
 
-"* `Adafruit RGB Positive 16x2 LCD+Keypad Kit for Raspberry Pi
-<https://www.adafruit.com/product/1109>`_"
+* `Adafruit RGB Positive 16x2 LCD+Keypad Kit for Raspberry Pi
+  <https://www.adafruit.com/product/1109>`_
 
 **Software and Dependencies:**
 
@@ -46,7 +46,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 class Character_LCD_RGB_I2C(Character_LCD_RGB):
     """RGB Character LCD connected to I2C shield or Pi plate using I2C connection.
-    This is a subclass of Character_LCD_RGB and implements all of the same
+    This is a subclass of `Character_LCD_RGB` and implements all of the same
     functions and functionality.
 
     To use, import and initialise as follows:

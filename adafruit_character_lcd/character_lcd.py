@@ -17,7 +17,7 @@ Implementation Notes
 
 **Hardware:**
 
-"* `Adafruit Character LCDs <http://www.adafruit.com/category/63_96>`_"
+* `Adafruit Character LCDs <http://www.adafruit.com/category/63_96>`_
 
 **Software and Dependencies:**
 
@@ -620,9 +620,12 @@ class Character_LCD_RGB(Character_LCD):
     :param ~digitalio.DigitalInOut db7: The data line 7
     :param columns: The columns on the charLCD
     :param lines: The lines on the charLCD
-    :param ~pwmio.PWMOut, ~digitalio.DigitalInOut red: Red RGB Anode
-    :param ~pwmio.PWMOut, ~digitalio.DigitalInOut green: Green RGB Anode
-    :param ~pwmio.PWMOut, ~digitalio.DigitalInOut blue: Blue RGB Anode
+    :param red: Red RGB Anode
+    :type red: ~pwmio.PWMOut or ~digitalio.DigitalInOut
+    :param green: Green RGB Anode
+    :type green: ~pwmio.PWMOut or ~digitalio.DigitalInOut
+    :param blue: Blue RGB Anode
+    :type blue: ~pwmio.PWMOut or ~digitalio.DigitalInOut
     :param ~digitalio.DigitalInOut read_write: The rw pin. Determines whether to read to or
         write from the display. Not necessary if only writing to the display. Used on shield.
 

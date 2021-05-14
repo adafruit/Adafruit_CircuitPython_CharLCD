@@ -23,7 +23,7 @@ extensions = [
 # Uncomment the below if you use native CircuitPython modules such as
 # digitalio, micropython and busio. List the modules you use. Without it, the
 # autodoc module docs will fail to generate with a warning.
-# autodoc_mock_imports = ["micropython", "digitalio", "addfruit_bus_device"]
+autodoc_mock_imports = ["micropython", "board", "busio", "digitalio", "pwmio"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.4", None),
@@ -43,7 +43,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "Adafruit CIRCUITPYTHON_CHARLCD Library"
+project = "Adafruit CircuitPython_CharLCD Library"
 copyright = "2017 Brent Rubell"
 author = "Brent Rubell"
 
@@ -118,7 +118,7 @@ html_static_path = ["_static"]
 html_favicon = "_static/favicon.ico"
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "AdafruitCIRCUITPYTHON_CHARLCDLibrarydoc"
+htmlhelp_basename = "AdafruitCircuitPython_CharLCDLibrarydoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -143,8 +143,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "AdafruitCIRCUITPYTHON_CHARLCDLibrary.tex",
-        "Adafruit CIRCUITPYTHON_CHARLCD Library Documentation",
+        "AdafruitCircuitPython_CharLCDLibrary.tex",
+        "Adafruit CircuitPython_CharLCD Library Documentation",
         author,
         "manual",
     ),
@@ -157,8 +157,8 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "adafruitCIRCUITPYTHON_CHARLCDlibrary",
-        "Adafruit CIRCUITPYTHON_CHARLCD Library Documentation",
+        "adafruitCircuitPython_CharLCDlibrary",
+        "Adafruit CircuitPython_CharLCD Library Documentation",
         [author],
         1,
     )
@@ -172,10 +172,10 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "AdafruitCIRCUITPYTHON_CHARLCDLibrary",
-        "Adafruit CIRCUITPYTHON_CHARLCD Library Documentation",
+        "AdafruitCircuitPython_CharLCDLibrary",
+        "Adafruit CircuitPython_CharLCD Library Documentation",
         author,
-        "AdafruitCIRCUITPYTHON_CHARLCDLibrary",
+        "AdafruitCircuitPython_CharLCDLibrary",
         "One line description of project.",
         "Miscellaneous",
     ),
