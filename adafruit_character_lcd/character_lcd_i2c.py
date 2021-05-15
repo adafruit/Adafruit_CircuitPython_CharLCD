@@ -15,7 +15,7 @@ Implementation Notes
 
 **Hardware:**
 
-"* `I2C / SPI character LCD backpack <https://www.adafruit.com/product/292>`_"
+* `I2C / SPI character LCD backpack <https://www.adafruit.com/product/292>`_
 
 **Software and Dependencies:**
 
@@ -36,8 +36,8 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 class Character_LCD_I2C(Character_LCD_Mono):
     # pylint: disable=too-few-public-methods, too-many-arguments
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
-    This is a subclass of Character_LCD and implements all of the same
-    functions and functionality.
+    This is a subclass of `Character_LCD_Mono` and implements all of the
+    same functions and functionality.
 
     To use, import and initialise as follows:
 

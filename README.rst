@@ -1,4 +1,3 @@
-
 Introduction
 ============
 
@@ -15,6 +14,7 @@ Introduction
     :alt: Build Status
 
 This library is compatible with standard Character LCDs such as:
+
 * `Adafruit Standard LCD 16x2 <https://www.adafruit.com/product/181>`_
 * `Adafruit RGB backlight negative LCD 16x2 <https://www.adafruit.com/product/399>`_
 * `Adafruit RGB backlight negative LCD 20x4 <https://www.adafruit.com/product/498>`_
@@ -58,8 +58,8 @@ I2C & SPI displays also depend on:
 * `Bus Device <https://github.com/adafruit/Adafruit_CircuitPython_BusDevice>`_
 
 Please ensure all dependencies are available on the CircuitPython filesystem.
-This is easily achieved by downloading
-`the Adafruit library and driver bundle <https://github.com/adafruit/Adafruit_CircuitPython_Bundle>`_.
+This is easily achieved by downloading the
+`Adafruit library and driver bundle <https://github.com/adafruit/Adafruit_CircuitPython_Bundle>`_.
 
 Usage Example
 =============

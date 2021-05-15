@@ -30,4 +30,4 @@ checkmark = bytes([0x0, 0x0, 0x1, 0x3, 0x16, 0x1C, 0x8, 0x0])
 lcd.create_char(0, checkmark)
 
 lcd.clear()
-lcd.message = "\x00"
+lcd.message = "\x00 Success \x00"

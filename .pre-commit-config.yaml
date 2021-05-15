@@ -27,6 +27,7 @@ repos:
 -   repo: local
     hooks:
     -   id: pylint_examples
+        require_serial: true
         name: pylint (examples code)
         description: Run pylint rules on "examples/*.py" files
         entry: /usr/bin/env bash -c
