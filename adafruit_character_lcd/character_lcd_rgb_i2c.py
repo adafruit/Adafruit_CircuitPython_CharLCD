@@ -16,22 +16,23 @@ Implementation Notes
 **Hardware:**
 
 * `RGB LCD Shield Kit w/ 16x2 Character Display - Negative Display
-  <https://www.adafruit.com/product/714>`_
+  <https://www.adafruit.com/product/714>`_ (Product ID: 714)
 
 * `RGB LCD Shield Kit w/ 16x2 Character Display - Positive Display
-  <https://www.adafruit.com/product/716>`_
+  <https://www.adafruit.com/product/716>`_ (Product ID: 716)
 
 * `Adafruit RGB Negative 16x2 LCD+Keypad Kit for Raspberry Pi
-  <https://www.adafruit.com/product/1110>`_
+  <https://www.adafruit.com/product/1110>`_ (Product ID: 1110)
 
 * `Adafruit RGB Positive 16x2 LCD+Keypad Kit for Raspberry Pi
-  <https://www.adafruit.com/product/1109>`_
+  <https://www.adafruit.com/product/1109>`_ (Product ID: 1109)
 
 **Software and Dependencies:**
 
-* Adafruit CircuitPython firmware:
-  https://github.com/adafruit/circuitpython/releases
-* Adafruit's Bus Device library (when using I2C/SPI):
+* Adafruit CircuitPython firmware for the supported boards:
+  https://circuitpython.org/downloads
+
+* Adafruit's Bus Device library:
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
@@ -54,10 +55,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
     .. code-block:: python
 
         import board
-        import busio
         from adafruit_character_lcd.character_lcd_rgb_i2c import Character_LCD_RGB_I2C
 
-        i2c = busio.I2C(board.SCL, board.SDA)
+        i2c = board.I2C()  # uses board.SCL and board.SDA
         lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
     """
@@ -115,10 +115,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         .. code-block:: python
 
             import board
-            import busio
             from adafruit_character_lcd.character_lcd_rgb_i2c import Character_LCD_RGB_I2C
 
-            i2c = busio.I2C(board.SCL, board.SDA)
+            i2c = board.I2C()  # uses board.SCL and board.SDA
             lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
             while True:
@@ -137,10 +136,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         .. code-block:: python
 
             import board
-            import busio
             from adafruit_character_lcd.character_lcd_rgb_i2c import Character_LCD_RGB_I2C
 
-            i2c = busio.I2C(board.SCL, board.SDA)
+            i2c = board.I2C()  # uses board.SCL and board.SDA
             lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
             while True:
@@ -159,10 +157,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         .. code-block:: python
 
             import board
-            import busio
             from adafruit_character_lcd.character_lcd_rgb_i2c import Character_LCD_RGB_I2C
 
-            i2c = busio.I2C(board.SCL, board.SDA)
+            i2c = board.I2C()  # uses board.SCL and board.SDA
             lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
             while True:
@@ -181,10 +178,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         .. code-block:: python
 
             import board
-            import busio
             from adafruit_character_lcd.character_lcd_rgb_i2c import Character_LCD_RGB_I2C
 
-            i2c = busio.I2C(board.SCL, board.SDA)
+            i2c = board.I2C()  # uses board.SCL and board.SDA
             lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
             while True:
@@ -203,10 +199,9 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
         .. code-block:: python
 
             import board
-            import busio
             from adafruit_character_lcd.character_lcd_rgb_i2c import Character_LCD_RGB_I2C
 
-            i2c = busio.I2C(board.SCL, board.SDA)
+            i2c = board.I2C()  # uses board.SCL and board.SDA
             lcd = Character_LCD_RGB_I2C(i2c, 16, 2)
 
             while True:

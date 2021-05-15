@@ -15,13 +15,15 @@ Implementation Notes
 
 **Hardware:**
 
-* `I2C / SPI character LCD backpack <https://www.adafruit.com/product/292>`_
+* `I2C / SPI character LCD backpack
+  <https://www.adafruit.com/product/292>`_ (Product ID: 4566)
 
 **Software and Dependencies:**
 
-* Adafruit CircuitPython firmware:
-  https://github.com/adafruit/circuitpython/releases
-* Adafruit's Bus Device library (when using I2C/SPI):
+* Adafruit CircuitPython firmware for the supported boards:
+  https://circuitpython.org/downloads
+
+* Adafruit's Bus Device library:
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
@@ -43,11 +45,10 @@ class Character_LCD_SPI(Character_LCD_Mono):  # pylint: disable=too-few-public-m
     .. code-block:: python
 
         import board
-        import busio
         import digitalio
         import adafruit_character_lcd.character_lcd_mono as character_lcd
 
-        spi = busio.SPI(board.SCK, MOSI=board.MOSI)
+        spi = board.SPI()
         latch = digitalio.DigitalInOut(board.D5)
         lcd = character_lcd.Character_LCD_SPI(spi, latch, 16, 2)
     """
