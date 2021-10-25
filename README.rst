@@ -110,6 +110,11 @@ To verify that your pins are correct, print a hello message to the CharLCD:
 Custom character example with ``create_char()`` is provided within /examples/
 
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/charlcd/en/latest/>`_.
+
 Contributing
 ============
 
