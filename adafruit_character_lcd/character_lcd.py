@@ -673,6 +673,9 @@ class Character_LCD_RGB(Character_LCD):
 
         The following example turns the LCD red and displays, "Hello, world!".
 
+        The property returns a list, but can be set as an int in the format ``0xRRGGBB``,
+        as output by `rainbowio.colorwheel` for example.
+
         .. code-block:: python
 
             import time
@@ -691,6 +694,14 @@ class Character_LCD_RGB(Character_LCD):
 
     @color.setter
     def color(self, color):
+        if isinstance(color, int):
+            if color >> 24:
+                raise ValueError("Integer color value must be positive and 24 bits max")
+            # NOTE: convert to 0-100
+            r = (color >> 16) / 2.55
+            g = ((color >> 8) & 0xFF) / 2.55
+            b = (color & 0xFF) / 2.55
+            color = [r, g, b]
         self._color = color
         for number, pin in enumerate(self.rgb_led):
             if hasattr(pin, "duty_cycle"):
