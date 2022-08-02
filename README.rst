@@ -13,6 +13,10 @@ Introduction
     :target: https://github.com/adafruit/Adafruit_CircuitPython_CharLCD/actions/
     :alt: Build Status
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+    :alt: Code Style: Black
+
 This library is compatible with standard Character LCDs such as:
 
 * `Adafruit Standard LCD 16x2 <https://www.adafruit.com/product/181>`_
