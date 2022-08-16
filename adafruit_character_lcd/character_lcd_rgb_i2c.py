@@ -41,7 +41,7 @@ import digitalio
 from adafruit_mcp230xx.mcp23017 import MCP23017
 from adafruit_character_lcd.character_lcd import Character_LCD_RGB
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
