@@ -480,9 +480,7 @@ class Character_LCD:
         self.displaymode &= ~_LCD_ENTRYLEFT
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
 
-    def create_char(
-        self, location: int, pattern: Sequence[int, int, int, int, int, int, int, int]
-    ) -> None:
+    def create_char(self, location: int, pattern: Sequence[int]) -> None:
         """
         Fill one of the first 8 CGRAM locations with custom characters.
         The location parameter should be between 0 and 7 and pattern should
@@ -679,7 +677,7 @@ class Character_LCD_RGB(Character_LCD):
         super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
 
     @property
-    def color(self) -> List[int, int, int]:
+    def color(self) -> List[int]:
         """
         The color of the display. Provide a list of three integers ranging 0 - 100, ``[R, G, B]``.
         ``0`` is no color, or "off". ``100`` is maximum color. For example, the brightest red would
@@ -710,7 +708,7 @@ class Character_LCD_RGB(Character_LCD):
         return self._color
 
     @color.setter
-    def color(self, color: Union[List[int, int, int], int]) -> None:
+    def color(self, color: Union[List[int], int]) -> None:
         if isinstance(color, int):
             if color >> 24:
                 raise ValueError("Integer color value must be positive and 24 bits max")
