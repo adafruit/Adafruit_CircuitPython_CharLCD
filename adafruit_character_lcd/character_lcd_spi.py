@@ -27,6 +27,12 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+try:
+    import typing  # pylint: disable=unused-import
+    import busio
+    import digitalio
+except ImportError:
+    pass
 
 import adafruit_74hc595
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
@@ -53,7 +59,14 @@ class Character_LCD_SPI(Character_LCD_Mono):  # pylint: disable=too-few-public-m
         lcd = character_lcd.Character_LCD_SPI(spi, latch, 16, 2)
     """
 
-    def __init__(self, spi, latch, columns, lines, backlight_inverted=False):
+    def __init__(
+        self,
+        spi: busio.SPI,
+        latch: digitalio.DigitalInOut,
+        columns: int,
+        lines: int,
+        backlight_inverted: bool = False,
+    ):
         # pylint: disable=too-many-arguments
         """Initialize character LCD connected to backpack using SPI connection
         on the specified SPI bus and latch line with the specified number of

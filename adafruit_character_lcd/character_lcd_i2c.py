@@ -27,6 +27,11 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+try:
+    from typing import Optional
+    import busio
+except ImportError:
+    pass
 
 from adafruit_mcp230xx.mcp23008 import MCP23008
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
@@ -38,8 +43,8 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 class Character_LCD_I2C(Character_LCD_Mono):
     # pylint: disable=too-few-public-methods, too-many-arguments
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
-    This is a subclass of `Character_LCD_Mono` and implements all of the
-    same functions and functionality.
+    This is a subclass of `Character_LCD_Mono` and implements all the same
+    functions and functionality.
 
     To use, import and initialise as follows:
 
@@ -52,7 +57,14 @@ class Character_LCD_I2C(Character_LCD_Mono):
         lcd = Character_LCD_I2C(i2c, 16, 2)
     """
 
-    def __init__(self, i2c, columns, lines, address=None, backlight_inverted=False):
+    def __init__(
+        self,
+        i2c: busio.I2C,
+        columns: int,
+        lines: int,
+        address: Optional[int] = None,
+        backlight_inverted: bool = False,
+    ) -> None:
         """Initialize character LCD connected to backpack using I2C connection
         on the specified I2C bus with the specified number of columns and
         lines on the display. Optionally specify if backlight is inverted.
