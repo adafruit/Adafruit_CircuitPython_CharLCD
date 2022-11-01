@@ -29,8 +29,6 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
-import circuitpython_typing
-
 try:
     from typing import Union, Optional, List, Sequence
     from circuitpython_typing import pwmio
@@ -91,7 +89,9 @@ def _set_bit(byte_value: int, position: int, val: bool) -> int:
     return ret
 
 
-def _map(xval: float, in_min: float, in_max: float, out_min: float, out_max: float) -> float:
+def _map(
+    xval: float, in_min: float, in_max: float, out_min: float, out_max: float
+) -> float:
     # Affine transfer/map with constrained output.
     outrange = float(out_max - out_min)
     inrange = float(in_max - in_min)
