@@ -29,6 +29,7 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+import circuitpython_typing
 
 try:
     from typing import Union, Optional, List, Sequence
@@ -90,7 +91,7 @@ def _set_bit(byte_value: int, position: int, val: bool) -> int:
     return ret
 
 
-def _map(xval: int, in_min: int, in_max: int, out_min: int, out_max: int) -> float:
+def _map(xval: float, in_min: float, in_max: float, out_min: float, out_max: float) -> float:
     # Affine transfer/map with constrained output.
     outrange = float(out_max - out_min)
     inrange = float(in_max - in_min)
@@ -489,7 +490,7 @@ class Character_LCD:
         To show your custom character use, for example, ``lcd.message = "\x01"``
 
         :param int location: Integer in range(8) to store the created character.
-        :param Sequence pattern: len(8) describes created character.
+        :param Sequence[int] pattern: len(8) describes created character.
 
         """
         # only position 0..7 are allowed
@@ -498,9 +499,9 @@ class Character_LCD:
         for i in range(8):
             self._write8(pattern[i], char_mode=True)
 
-    def _write8(self, value: [int], char_mode: bool = False) -> None:
+    def _write8(self, value: int, char_mode: bool = False) -> None:
         # Sends 8b ``value`` in ``char_mode``.
-        # :param value: bytes
+        # :param value: int
         # :param char_mode: character/data mode selector. False (default) for
         # data only, True for character bits.
         #  one ms delay to prevent writing too quickly.
@@ -708,15 +709,15 @@ class Character_LCD_RGB(Character_LCD):
         return self._color
 
     @color.setter
-    def color(self, color: Union[List[int], int]) -> None:
+    def color(self, color: Union[List[float], int]) -> None:
         if isinstance(color, int):
             if color >> 24:
                 raise ValueError("Integer color value must be positive and 24 bits max")
             # NOTE: convert to 0-100
-            r = int((color >> 16) / 2.55)
-            g = int(((color >> 8) & 0xFF) / 2.55)
-            b = int((color & 0xFF) / 2.55)
-            color = [r, g, b]  # This is List[float], should be List[int]
+            r = (color >> 16) / 2.55
+            g = ((color >> 8) & 0xFF) / 2.55
+            b = (color & 0xFF) / 2.55
+            color = [r, g, b]
         self._color = color
         for number, pin in enumerate(self.rgb_led):
             if hasattr(pin, "duty_cycle"):

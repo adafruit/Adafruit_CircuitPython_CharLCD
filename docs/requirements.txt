@@ -3,3 +3,5 @@
 # SPDX-License-Identifier: Unlicense
 
 sphinx>=4.0.0
+adafruit_circuitpython_typing>=1.8.2
+typing_extensions>=4.4.0
