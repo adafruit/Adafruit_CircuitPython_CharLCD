@@ -123,6 +123,7 @@ class Character_LCD:
 
     # pylint: disable-msg=too-many-arguments
     def __init__(
+        # pylint: disable=invalid-name
         self,
         rs: digitalio.DigitalInOut,
         en: digitalio.DigitalInOut,
@@ -132,6 +133,7 @@ class Character_LCD:
         d7: digitalio.DigitalInOut,
         columns: int,
         lines: int,
+        # pylint: enable=invalid-name
     ) -> None:
 
         self.columns = columns
