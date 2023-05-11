@@ -135,7 +135,6 @@ class Character_LCD:
         lines: int,
         # pylint: enable=invalid-name
     ) -> None:
-
         self.columns = columns
         self.lines = lines
         #  save pin numbers
@@ -571,7 +570,6 @@ class Character_LCD_Mono(Character_LCD):
         backlight_pin: Optional[digitalio.DigitalInOut] = None,
         backlight_inverted: bool = False,
     ):
-
         # Backlight pin and inversion
         self.backlight_pin = backlight_pin
         self.backlight_inverted = backlight_inverted
@@ -655,7 +653,6 @@ class Character_LCD_RGB(Character_LCD):
         blue: Union[pwmio.PWMOut, digitalio.DigitalInOut],
         read_write: Optional[digitalio.DigitalInOut] = None,
     ) -> None:
-
         # Define read_write (rw) pin
         self.read_write = read_write
 
