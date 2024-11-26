@@ -107,12 +107,12 @@ def _map(
 class Character_LCD:
     """Base class for character LCD.
 
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut d4: The data line 4
-    :param ~digitalio.DigitalInOut d5: The data line 5
-    :param ~digitalio.DigitalInOut d6: The data line 6
-    :param ~digitalio.DigitalInOut d7: The data line 7
+    :param ~digitalio.DigitalInOut reset_dio: The reset data line
+    :param ~digitalio.DigitalInOut enable_dio: The enable data line
+    :param ~digitalio.DigitalInOut d4_dio: The data line 4
+    :param ~digitalio.DigitalInOut d5_dio: The data line 5
+    :param ~digitalio.DigitalInOut d6_dio: The data line 6
+    :param ~digitalio.DigitalInOut d7_dio: The data line 7
     :param int columns: The columns on the charLCD
     :param int lines: The lines on the charLCD
 
@@ -123,30 +123,28 @@ class Character_LCD:
 
     # pylint: disable-msg=too-many-arguments
     def __init__(
-        # pylint: disable=invalid-name
         self,
-        rs: digitalio.DigitalInOut,
-        en: digitalio.DigitalInOut,
-        d4: digitalio.DigitalInOut,
-        d5: digitalio.DigitalInOut,
-        d6: digitalio.DigitalInOut,
-        d7: digitalio.DigitalInOut,
+        reset_dio: digitalio.DigitalInOut,
+        enable_dio: digitalio.DigitalInOut,
+        d4_dio: digitalio.DigitalInOut,
+        d5_dio: digitalio.DigitalInOut,
+        d6_dio: digitalio.DigitalInOut,
+        d7_dio: digitalio.DigitalInOut,
         columns: int,
         lines: int,
-        # pylint: enable=invalid-name
     ) -> None:
         self.columns = columns
         self.lines = lines
         #  save pin numbers
-        self.reset = rs
-        self.enable = en
-        self.dl4 = d4
-        self.dl5 = d5
-        self.dl6 = d6
-        self.dl7 = d7
+        self.reset = reset_dio
+        self.enable = enable_dio
+        self.dl4 = d4_dio
+        self.dl5 = d5_dio
+        self.dl6 = d6_dio
+        self.dl7 = d7_dio
 
         # set all pins as outputs
-        for pin in (rs, en, d4, d5, d6, d7):
+        for pin in (reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio):
             pin.direction = digitalio.Direction.OUTPUT
 
         # Initialise the display
@@ -541,12 +539,12 @@ class Character_LCD:
 class Character_LCD_Mono(Character_LCD):
     """Interfaces with monochromatic character LCDs.
 
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut d4: The data line 4
-    :param ~digitalio.DigitalInOut d5: The data line 5
-    :param ~digitalio.DigitalInOut d6: The data line 6
-    :param ~digitalio.DigitalInOut d7: The data line 7
+    :param ~digitalio.DigitalInOut reset_dio: The reset data line
+    :param ~digitalio.DigitalInOut enable_dio: The enable data line
+    :param ~digitalio.DigitalInOut d4_dio: The data line 4
+    :param ~digitalio.DigitalInOut d5_dio: The data line 5
+    :param ~digitalio.DigitalInOut d6_dio: The data line 6
+    :param ~digitalio.DigitalInOut d7_dio: The data line 7
     :param int columns: The columns on the charLCD
     :param int lines: The lines on the charLCD
     :param ~digitalio.DigitalInOut backlight_pin: The backlight pin
@@ -559,12 +557,12 @@ class Character_LCD_Mono(Character_LCD):
     # pylint: disable-msg=too-many-arguments
     def __init__(
         self,
-        rs: digitalio.DigitalInOut,
-        en: digitalio.DigitalInOut,
-        db4: digitalio.DigitalInOut,
-        db5: digitalio.DigitalInOut,
-        db6: digitalio.DigitalInOut,
-        db7: digitalio.DigitalInOut,
+        reset_dio: digitalio.DigitalInOut,
+        enable_dio: digitalio.DigitalInOut,
+        d4_dio: digitalio.DigitalInOut,
+        d5_dio: digitalio.DigitalInOut,
+        d6_dio: digitalio.DigitalInOut,
+        d7_dio: digitalio.DigitalInOut,
         columns: int,
         lines: int,
         backlight_pin: Optional[digitalio.DigitalInOut] = None,
@@ -578,7 +576,9 @@ class Character_LCD_Mono(Character_LCD):
         if backlight_pin is not None:
             self.backlight_pin.direction = digitalio.Direction.OUTPUT
             self.backlight = True
-        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
+        super().__init__(
+            reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines
+        )
 
     # pylint: enable-msg=too-many-arguments
 
@@ -621,12 +621,12 @@ class Character_LCD_Mono(Character_LCD):
 class Character_LCD_RGB(Character_LCD):
     """Interfaces with RGB character LCDs.
 
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut db4: The data line 4
-    :param ~digitalio.DigitalInOut db5: The data line 5
-    :param ~digitalio.DigitalInOut db6: The data line 6
-    :param ~digitalio.DigitalInOut db7: The data line 7
+    :param ~digitalio.DigitalInOut reset_dio: The reset data line
+    :param ~digitalio.DigitalInOut enable_dio: The enable data line
+    :param ~digitalio.DigitalInOut d4_dio: The data line 4
+    :param ~digitalio.DigitalInOut d5_dio: The data line 5
+    :param ~digitalio.DigitalInOut d6_dio: The data line 6
+    :param ~digitalio.DigitalInOut d7_dio: The data line 7
     :param int columns: The columns on the charLCD
     :param int lines: The lines on the charLCD
     :param ~pwmio.PWMOut,~digitalio.DigitalInOut red: Red RGB Anode
@@ -640,12 +640,12 @@ class Character_LCD_RGB(Character_LCD):
     # pylint: disable-msg=too-many-arguments
     def __init__(
         self,
-        rs: digitalio.DigitalInOut,
-        en: digitalio.DigitalInOut,
-        db4: digitalio.DigitalInOut,
-        db5: digitalio.DigitalInOut,
-        db6: digitalio.DigitalInOut,
-        db7: digitalio.DigitalInOut,
+        reset_dio: digitalio.DigitalInOut,
+        enable_dio: digitalio.DigitalInOut,
+        d4_dio: digitalio.DigitalInOut,
+        d5_dio: digitalio.DigitalInOut,
+        d6_dio: digitalio.DigitalInOut,
+        d7_dio: digitalio.DigitalInOut,
         columns: int,
         lines: int,
         red: Union[pwmio.PWMOut, digitalio.DigitalInOut],
@@ -674,7 +674,9 @@ class Character_LCD_RGB(Character_LCD):
                 )
 
         self._color = [0, 0, 0]
-        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
+        super().__init__(
+            reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines
+        )
 
     @property
     def color(self) -> List[int]:
