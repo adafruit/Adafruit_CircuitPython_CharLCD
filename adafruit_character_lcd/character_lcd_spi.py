@@ -59,7 +59,8 @@ class Character_LCD_SPI(Character_LCD_Mono):  # pylint: disable=too-few-public-m
         lcd = character_lcd.Character_LCD_SPI(spi, latch, 16, 2)
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
+    def __init__(
         self,
         spi: busio.SPI,
         latch: digitalio.DigitalInOut,

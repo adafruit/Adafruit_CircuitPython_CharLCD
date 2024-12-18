@@ -103,7 +103,7 @@ def _map(
     return ret
 
 
-# pylint: disable-msg=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class Character_LCD:
     """Base class for character LCD.
 
@@ -121,7 +121,7 @@ class Character_LCD:
     LEFT_TO_RIGHT = const(0)
     RIGHT_TO_LEFT = const(1)
 
-    # pylint: disable-msg=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         reset_dio: digitalio.DigitalInOut,
@@ -163,9 +163,10 @@ class Character_LCD:
         # Set entry mode
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
         self.clear()
-        self._message = None
-        self._enable = None
-        self._direction = None
+
+        self._message = ""
+        self._backlight_on = False
+        self._direction = self.LEFT_TO_RIGHT
         # track row and column used in cursor_position
         # initialize to 0,0
         self.row = 0
@@ -535,7 +536,7 @@ class Character_LCD:
 # pylint: enable-msg=too-many-instance-attributes
 
 
-# pylint: disable-msg=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class Character_LCD_Mono(Character_LCD):
     """Interfaces with monochromatic character LCDs.
 
@@ -554,7 +555,7 @@ class Character_LCD_Mono(Character_LCD):
 
     """
 
-    # pylint: disable-msg=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         reset_dio: digitalio.DigitalInOut,
@@ -607,15 +608,12 @@ class Character_LCD_Mono(Character_LCD):
             time.sleep(5)
 
         """
-        return self._enable
+        return self._backlight_on
 
     @backlight.setter
-    def backlight(self, enable: bool) -> None:
-        self._enable = enable
-        if enable:
-            self.backlight_pin.value = not self.backlight_inverted
-        else:
-            self.backlight_pin.value = self.backlight_inverted
+    def backlight(self, enable):
+        self._backlight_on = enable
+        self.backlight_pin.value = enable ^ self.backlight_inverted
 
 
 class Character_LCD_RGB(Character_LCD):
@@ -637,7 +635,7 @@ class Character_LCD_RGB(Character_LCD):
 
     """
 
-    # pylint: disable-msg=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         reset_dio: digitalio.DigitalInOut,
