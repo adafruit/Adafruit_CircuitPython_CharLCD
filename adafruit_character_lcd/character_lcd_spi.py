@@ -27,11 +27,17 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+try:
+    import typing  # pylint: disable=unused-import
+    import busio
+    import digitalio
+except ImportError:
+    pass
 
 import adafruit_74hc595
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
@@ -53,14 +59,20 @@ class Character_LCD_SPI(Character_LCD_Mono):  # pylint: disable=too-few-public-m
         lcd = character_lcd.Character_LCD_SPI(spi, latch, 16, 2)
     """
 
-    def __init__(self, spi, latch, columns, lines, backlight_inverted=False):
-        # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
+    def __init__(
+        self,
+        spi: busio.SPI,
+        latch: digitalio.DigitalInOut,
+        columns: int,
+        lines: int,
+        backlight_inverted: bool = False,
+    ):
         """Initialize character LCD connected to backpack using SPI connection
         on the specified SPI bus and latch line with the specified number of
         columns and lines on the display. Optionally specify if backlight is
         inverted.
         """
-        # pylint: enable=too-many-arguments
 
         self._shift_register = adafruit_74hc595.ShiftRegister74HC595(spi, latch)
         reset = self._shift_register.get_pin(1)

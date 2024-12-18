@@ -27,21 +27,26 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
-
 import time
+
+try:
+    from typing import Optional
+    import busio
+except ImportError:
+    pass
 
 from adafruit_mcp230xx.mcp23008 import MCP23008
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
 class Character_LCD_I2C(Character_LCD_Mono):
     # pylint: disable=too-few-public-methods
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
-    This is a subclass of `Character_LCD_Mono` and implements all of the
-    same functions and functionality.
+    This is a subclass of `Character_LCD_Mono` and implements all the same
+    functions and functionality.
 
     To use, import and initialise as follows:
 
@@ -55,7 +60,14 @@ class Character_LCD_I2C(Character_LCD_Mono):
     """
 
     # pylint: disable=too-many-positional-arguments
-    def __init__(self, i2c, columns, lines, address=None, backlight_inverted=False):
+    def __init__(
+        self,
+        i2c: busio.I2C,
+        columns: int,
+        lines: int,
+        address: Optional[int] = None,
+        backlight_inverted: bool = False,
+    ) -> None:
         """Initialize character LCD connected to backpack using I2C connection
         on the specified I2C bus with the specified number of columns and
         lines on the display. Optionally specify if backlight is inverted.
@@ -78,7 +90,7 @@ class Character_LCD_I2C(Character_LCD_Mono):
             backlight_inverted=backlight_inverted,
         )
 
-    def _write8(self, value, char_mode=False):
+    def _write8(self, value: int, char_mode: bool = False) -> None:
         # Sends 8b ``value`` in ``char_mode``.
         # :param value: bytes
         # :param char_mode: character/data mode selector. False (default) for

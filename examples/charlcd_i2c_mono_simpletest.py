@@ -12,6 +12,7 @@ lcd_rows = 2
 
 # Initialise I2C bus.
 i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 
 # Initialise the lcd class
 lcd = character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)

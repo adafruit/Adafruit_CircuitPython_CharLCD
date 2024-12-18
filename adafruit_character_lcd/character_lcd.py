@@ -29,12 +29,17 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+try:
+    from typing import Union, Optional, List, Sequence
+    from circuitpython_typing import pwmio
+except ImportError:
+    pass
 
 import time
 import digitalio
 from micropython import const
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 # Commands
@@ -73,7 +78,7 @@ _LCD_5X8DOTS = const(0x00)
 _LCD_ROW_OFFSETS = (0x00, 0x40, 0x14, 0x54)
 
 
-def _set_bit(byte_value, position, val):
+def _set_bit(byte_value: int, position: int, val: bool) -> int:
     # Given the specified byte_value set the bit at position to the provided
     # boolean value val and return the modified byte.
     ret = None
@@ -84,7 +89,9 @@ def _set_bit(byte_value, position, val):
     return ret
 
 
-def _map(xval, in_min, in_max, out_min, out_max):
+def _map(
+    xval: float, in_min: float, in_max: float, out_min: float, out_max: float
+) -> float:
     # Affine transfer/map with constrained output.
     outrange = float(out_max - out_min)
     inrange = float(in_max - in_min)
@@ -100,34 +107,44 @@ def _map(xval, in_min, in_max, out_min, out_max):
 class Character_LCD:
     """Base class for character LCD.
 
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut d4: The data line 4
-    :param ~digitalio.DigitalInOut d5: The data line 5
-    :param ~digitalio.DigitalInOut d6: The data line 6
-    :param ~digitalio.DigitalInOut d7: The data line 7
-    :param columns: The columns on the charLCD
-    :param lines: The lines on the charLCD
+    :param ~digitalio.DigitalInOut reset_dio: The reset data line
+    :param ~digitalio.DigitalInOut enable_dio: The enable data line
+    :param ~digitalio.DigitalInOut d4_dio: The data line 4
+    :param ~digitalio.DigitalInOut d5_dio: The data line 5
+    :param ~digitalio.DigitalInOut d6_dio: The data line 6
+    :param ~digitalio.DigitalInOut d7_dio: The data line 7
+    :param int columns: The columns on the charLCD
+    :param int lines: The lines on the charLCD
 
     """
 
     LEFT_TO_RIGHT = const(0)
     RIGHT_TO_LEFT = const(1)
 
-    # pylint: disable=too-many-positional-arguments,invalid-name
-    def __init__(self, rs, en, d4, d5, d6, d7, columns, lines):
+    # pylint: disable=too-many-positional-arguments
+    def __init__(
+        self,
+        reset_dio: digitalio.DigitalInOut,
+        enable_dio: digitalio.DigitalInOut,
+        d4_dio: digitalio.DigitalInOut,
+        d5_dio: digitalio.DigitalInOut,
+        d6_dio: digitalio.DigitalInOut,
+        d7_dio: digitalio.DigitalInOut,
+        columns: int,
+        lines: int,
+    ) -> None:
         self.columns = columns
         self.lines = lines
         #  save pin numbers
-        self.reset = rs
-        self.enable = en
-        self.dl4 = d4
-        self.dl5 = d5
-        self.dl6 = d6
-        self.dl7 = d7
+        self.reset = reset_dio
+        self.enable = enable_dio
+        self.dl4 = d4_dio
+        self.dl5 = d5_dio
+        self.dl6 = d6_dio
+        self.dl7 = d7_dio
 
         # set all pins as outputs
-        for pin in (rs, en, d4, d5, d6, d7):
+        for pin in (reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio):
             pin.direction = digitalio.Direction.OUTPUT
 
         # Initialise the display
@@ -158,12 +175,12 @@ class Character_LCD:
 
     # pylint: enable-msg=too-many-arguments
 
-    def home(self):
+    def home(self) -> None:
         """Moves the cursor "home" to position (0, 0)."""
         self._write8(_LCD_RETURNHOME)
         time.sleep(0.003)
 
-    def clear(self):
+    def clear(self) -> None:
         """Clears everything displayed on the LCD.
 
         The following example displays, "Hello, world!", then clears the LCD.
@@ -185,21 +202,21 @@ class Character_LCD:
         time.sleep(0.003)
 
     @property
-    def column_align(self):
+    def column_align(self) -> bool:
         """If True, message text after '\\n' starts directly below start of first
         character in message. If False, text after '\\n' starts at column zero.
         """
         return self._column_align
 
     @column_align.setter
-    def column_align(self, enable):
+    def column_align(self, enable: bool):
         if isinstance(enable, bool):
             self._column_align = enable
         else:
             raise ValueError("The column_align value must be either True or False")
 
     @property
-    def cursor(self):
+    def cursor(self) -> bool:
         """True if cursor is visible. False to stop displaying the cursor.
 
         The following example shows the cursor after a displayed message:
@@ -221,19 +238,19 @@ class Character_LCD:
         return self.displaycontrol & _LCD_CURSORON == _LCD_CURSORON
 
     @cursor.setter
-    def cursor(self, show):
+    def cursor(self, show: bool) -> None:
         if show:
             self.displaycontrol |= _LCD_CURSORON
         else:
             self.displaycontrol &= ~_LCD_CURSORON
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
-    def cursor_position(self, column, row):
+    def cursor_position(self, column: int, row: int) -> None:
         """Move the cursor to position ``column``, ``row`` for the next
         message only. Displaying a message resets the cursor position to (0, 0).
 
-            :param column: column location
-            :param row: row location
+            :param int column: column location
+            :param int row: row location
         """
         # Clamp row to the last row of the display
         if row >= self.lines:
@@ -248,7 +265,7 @@ class Character_LCD:
         self.column = column
 
     @property
-    def blink(self):
+    def blink(self) -> bool:
         """
         Blink the cursor. True to blink the cursor. False to stop blinking.
 
@@ -271,7 +288,7 @@ class Character_LCD:
         return self.displaycontrol & _LCD_BLINKON == _LCD_BLINKON
 
     @blink.setter
-    def blink(self, blink):
+    def blink(self, blink: bool) -> None:
         if blink:
             self.displaycontrol |= _LCD_BLINKON
         else:
@@ -279,7 +296,7 @@ class Character_LCD:
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     @property
-    def display(self):
+    def display(self) -> bool:
         """
         Enable or disable the display. True to enable the display. False to disable the display.
 
@@ -301,7 +318,7 @@ class Character_LCD:
         return self.displaycontrol & _LCD_DISPLAYON == _LCD_DISPLAYON
 
     @display.setter
-    def display(self, enable):
+    def display(self, enable: bool) -> None:
         if enable:
             self.displaycontrol |= _LCD_DISPLAYON
         else:
@@ -309,7 +326,7 @@ class Character_LCD:
         self._write8(_LCD_DISPLAYCONTROL | self.displaycontrol)
 
     @property
-    def message(self):
+    def message(self) -> Optional[str]:
         """Display a string of text on the character LCD.
         Start position is (0,0) if cursor_position is not set.
         If cursor_position is set, message starts at the set
@@ -334,7 +351,7 @@ class Character_LCD:
         return self._message
 
     @message.setter
-    def message(self, message):
+    def message(self, message: str):
         self._message = message
         # Set line to match self.row from cursor_position()
         line = self.row
@@ -376,7 +393,7 @@ class Character_LCD:
         # reset column and row to (0,0) after message is displayed
         self.column, self.row = 0, 0
 
-    def move_left(self):
+    def move_left(self) -> None:
         """Moves displayed text left one column.
 
         The following example scrolls a message to the left off the screen.
@@ -399,7 +416,7 @@ class Character_LCD:
         """
         self._write8(_LCD_CURSORSHIFT | _LCD_DISPLAYMOVE | _LCD_MOVELEFT)
 
-    def move_right(self):
+    def move_right(self) -> None:
         """Moves displayed text right one column.
 
         The following example scrolls a message to the right off the screen.
@@ -423,7 +440,7 @@ class Character_LCD:
         self._write8(_LCD_CURSORSHIFT | _LCD_DISPLAYMOVE | _LCD_MOVERIGHT)
 
     @property
-    def text_direction(self):
+    def text_direction(self) -> Optional[int]:
         """The direction the text is displayed. To display the text left to right beginning on the
         left side of the LCD, set ``text_direction = LEFT_TO_RIGHT``. To display the text right
         to left beginning on the right size of the LCD, set ``text_direction = RIGHT_TO_LEFT``.
@@ -447,24 +464,24 @@ class Character_LCD:
         return self._direction
 
     @text_direction.setter
-    def text_direction(self, direction):
+    def text_direction(self, direction: int) -> None:
         self._direction = direction
         if direction == self.LEFT_TO_RIGHT:
             self._left_to_right()
         elif direction == self.RIGHT_TO_LEFT:
             self._right_to_left()
 
-    def _left_to_right(self):
+    def _left_to_right(self) -> None:
         # Displays text from left to right on the LCD.
         self.displaymode |= _LCD_ENTRYLEFT
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
 
-    def _right_to_left(self):
+    def _right_to_left(self) -> None:
         # Displays text from right to left on the LCD.
         self.displaymode &= ~_LCD_ENTRYLEFT
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
 
-    def create_char(self, location, pattern):
+    def create_char(self, location: int, pattern: Sequence[int]) -> None:
         """
         Fill one of the first 8 CGRAM locations with custom characters.
         The location parameter should be between 0 and 7 and pattern should
@@ -472,8 +489,8 @@ class Character_LCD:
         design your custom character at http://www.quinapalus.com/hd44780udg.html
         To show your custom character use, for example, ``lcd.message = "\x01"``
 
-        :param location: integer in range(8) to store the created character
-        :param ~bytes pattern: len(8) describes created character
+        :param int location: Integer in range(8) to store the created character.
+        :param Sequence[int] pattern: len(8) describes created character.
 
         """
         # only position 0..7 are allowed
@@ -482,10 +499,9 @@ class Character_LCD:
         for i in range(8):
             self._write8(pattern[i], char_mode=True)
 
-    def _write8(self, value, char_mode=False):
-        print(f"bit-by-bit: {char_mode=}, {value=:x}")
+    def _write8(self, value: int, char_mode: bool = False) -> None:
         # Sends 8b ``value`` in ``char_mode``.
-        # :param value: bytes
+        # :param value: int
         # :param char_mode: character/data mode selector. False (default) for
         # data only, True for character bits.
         #  one ms delay to prevent writing too quickly.
@@ -506,7 +522,7 @@ class Character_LCD:
         self.dl7.value = ((value >> 3) & 1) > 0
         self._pulse_enable()
 
-    def _pulse_enable(self):
+    def _pulse_enable(self) -> None:
         # Pulses (lo->hi->lo) to send commands.
         self.enable.value = False
         # 1microsec pause
@@ -524,14 +540,14 @@ class Character_LCD:
 class Character_LCD_Mono(Character_LCD):
     """Interfaces with monochromatic character LCDs.
 
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut d4: The data line 4
-    :param ~digitalio.DigitalInOut d5: The data line 5
-    :param ~digitalio.DigitalInOut d6: The data line 6
-    :param ~digitalio.DigitalInOut d7: The data line 7
-    :param columns: The columns on the charLCD
-    :param lines: The lines on the charLCD
+    :param ~digitalio.DigitalInOut reset_dio: The reset data line
+    :param ~digitalio.DigitalInOut enable_dio: The enable data line
+    :param ~digitalio.DigitalInOut d4_dio: The data line 4
+    :param ~digitalio.DigitalInOut d5_dio: The data line 5
+    :param ~digitalio.DigitalInOut d6_dio: The data line 6
+    :param ~digitalio.DigitalInOut d7_dio: The data line 7
+    :param int columns: The columns on the charLCD
+    :param int lines: The lines on the charLCD
     :param ~digitalio.DigitalInOut backlight_pin: The backlight pin
     :param bool backlight_inverted: ``False`` if LCD is not inverted, i.e. backlight pin is
         connected to common anode. ``True`` if LCD is inverted i.e. backlight pin is connected
@@ -542,16 +558,16 @@ class Character_LCD_Mono(Character_LCD):
     # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
-        rs,
-        en,
-        db4,
-        db5,
-        db6,
-        db7,
-        columns,
-        lines,
-        backlight_pin=None,
-        backlight_inverted=False,
+        reset_dio: digitalio.DigitalInOut,
+        enable_dio: digitalio.DigitalInOut,
+        d4_dio: digitalio.DigitalInOut,
+        d5_dio: digitalio.DigitalInOut,
+        d6_dio: digitalio.DigitalInOut,
+        d7_dio: digitalio.DigitalInOut,
+        columns: int,
+        lines: int,
+        backlight_pin: Optional[digitalio.DigitalInOut] = None,
+        backlight_inverted: bool = False,
     ):
         # Backlight pin and inversion
         self.backlight_pin = backlight_pin
@@ -561,12 +577,14 @@ class Character_LCD_Mono(Character_LCD):
         if backlight_pin is not None:
             self.backlight_pin.direction = digitalio.Direction.OUTPUT
             self.backlight = True
-        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
+        super().__init__(
+            reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines
+        )
 
     # pylint: enable-msg=too-many-arguments
 
     @property
-    def backlight(self):
+    def backlight(self) -> Optional[bool]:
         """Enable or disable backlight. True if backlight is on. False if backlight is off.
 
         The following example turns the backlight off, then displays, "Hello, world?", then turns
@@ -601,14 +619,14 @@ class Character_LCD_Mono(Character_LCD):
 class Character_LCD_RGB(Character_LCD):
     """Interfaces with RGB character LCDs.
 
-    :param ~digitalio.DigitalInOut rs: The reset data line
-    :param ~digitalio.DigitalInOut en: The enable data line
-    :param ~digitalio.DigitalInOut db4: The data line 4
-    :param ~digitalio.DigitalInOut db5: The data line 5
-    :param ~digitalio.DigitalInOut db6: The data line 6
-    :param ~digitalio.DigitalInOut db7: The data line 7
-    :param columns: The columns on the charLCD
-    :param lines: The lines on the charLCD
+    :param ~digitalio.DigitalInOut reset_dio: The reset data line
+    :param ~digitalio.DigitalInOut enable_dio: The enable data line
+    :param ~digitalio.DigitalInOut d4_dio: The data line 4
+    :param ~digitalio.DigitalInOut d5_dio: The data line 5
+    :param ~digitalio.DigitalInOut d6_dio: The data line 6
+    :param ~digitalio.DigitalInOut d7_dio: The data line 7
+    :param int columns: The columns on the charLCD
+    :param int lines: The lines on the charLCD
     :param ~pwmio.PWMOut,~digitalio.DigitalInOut red: Red RGB Anode
     :param ~pwmio.PWMOut,~digitalio.DigitalInOut green: Green RGB Anode
     :param ~pwmio.PWMOut,~digitalio.DigitalInOut blue: Blue RGB Anode
@@ -617,22 +635,22 @@ class Character_LCD_RGB(Character_LCD):
 
     """
 
-    # pylint: disable=too-many-positional-arguments,invalid-name
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
-        rs,
-        en,
-        db4,
-        db5,
-        db6,
-        db7,
-        columns,
-        lines,
-        red,
-        green,
-        blue,
-        read_write=None,
-    ):
+        reset_dio: digitalio.DigitalInOut,
+        enable_dio: digitalio.DigitalInOut,
+        d4_dio: digitalio.DigitalInOut,
+        d5_dio: digitalio.DigitalInOut,
+        d6_dio: digitalio.DigitalInOut,
+        d7_dio: digitalio.DigitalInOut,
+        columns: int,
+        lines: int,
+        red: Union[pwmio.PWMOut, digitalio.DigitalInOut],
+        green: Union[pwmio.PWMOut, digitalio.DigitalInOut],
+        blue: Union[pwmio.PWMOut, digitalio.DigitalInOut],
+        read_write: Optional[digitalio.DigitalInOut] = None,
+    ) -> None:
         # Define read_write (rw) pin
         self.read_write = read_write
 
@@ -654,10 +672,12 @@ class Character_LCD_RGB(Character_LCD):
                 )
 
         self._color = [0, 0, 0]
-        super().__init__(rs, en, db4, db5, db6, db7, columns, lines)
+        super().__init__(
+            reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines
+        )
 
     @property
-    def color(self):
+    def color(self) -> List[int]:
         """
         The color of the display. Provide a list of three integers ranging 0 - 100, ``[R, G, B]``.
         ``0`` is no color, or "off". ``100`` is maximum color. For example, the brightest red would
@@ -667,6 +687,9 @@ class Character_LCD_RGB(Character_LCD):
         be red.
 
         The following example turns the LCD red and displays, "Hello, world!".
+
+        The property returns a list, but can be set as an int in the format ``0xRRGGBB``,
+        as output by `rainbowio.colorwheel` for example.
 
         .. code-block:: python
 
@@ -685,7 +708,15 @@ class Character_LCD_RGB(Character_LCD):
         return self._color
 
     @color.setter
-    def color(self, color):
+    def color(self, color: Union[List[float], int]) -> None:
+        if isinstance(color, int):
+            if color >> 24:
+                raise ValueError("Integer color value must be positive and 24 bits max")
+            # NOTE: convert to 0-100
+            r = (color >> 16) / 2.55
+            g = ((color >> 8) & 0xFF) / 2.55
+            b = (color & 0xFF) / 2.55
+            color = [r, g, b]
         self._color = color
         for number, pin in enumerate(self.rgb_led):
             if hasattr(pin, "duty_cycle"):
