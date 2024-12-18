@@ -28,6 +28,8 @@ Implementation Notes
 
 """
 
+import time
+
 from adafruit_mcp230xx.mcp23008 import MCP23008
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
@@ -36,7 +38,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
 class Character_LCD_I2C(Character_LCD_Mono):
-    # pylint: disable=too-few-public-methods, too-many-arguments
+    # pylint: disable=too-few-public-methods
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
     This is a subclass of `Character_LCD_Mono` and implements all of the
     same functions and functionality.
@@ -52,6 +54,7 @@ class Character_LCD_I2C(Character_LCD_Mono):
         lcd = Character_LCD_I2C(i2c, 16, 2)
     """
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, i2c, columns, lines, address=None, backlight_inverted=False):
         """Initialize character LCD connected to backpack using I2C connection
         on the specified I2C bus with the specified number of columns and
@@ -59,18 +62,51 @@ class Character_LCD_I2C(Character_LCD_Mono):
         """
 
         if address:
-            mcp = MCP23008(i2c, address=address)
+            self.mcp = MCP23008(i2c, address=address)
         else:
-            mcp = MCP23008(i2c)
+            self.mcp = MCP23008(i2c)
         super().__init__(
-            mcp.get_pin(1),
-            mcp.get_pin(2),
-            mcp.get_pin(3),
-            mcp.get_pin(4),
-            mcp.get_pin(5),
-            mcp.get_pin(6),
+            self.mcp.get_pin(1),  # reset
+            self.mcp.get_pin(2),  # enable
+            self.mcp.get_pin(3),  # data line 4
+            self.mcp.get_pin(4),  # data line 5
+            self.mcp.get_pin(5),  # data line 6
+            self.mcp.get_pin(6),  # data line 7
             columns,
             lines,
-            backlight_pin=mcp.get_pin(7),
+            backlight_pin=self.mcp.get_pin(7),
             backlight_inverted=backlight_inverted,
         )
+
+    def _write8(self, value, char_mode=False):
+        # Sends 8b ``value`` in ``char_mode``.
+        # :param value: bytes
+        # :param char_mode: character/data mode selector. False (default) for
+        # data only, True for character bits.
+        #  one ms delay to prevent writing too quickly.
+        time.sleep(0.001)
+
+        # bits are, MSB (7) to LSB (0)
+        # backlight:   bit 7
+        # data line 7: bit 6
+        # data line 6: bit 5
+        # data line 5: bit 4
+        # data line 4: bit 3
+        # enable:      bit 2
+        # reset:       bit 1
+        # (unused):    bit 0
+
+        reset_bit = int(char_mode) << 1
+        backlight_bit = int(self.backlight ^ self.backlight_inverted) << 7
+
+        # Write char_mode and upper 4 bits of data, shifted to the correct position.
+        self.mcp.gpio = reset_bit | backlight_bit | ((value & 0xF0) >> 1)
+
+        #  do command
+        self._pulse_enable()
+
+        # Write char_mode and lower 4 bits of data, shifted to the correct position.
+        self.mcp.gpio = reset_bit | backlight_bit | ((value & 0x0F) << 3)
+
+        # do command
+        self._pulse_enable()

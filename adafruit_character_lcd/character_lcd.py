@@ -96,7 +96,7 @@ def _map(xval, in_min, in_max, out_min, out_max):
     return ret
 
 
-# pylint: disable-msg=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class Character_LCD:
     """Base class for character LCD.
 
@@ -114,9 +114,8 @@ class Character_LCD:
     LEFT_TO_RIGHT = const(0)
     RIGHT_TO_LEFT = const(1)
 
-    # pylint: disable-msg=too-many-arguments
+    # pylint: disable=too-many-positional-arguments,invalid-name
     def __init__(self, rs, en, d4, d5, d6, d7, columns, lines):
-
         self.columns = columns
         self.lines = lines
         #  save pin numbers
@@ -148,9 +147,9 @@ class Character_LCD:
         self._write8(_LCD_ENTRYMODESET | self.displaymode)
         self.clear()
 
-        self._message = None
-        self._enable = None
-        self._direction = None
+        self._message = ""
+        self._backlight_on = False
+        self._direction = self.LEFT_TO_RIGHT
         # track row and column used in cursor_position
         # initialize to 0,0
         self.row = 0
@@ -484,6 +483,7 @@ class Character_LCD:
             self._write8(pattern[i], char_mode=True)
 
     def _write8(self, value, char_mode=False):
+        print(f"bit-by-bit: {char_mode=}, {value=:x}")
         # Sends 8b ``value`` in ``char_mode``.
         # :param value: bytes
         # :param char_mode: character/data mode selector. False (default) for
@@ -520,7 +520,7 @@ class Character_LCD:
 # pylint: enable-msg=too-many-instance-attributes
 
 
-# pylint: disable-msg=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class Character_LCD_Mono(Character_LCD):
     """Interfaces with monochromatic character LCDs.
 
@@ -539,7 +539,7 @@ class Character_LCD_Mono(Character_LCD):
 
     """
 
-    # pylint: disable-msg=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         rs,
@@ -553,7 +553,6 @@ class Character_LCD_Mono(Character_LCD):
         backlight_pin=None,
         backlight_inverted=False,
     ):
-
         # Backlight pin and inversion
         self.backlight_pin = backlight_pin
         self.backlight_inverted = backlight_inverted
@@ -591,15 +590,12 @@ class Character_LCD_Mono(Character_LCD):
             time.sleep(5)
 
         """
-        return self._enable
+        return self._backlight_on
 
     @backlight.setter
     def backlight(self, enable):
-        self._enable = enable
-        if enable:
-            self.backlight_pin.value = not self.backlight_inverted
-        else:
-            self.backlight_pin.value = self.backlight_inverted
+        self._backlight_on = enable
+        self.backlight_pin.value = enable ^ self.backlight_inverted
 
 
 class Character_LCD_RGB(Character_LCD):
@@ -621,7 +617,7 @@ class Character_LCD_RGB(Character_LCD):
 
     """
 
-    # pylint: disable-msg=too-many-arguments
+    # pylint: disable=too-many-positional-arguments,invalid-name
     def __init__(
         self,
         rs,
@@ -637,7 +633,6 @@ class Character_LCD_RGB(Character_LCD):
         blue,
         read_write=None,
     ):
-
         # Define read_write (rw) pin
         self.read_write = read_write
 
