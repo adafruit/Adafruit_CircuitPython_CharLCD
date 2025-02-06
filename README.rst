@@ -55,6 +55,7 @@ This driver depends on:
 * `Adafruit CircuitPython <https://github.com/adafruit/circuitpython>`_
 * `Adafruit CircuitPython BusDevice <https://github.com/adafruit/Adafruit_CircuitPython_BusDevice>`_
 * `Adafruit CircuitPython MCP230xx <https://github.com/adafruit/Adafruit_CircuitPython_MCP230xx>`_
+* `Adafruit CircuitPython PCF8574 <https://github.com/adafruit/Adafruit_CircuitPython_PCF8574>`_
 * `Adafruit CircuitPython 74HC595 <https://github.com/adafruit/Adafruit_CircuitPython_74HC595>`_
 
 I2C & SPI displays also depend on:
