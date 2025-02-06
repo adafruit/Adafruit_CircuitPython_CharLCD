@@ -124,10 +124,6 @@ class Character_LCD_I2C(Character_LCD_Mono):
             )
 
     def _write8(self, value: int, char_mode: bool = False) -> None:
-        if not isinstance(self.expander, MCP23008):
-            super()._write8(value, char_mode)
-            return
-
         # Sends 8b ``value`` in ``char_mode``.
         # :param value: bytes
         # :param char_mode: character/data mode selector. False (default) for
@@ -135,27 +131,47 @@ class Character_LCD_I2C(Character_LCD_Mono):
         #  one ms delay to prevent writing too quickly.
         time.sleep(0.001)
 
-        # bits are, MSB (7) to LSB (0)
-        # backlight:   bit 7
-        # data line 7: bit 6
-        # data line 6: bit 5
-        # data line 5: bit 4
-        # data line 4: bit 3
-        # enable:      bit 2
-        # reset:       bit 1
-        # (unused):    bit 0
+        if isinstance(self.expander, MCP23008):
+            # bits are, MSB (7) to LSB (0)
+            # backlight:   bit 7
+            # data line 7: bit 6
+            # data line 6: bit 5
+            # data line 5: bit 4
+            # data line 4: bit 3
+            # enable:      bit 2
+            # reset:       bit 1
+            # (unused):    bit 0
 
-        reset_bit = int(char_mode) << 1
-        backlight_bit = int(self.backlight ^ self.backlight_inverted) << 7
+            reset_bit = int(char_mode) << 1
+            backlight_bit = int(self.backlight ^ self.backlight_inverted) << 7
 
-        # Write char_mode and upper 4 bits of data, shifted to the correct position.
-        self.expander.gpio = reset_bit | backlight_bit | ((value & 0xF0) >> 1)
+            # Write char_mode and upper 4 bits of data, shifted to the correct position.
+            self.__write_command(reset_bit | backlight_bit | ((value & 0xF0) >> 1))
+            self.__write_command(reset_bit | backlight_bit | ((value & 0x0F) << 3))
 
-        #  do command
-        self._pulse_enable()
+        elif isinstance(self.expander, PCF8574):
+            # bits are, MSB (7) to LSB (0)
+            # data line 7: bit 7
+            # data line 6: bit 6
+            # data line 5: bit 5
+            # data line 4: bit 4
+            # backlight:   bit 3
+            # enable:      bit 2
+            # write/read:  bit 1
+            # reset:       bit 0
+            reset_bit = int(char_mode)
+            backlight_bit = int(self.backlight ^ self.backlight_inverted) << 3
 
-        # Write char_mode and lower 4 bits of data, shifted to the correct position.
-        self.expander.gpio = reset_bit | backlight_bit | ((value & 0x0F) << 3)
+            # Write char_mode and upper 4 bits of data, shifted to the correct position.
+            self.__write_command(reset_bit | backlight_bit | (value & 0xF0))
+            self.__write_command(reset_bit | backlight_bit | (value << 4))
 
-        # do command
+    def __write_command(self, value: int) -> None:
+        # Write command bits to expander.
+        if isinstance(self.expander, MCP23008):
+            self.expander.gpio = value
+        elif isinstance(self.expander, PCF8574):
+            self.expander.write_gpio(value)
+
+        # execute command
         self._pulse_enable()
