@@ -4,6 +4,7 @@
 
 Adafruit-Blinka
 adafruit-circuitpython-mcp230xx
+adafruit-circuitpython-pcf8574
 adafruit-circuitpython-busdevice
 adafruit-circuitpython-74hc595
 adafruit-circuitpython-typing~=1.5
