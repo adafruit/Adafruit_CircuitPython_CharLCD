@@ -36,14 +36,17 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+
 try:
     from typing import Optional
+
     import busio
 except ImportError:
     pass
 
 import digitalio
 from adafruit_mcp230xx.mcp23017 import MCP23017
+
 from adafruit_character_lcd.character_lcd import Character_LCD_RGB
 
 __version__ = "0.0.0+auto.0"
@@ -67,10 +70,7 @@ class Character_LCD_RGB_I2C(Character_LCD_RGB):
 
     """
 
-    def __init__(
-        self, i2c: busio.I2C, columns: int, lines: int, address: Optional[int] = None
-    ):
-        # pylint: disable=too-many-locals
+    def __init__(self, i2c: busio.I2C, columns: int, lines: int, address: Optional[int] = None):
         """Initialize RGB character LCD connected to shield using I2C connection
         on the specified I2C bus with the specified number of columns and lines
         on the display.

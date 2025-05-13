@@ -2,8 +2,10 @@
 # SPDX-License-Identifier: MIT
 
 """Display a custom character"""
+
 import board
 import digitalio
+
 import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD

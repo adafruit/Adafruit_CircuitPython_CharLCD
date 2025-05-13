@@ -2,10 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 """Simple test for RGB character LCD on Raspberry Pi"""
+
 import time
+
 import board
 import digitalio
 import pwmio
+
 import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD

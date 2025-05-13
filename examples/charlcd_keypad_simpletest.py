@@ -2,8 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """Simple test for keypad on I2C RGB character LCD Shield or Pi Plate kits"""
+
 import time
+
 import board
+
 import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 
 # Modify this if you have a different sized Character LCD

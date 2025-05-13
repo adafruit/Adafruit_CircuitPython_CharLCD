@@ -2,9 +2,12 @@
 # SPDX-License-Identifier: MIT
 
 """Simple test for monochromatic character LCD"""
+
 import time
+
 import board
 import digitalio
+
 import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD
