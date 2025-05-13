@@ -27,21 +27,24 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+
 try:
-    import typing  # pylint: disable=unused-import
+    import typing
+
     import busio
     import digitalio
 except ImportError:
     pass
 
 import adafruit_74hc595
+
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
-class Character_LCD_SPI(Character_LCD_Mono):  # pylint: disable=too-few-public-methods
+class Character_LCD_SPI(Character_LCD_Mono):
     """Character LCD connected to I2C/SPI backpack using its SPI connection.
     This is a subclass of `Character_LCD_Mono` and implements all of the same
     functions and functionality.
@@ -59,7 +62,6 @@ class Character_LCD_SPI(Character_LCD_Mono):  # pylint: disable=too-few-public-m
         lcd = character_lcd.Character_LCD_SPI(spi, latch, 16, 2)
     """
 
-    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         spi: busio.SPI,

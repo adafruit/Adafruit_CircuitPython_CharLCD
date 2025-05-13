@@ -2,9 +2,12 @@
 # SPDX-License-Identifier: MIT
 
 """Use custom characters to display Nyan cat"""
+
 import time
+
 import board
 import digitalio
+
 import adafruit_character_lcd.character_lcd as characterlcd
 
 # Modify this if you have a different sized character LCD
@@ -76,9 +79,7 @@ lcd.create_char(7, tail_neutral)
 lcd.clear()
 
 lcd.move_right()
-lcd.message = (
-    "\x02\x02\x02\x02\x01\x00\x00\x00\x06\n\x02\x02\x02\x07\x03\x04\x04\x04\x05"
-)
+lcd.message = "\x02\x02\x02\x02\x01\x00\x00\x00\x06\n\x02\x02\x02\x07\x03\x04\x04\x04\x05"
 
 lcd.backlight = True
 

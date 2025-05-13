@@ -27,15 +27,18 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+
 import time
 
 try:
     from typing import Optional
+
     import busio
 except ImportError:
     pass
 
 from adafruit_mcp230xx.mcp23008 import MCP23008
+
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
 
 __version__ = "0.0.0+auto.0"
@@ -43,7 +46,6 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_CharLCD.git"
 
 
 class Character_LCD_I2C(Character_LCD_Mono):
-    # pylint: disable=too-few-public-methods
     """Character LCD connected to I2C/SPI backpack using its I2C connection.
     This is a subclass of `Character_LCD_Mono` and implements all the same
     functions and functionality.
@@ -59,7 +61,6 @@ class Character_LCD_I2C(Character_LCD_Mono):
         lcd = Character_LCD_I2C(i2c, 16, 2)
     """
 
-    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         i2c: busio.I2C,

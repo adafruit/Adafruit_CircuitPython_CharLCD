@@ -29,13 +29,16 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+
 try:
-    from typing import Union, Optional, List, Sequence
+    from typing import List, Optional, Sequence, Union
+
     from circuitpython_typing import pwmio
 except ImportError:
     pass
 
 import time
+
 import digitalio
 from micropython import const
 
@@ -89,9 +92,7 @@ def _set_bit(byte_value: int, position: int, val: bool) -> int:
     return ret
 
 
-def _map(
-    xval: float, in_min: float, in_max: float, out_min: float, out_max: float
-) -> float:
+def _map(xval: float, in_min: float, in_max: float, out_min: float, out_max: float) -> float:
     # Affine transfer/map with constrained output.
     outrange = float(out_max - out_min)
     inrange = float(in_max - in_min)
@@ -103,7 +104,6 @@ def _map(
     return ret
 
 
-# pylint: disable=too-many-instance-attributes
 class Character_LCD:
     """Base class for character LCD.
 
@@ -121,7 +121,6 @@ class Character_LCD:
     LEFT_TO_RIGHT = const(0)
     RIGHT_TO_LEFT = const(1)
 
-    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         reset_dio: digitalio.DigitalInOut,
@@ -172,8 +171,6 @@ class Character_LCD:
         self.row = 0
         self.column = 0
         self._column_align = False
-
-    # pylint: enable-msg=too-many-arguments
 
     def home(self) -> None:
         """Moves the cursor "home" to position (0, 0)."""
@@ -381,11 +378,10 @@ class Character_LCD:
                 # cursor_position is set
                 if self.displaymode & _LCD_ENTRYLEFT > 0:
                     col = self.column * self._column_align
+                elif self._column_align:
+                    col = self.column
                 else:
-                    if self._column_align:
-                        col = self.column
-                    else:
-                        col = self.columns - 1
+                    col = self.columns - 1
                 self.cursor_position(col, line)
             # Write string to display
             else:
@@ -533,10 +529,6 @@ class Character_LCD:
         time.sleep(0.0000001)
 
 
-# pylint: enable-msg=too-many-instance-attributes
-
-
-# pylint: disable=too-many-instance-attributes
 class Character_LCD_Mono(Character_LCD):
     """Interfaces with monochromatic character LCDs.
 
@@ -555,7 +547,6 @@ class Character_LCD_Mono(Character_LCD):
 
     """
 
-    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         reset_dio: digitalio.DigitalInOut,
@@ -577,11 +568,7 @@ class Character_LCD_Mono(Character_LCD):
         if backlight_pin is not None:
             self.backlight_pin.direction = digitalio.Direction.OUTPUT
             self.backlight = True
-        super().__init__(
-            reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines
-        )
-
-    # pylint: enable-msg=too-many-arguments
+        super().__init__(reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines)
 
     @property
     def backlight(self) -> Optional[bool]:
@@ -635,7 +622,6 @@ class Character_LCD_RGB(Character_LCD):
 
     """
 
-    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         reset_dio: digitalio.DigitalInOut,
@@ -672,9 +658,7 @@ class Character_LCD_RGB(Character_LCD):
                 )
 
         self._color = [0, 0, 0]
-        super().__init__(
-            reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines
-        )
+        super().__init__(reset_dio, enable_dio, d4_dio, d5_dio, d6_dio, d7_dio, columns, lines)
 
     @property
     def color(self) -> List[int]:

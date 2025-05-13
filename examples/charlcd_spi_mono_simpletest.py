@@ -2,10 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 """Simple test for 16x2 character LCD connected to 74HC595 SPI LCD backpack."""
+
 import time
+
 import board
 import busio
 import digitalio
+
 import adafruit_character_lcd.character_lcd_spi as character_lcd
 
 # Modify this if you have a different sized character LCD
