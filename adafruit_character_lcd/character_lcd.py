@@ -483,7 +483,7 @@ class Character_LCD:
         The location parameter should be between 0 and 7 and pattern should
         provide an array of 8 bytes containing the pattern. E.g. you can easily
         design your custom character at http://www.quinapalus.com/hd44780udg.html
-        To show your custom character use, for example, ``lcd.message = "\x01"``
+        To show your custom character use, for example, ``lcd.message = "\\x01"``
 
         :param int location: Integer in range(8) to store the created character.
         :param Sequence[int] pattern: len(8) describes created character.
